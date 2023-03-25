@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{tcolorbox}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\emph{#1}}
+
+\title{Notes on Chernoff Bounds for Randomized Algorithms}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+In this note I show how to easily apply the Chernoff bound to get results of practical use in randomized algorithms.
+In particular I will ignore constant factors, which simplifies everything considerably.
+Throughout this document, any uses of big-O notation will refer to functions in the variable \(n\).
+
+\section{With High Probability}
+
+First, we clarify the kinds of results which we want to obtain.
+
+\begin{definition}
+  Let \(A(n, c)\) be an event depending on \(n\) and a value \(c\).
+  We say \(A\) holds \defn{with high probability} if
+  for any choice of \(c\),
+  \(Pr[\neg A(n, c)] \in O(n^{-c})\).
+\end{definition}
+
+In particular we might have a random variable \(X(n)\) depending on \(n\).
+If we say, ``\(X\) is \(O(f)\) with high probability'',
+we mean that for any constant \(c\), there exist constants \(a, b, N\) such that
+\(\Pr[X(n) > af(n)] < bn^{-c}\) for all \(n > N\).
+In other words, the constants \(a, b, N\) hidden by the big-O notation are allowed to depend on \(c\).
+
+The motivation for this is as follows.
+Suppose \(p\) is a polynomial, and we have \(p(n)\) random variables \(X_i\)
+such that each \(X_i\) is \(O(f)\) with high probability.
+Then by a union bound, all \(p(n)\) of the \(X_i\) are \(O(f)\) with high probability.
+
+We will focus on getting results that hold with high probability.
+
+\section{Applying Chernoff Bounds}
+
+\begin{theorem}[Chernoff]
+  \label{thm:chernoff}
+  Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
+  Let \(\mu = E[X]\) and \(\delta \ge 0\).
+  Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right).\]
+\end{theorem}
+
+Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
+It will be helpful to specialize the theorem to make it easier to apply:
+
+\begin{tcolorbox}
+  \begin{corollary}
+    \label{cor:chernoff-simple}
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
+    Let \(\mu \ge E[X]\).
+    Then \[\Pr[X \ge 3\mu] \le \exp(-\mu).\]  
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}
+  Let \(Y = X + \mu - E[X]\).
+  Then \(Y\) is a sum of fully independent \([0, 1]\) random variables with \(\mu = E[Y]\).
+  Apply Theorem~\ref{thm:chernoff} to \(Y\) with \(\delta = 2\) to obtain
+  \(\Pr[X \ge 3\mu] \le \Pr[Y \ge 3\mu] \le \exp(-\mu)\)
+  as desired.
+\end{proof}
+
+First, we've replaced the exact value \(\mu = E[X]\) with an upper bound \(\mu \ge E[X]\).
+This lets us get rid of the unnecessary parameter \(\delta\),
+since in the regimes relevant to us, the exponent scales linearly with both \(\delta\) and \(\mu\)
+and so \(\delta\) is superfluous.
+
+Now we can easily use this to get bounds with high probability.
+
+\begin{tcolorbox}
+  \begin{corollary}
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
+    \begin{itemize}
+    \item If \(E[X] \in O(\log n)\), then with high probability \(X \in O(\log n)\).
+    \item If \(E[X] \in \Omega(\log n)\), then with high probability \(X \in O(E[X])\).
+    \end{itemize}
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}\hfill
+  \begin{itemize}
+  \item
+    Apply Corollary~\ref{cor:chernoff-simple} with \(\mu = c \log n\) for \(c\) large enough so that eventually \(E[X] \le \mu\).
+    Then eventually \(\Pr[X \ge 3c \log n] \le \exp(-c\log n) = n^{-c}\).
+  \item
+    Pick a constant \(c\),
+    and let \(d \ge 1\) be a constant large enough so that eventually \(dE[X] \ge c \log n\).
+    Apply Corollary~\ref{cor:chernoff-simple} with \(\mu = dE[X]\).
+    Then eventually \(\Pr[X \ge 3dE[X]] \le \exp(-dE[X]) \le \exp(-c\log n) = n^{-c}\).
+  \end{itemize}
+\end{proof}
+
+\section{Bounded Independence}
+
+The Chernoff bound requires that the variables \(X_i\) are fully independent.
+In some contexts it can be useful to reduce the amount of independence, and thus the number of random bits needed to generate the variables.
+It turns out that it is possible to get Chernoff bounds even when the variables are only \(k\)-wise independent.
+
+\begin{theorem}[Theorem 5(IIa) of \cite{limited-chernoff}]
+  \label{thm:limited-chernoff}
+  Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu = E[X]\).
+  Let \(\delta \ge 1\) and suppose \(k \le \lfloor \delta \mu e^{-1/3} \rfloor.\)
+  Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp(-\lfloor k/2 \rfloor).\]
+\end{theorem}
+
+Again we'll put this into an easier form to apply:
+
+\begin{tcolorbox}
+  \begin{corollary}
+    \label{cor:limited-chernoff-simple}
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu \ge E[X]\).
+    Suppose \(k \le \mu.\)
+    Then \[\Pr[X \ge 4\mu] \le \exp(-\lfloor k/2 \rfloor).\]
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}
+  Without loss of generality assume \(\mu \ge 2\) since otherwise the statement is trivial.
+  Let \(Y = X + \mu - E[X]\) as before; then \(Y\) is a sum of \(k\)-wise independent \([0, 1]\) random variables with \(\mu = E[Y]\).
+  Set \(\delta = 3\) so that \(k \le \mu \le \lfloor 2\mu \rfloor \le \lfloor \delta \mu e^{-1/3} \rfloor\).
+  Applying Theorem~\ref{thm:limited-chernoff} to \(Y\), we obtain
+  \(\Pr[X \ge 4\mu] \le \Pr[Y \ge 4\mu] \le \exp(-\lfloor k/2 \rfloor).\)
+\end{proof}
+
+We can now show similar results to before but with only \(\Theta(\log n)\) independent bits.
+
+\begin{tcolorbox}
+  \begin{corollary}
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\), where \(k = 2\lceil c\log n \rceil\).
+    \begin{itemize}
+    \item If \(E[X] \in O(\log n)\), then  \(X \in O(\log n)\) with probability \(1 - n^{-c}\).
+    \item If \(E[X] \in \Omega(\log n)\), then \(X \in O(E[X])\) with probability \(1 - n^{-c}\).
+    \end{itemize}
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}\hfill
+  \begin{itemize}
+  \item
+    Let \(d \ge k\) be a constant large enough so that eventually \(E[X] \le d \log n\).
+    Apply Corollary~\ref{cor:limited-chernoff-simple} with \(\mu = d \log n\); 
+    then eventually \(\Pr[X \ge 4d \log n] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
+  \item
+    Let \(d\) be a constant large enough so that eventually \(d E[X] \ge k\).
+    Apply Corollary~\ref{cor:limited-chernoff-simple} with \(\mu = dE[X]\);
+    then eventually \(\Pr[X \ge 4dE[X]] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
+  \end{itemize}
+\end{proof}
+
+% todo summarize results on read-k families too
+
+\end{document}
