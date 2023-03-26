@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{tcolorbox}
+\usepackage[margin=1in]{geometry}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\emph{#1}}
+\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand*{\R}[0]{\mathbb{R}}
+
+\title{LP Duality Cheatsheet}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{tcolorbox}
+  \[
+  \begin{gathered}
+    \max\mat{c_1 \\ c_2 \\ c_3}^T \mat{x_1 \\ x_2 \\ x_3} \\
+    \begin{aligned}
+      x_1 &\ge 0 \\
+      x_2 &\le 0 \\
+      x_3 &\in \R \\
+    \end{aligned}\quad
+    Ax \in \mat{\le b_\alpha \\ \ge b_\beta \\ = b_\gamma} \\
+  \end{gathered}
+  \qquad\text{is dual to}\qquad
+  \begin{gathered}
+    \min\mat{b_\alpha \\ b_\beta \\ b_\gamma}^T \mat{y_\alpha \\ y_\beta \\ y_\gamma} \\
+    \begin{aligned}
+      y_\alpha \ge 0 \\
+      y_\beta \le 0 \\
+      y_\gamma \in \R \\
+    \end{aligned}\quad
+    A^Ty \in \mat{\ge c_1 \\ \le c_2 \\ = c_3} \\
+  \end{gathered}
+  \]
+\end{tcolorbox}
+\begin{theorem}[Strong duality]
+  One of the following holds:
+  \begin{itemize}
+  \item Both the primal and dual are feasible and have the same optimum value.
+  \item One is unbounded and the other is infeasible.
+  \item Both are infeasible.
+  \end{itemize}
+\end{theorem}
+
+To dualize a linear program:
+\begin{itemize}
+\item Create a dual variable for every primal constraint.
+  The sign of the variable depends\footnote{In some cases there is a sign flip, depending on whether the primal was maximizing or minimizing.  See the boxed equation.} on the direction of the constraint.
+  The coefficient of the variable in the objective is the right-hand side of the constraint.
+\item For every primal variable \(x\), create a dual constraint in the following way.
+  Look at all the primal constraints containing \(x\); for each such constraint multiply the dual variable corresponding to that constraint by the coefficient of \(x\).
+  The left-hand side of the new dual constraint is the sum of these terms.
+  The right-hand side of the constraint is the coefficient of \(x\) in the objective.
+  The direction of the new constraint depends\footnotemark[\value{footnote}]{} on the sign of \(x\).
+\end{itemize}
+
+\end{document}
