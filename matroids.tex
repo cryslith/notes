@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+
+\newcommand*{\Symbol}[2]{\newcommand*{#1}[0]{#2}}
+\Symbol{\I}{\mathcal{I}}
+\Symbol{\C}{\mathcal{C}}
+\newcommand*{\defn}[1]{\textbf{\textit{\boldmath #1}}}
+
+\title{Notes on Matroid Algorithms}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\C$ are the circuits.
+I sometimes write set union as $A + B$ when $A, B$ are disjoint, and I write set difference as $C - D$ when $D \subset C$.
+I also sometimes write $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
+
+% based on 
+
+Matroid partitioning: \href{https://page.math.tu-berlin.de/\~felsner/Lehre/SemMatS/Literatur/ScheinermanUllman:FractionalArboricity.pdf}{based on book chapter}.
+Note that it works even when applied to $k$ different matroids instead of $k$ copies of the same matroid; this generalization is checking for independence of a set in a $k$-wise matroid sum.
+Also it's helpful to use the following lemma when analyzing the algorithm:
+
+\begin{lemma}
+  Let $S \subset E$ and $a, b, c \in E - S$ where $a, b, c$ are distinct.
+  It cannot be simultaneously true that:
+  \[
+  S + \{a\} &\in \I \\
+  S + \{b, c\} &\in \I \\
+  S + \{a, b\} &\not\in \I \\
+  S + \{a, c\} &\not\in \I \\
+  \]
+\end{lemma}
+\begin{proof}
+  Since $|S + \{b, c\}| > |S + \{a\}|$, one of $b$ or $c$ can be added to $S + \{a\}$ while maintaining independence.
+\end{proof}
+
+The certificate for nonexistence of a matroid partition in the case of $k$ different matroids
+is a $Y \subset E$ such that $|Y| > \sum_i r_i(Y)$.
+Clearly if such a $Y$ exists then the partitioning cannot be accomplished, since in any partition we have \[|Y| = \sum_i |Y \cap S_i| = \sum_i r_i(Y \cap S_i) \le \sum_i r_i(Y)\]
+If the algorithm cannot make progress it still works to take $Y$ as the set of vertices which can reach an uncolored vertex.
+
+\begin{definition}
+  Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is a matroid on $A$ where $\I_{M|_A} = \{I \subset A \mid I \in \I_M\}$.
+\end{definition}
+
+\begin{definition}
+  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is a matroid on $E - B$ where $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$.  Equivalently $\C_{M/B} = \{C \cap (E - B) \mid C \in \C_M\}$.
+\end{definition}
+
+For graphic matroids, the submatroid corresponds to deleting the edges of $A$, and the quotient corresponds to contracting the edges in $B$.  Submatroids and quotients commute with themselves and each other.
+
+\begin{definition}
+  The \defn{Shannon switching game} is defined by a matroid $M$ and a subset $F \subset E$.
+  Two players, \emph{Cut} and \emph{Short} take turns claiming elements of $E - F$ for themselves, with Cut moving first, until all elements of $E - F$ have been claimed.
+  Letting $B$ be the set of edges claimed by Short,
+  the game is won by Short if $B$ spans $F$.
+\end{definition}
+
+\end{document}

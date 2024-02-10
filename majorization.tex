@@ -1,0 +1,127 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+\newcommand*{\E}[0]{\mathbf{E}}
+\DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\esssup}{ess\,sup}
+\DeclareMathOperator*{\essinf}{ess\,inf}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+
+\title{Notes on Majorization Inequalities}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+These are some notes on inequalities arising from majorization.
+We start with a very general majorization inequality and use this to obtain 
+
+In the following $(S, \Lambda, \mu)$ will be a measure space.
+We will mostly be interested in the cases where $S$ is a probability space ($\mu(S) = 1$) or where $S = \N$ and $\mu$ is counting measure.
+
+\begin{definition}
+  A real-valued function $f$ is \defn{convex} on an interval $[a, b]$ if for all $t \in [0, 1]$ we have $f(ta + (1 - t)b) \le tf(a) + (1 - t)f(b)$.
+\end{definition}
+
+It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a, b)$, left-differentiable on $(a, b]$, and right-differentiable on $[a, b)$.
+
+%% \section{Majorization on measure spaces}
+
+%% The following summary of majorization on measure spaces is from (Joe, 1987).
+%% Let $h: S \to \R_{\ge 0}$ be a nonnegative measurable function.
+%% We define functions $m_h : \R_{\ge 0} \to [0, \mu(S)]$ and $h^* : [0, \mu(S)] \to \R_{\ge 0}$ via
+%% \[
+%% m_h(t) &= \mu(\{x : h(x) > t\}) \\
+%% h^*(u) &= \sup\{t : m_h(t) > u\}
+%% \]
+
+%% We can think of $h^*$ as a ``decreasing rearrangement'' of $h$; it has the same mass distribution as $h$ but is a decreasing function on $\R$.
+%% Now for the main theorem:
+
+\begin{definition}
+  Let $f, g : S \to \R_{\ge 0}$ be nonnegative integrable functions such that $\int f\,d\mu = \int g\,d\mu < \infty$.
+  We say $g$ \defn{majorizes} $f$ if any of the following equivalent conditions hold:
+  \begin{itemize}
+  \item $\int \max\{f - t, 0\}\,d\mu \le \int \max\{g - t, 0\}\,d\mu$ for every $t \ge 0$.
+  \item $\int_t^\infty m_f(u)\,du \le \int_t^\infty m_g(u)\,du$ for all $t \ge 0$, where $m_h(u) = \mu(\{x : h(x) > u\})$.
+  \item $\int_0^r f^*(\ell)\,d\ell \le \int_0^r g^*(\ell)\,d\ell$ for all $0 \le r < \mu(S)$, where $h^*(\ell) = \sup\{t : m_h(t) > \ell\}$.
+  \end{itemize}
+  We write $f \prec g$ to mean $g$ majorizes $f$.
+\end{definition}
+
+\begin{theorem}[Theorem 2.1 in Joe 1987]
+  \label{thm:majorize}
+  Let $\phi$ be a continuous convex function on an interval $[0, b]$
+  such that $\phi(0) = 0$.
+  Let $f \prec g$ where $f, g$ take values in $[0, b]$.
+  Then \[\int \phi f\,d\mu \le \int \phi g\,d\mu\]
+  provided that the integrals exist and are finite.
+\end{theorem}
+\begin{proof}
+  First we consider the case where $\phi'(0^+) > -\infty$.  In this case, we can approximate $\phi$ by an increasing sequence of finite sums of the form $\phi_n(u) = \sum_i a_i \max\{u - b_i, 0\}$.  Linearity gives us $\int \phi_n f\,d\mu \le \int \phi_n g\,d\mu$ and the result follows from the monotone convergence theorem.  In this case we don't need the condition that the integrals are finite: they always exist and the result holds even if one or both is $\infty$.
+
+  In the case where $\phi'(0^+) = -\infty$ we approximate $\phi$ by a sequence of convex functions
+  \[\psi_n(u) = 
+  \begin{cases}
+    n\phi(n^{-1})u & 0 \le u < n^{-1}\\
+    \phi(u) & u \ge n^{-1}
+  \end{cases}\]
+  where each $\psi_n'(0^+) > -\infty$.
+  By the first case we have $\int \psi_n f\,d\mu \le \int \psi_n g\,d\mu$ and we can finish using the dominated convergence theorem since $|\psi_n| \le |\phi|$.
+\end{proof}
+
+Note that if $\mu(S) < \infty$ we can work with a general interval $[a, b]$ and dispense with the assumption $\phi(0) = 0$,
+by considering the functions \[\phi_a(u) &= \phi(u + a) - \phi(a) \\ f_a(x) &= f(x) - a \\ g_a(x) &= g(x) - a\]
+
+From this we can derive familiar results:
+
+\begin{theorem}[Jensen's Inequality]
+  Let $X : S \to \R$ be a random variable and $\phi$ a continuous convex function.
+  Then $\phi(\E X) \le \E[\phi(X)]$.
+\end{theorem}
+\begin{proof}
+  Consider the constant random variable $Y(x) = \E X$.
+  Then $Y \prec X$ and so by Theorem~\ref{thm:majorize} we have
+  $\phi(\E X) = \E[\phi(Y)] \le \E[\phi(X)]$.
+\end{proof}
+
+For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \to x^2$ is convex.
+
+\section*{Power Means}
+
+Suppose $\mu(S) = 1$ so that $S$ is a probability space.
+Let $f$ be a nonnegative measurable function $S \to \R$, and define:
+
+\[M_p(f) =
+\begin{cases}
+  \E[f^p]^{1/p} & p \in \R - \{0\} \\
+  \exp \E[\log f] & p = 0 \\
+  \essinf(f) & p = -\infty \\
+  \esssup(f) & p = \infty \\
+\end{cases}\]
+
+\end{document}
