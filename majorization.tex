@@ -27,6 +27,8 @@
 \DeclareMathOperator*{\Var}{\mathrm{Var}}
 \DeclareMathOperator*{\esssup}{ess\,sup}
 \DeclareMathOperator*{\essinf}{ess\,inf}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
 
 \def\[#1\]{\begin{align*}#1\end{align*}}
 
@@ -38,7 +40,8 @@
 \maketitle
 
 These are some notes on inequalities arising from majorization.
-We start with a very general majorization inequality and use this to obtain 
+We start with a very general majorization inequality and use this to obtain many useful and well-known results.
+I collected these so that I could remember how to derive these results without circularity.
 
 In the following $(S, \Lambda, \mu)$ will be a measure space.
 We will mostly be interested in the cases where $S$ is a probability space ($\mu(S) = 1$) or where $S = \N$ and $\mu$ is counting measure.
@@ -78,11 +81,11 @@ It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a
   Let $\phi$ be a continuous convex function on an interval $[0, b]$
   such that $\phi(0) = 0$.
   Let $f \prec g$ where $f, g$ take values in $[0, b]$.
-  Then \[\int \phi f\,d\mu \le \int \phi g\,d\mu\]
+  Then \[\int (\phi \circ f)\,d\mu \le \int (\phi \circ g)\,d\mu\]
   provided that the integrals exist and are finite.
 \end{theorem}
 \begin{proof}
-  First we consider the case where $\phi'(0^+) > -\infty$.  In this case, we can approximate $\phi$ by an increasing sequence of finite sums of the form $\phi_n(u) = \sum_i a_i \max\{u - b_i, 0\}$.  Linearity gives us $\int \phi_n f\,d\mu \le \int \phi_n g\,d\mu$ and the result follows from the monotone convergence theorem.  In this case we don't need the condition that the integrals are finite: they always exist and the result holds even if one or both is $\infty$.
+  First we consider the case where $\phi'(0^+) > -\infty$.  In this case, we can approximate $\phi$ by an increasing sequence of finite sums of the form $\phi_n(u) = \sum_i a_i \max\{u - b_i, 0\}$.  Linearity gives us $\int (\phi_n \circ f)\,d\mu \le \int (\phi_n \circ g)\,d\mu$ and the result follows from the monotone convergence theorem.  In this case we don't need the condition that the integrals are finite: they always exist and the result holds even if one or both is $\infty$.
 
   In the case where $\phi'(0^+) = -\infty$ we approximate $\phi$ by a sequence of convex functions
   \[\psi_n(u) = 
@@ -91,7 +94,7 @@ It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a
     \phi(u) & u \ge n^{-1}
   \end{cases}\]
   where each $\psi_n'(0^+) > -\infty$.
-  By the first case we have $\int \psi_n f\,d\mu \le \int \psi_n g\,d\mu$ and we can finish using the dominated convergence theorem since $|\psi_n| \le |\phi|$.
+  By the first case we have $\int (\psi_n \circ f)\,d\mu \le \int (\psi_n \circ g)\,d\mu$ and we can finish using the dominated convergence theorem since $|\psi_n| \le |\phi|$.
 \end{proof}
 
 Note that if $\mu(S) < \infty$ we can work with a general interval $[a, b]$ and dispense with the assumption $\phi(0) = 0$,
@@ -100,7 +103,7 @@ by considering the functions \[\phi_a(u) &= \phi(u + a) - \phi(a) \\ f_a(x) &= f
 From this we can derive familiar results:
 
 \begin{theorem}[Jensen's Inequality]
-  Let $X : S \to \R$ be a random variable and $\phi$ a continuous convex function.
+  Let $X$ be a random variable and $\phi$ a continuous convex function.
   Then $\phi(\E X) \le \E[\phi(X)]$.
 \end{theorem}
 \begin{proof}
@@ -109,19 +112,73 @@ From this we can derive familiar results:
   $\phi(\E X) = \E[\phi(Y)] \le \E[\phi(X)]$.
 \end{proof}
 
-For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \to x^2$ is convex.
+For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \mapsto x^2$ is convex.
 
 \section*{Power Means}
 
-Suppose $\mu(S) = 1$ so that $S$ is a probability space.
-Let $f$ be a nonnegative measurable function $S \to \R$, and define:
+Let $X$ be a nonnegative random variable, and define:
 
-\[M_p(f) =
+\[M_p(X) =
 \begin{cases}
-  \E[f^p]^{1/p} & p \in \R - \{0\} \\
-  \exp \E[\log f] & p = 0 \\
-  \essinf(f) & p = -\infty \\
-  \esssup(f) & p = \infty \\
+  \E[X^p]^{1/p} & p \in \R - \{0\} \\
+  \exp \E[\log X] & p = 0 \\
+  \essinf(X) & p = -\infty \\
+  \esssup(X) & p = \infty \\
 \end{cases}\]
+
+\begin{theorem}[Power Mean Inequality]
+  If $p \le q$ then $M_p(X) \le M_q(X)$ whenever both exist.
+\end{theorem}
+\begin{proof}
+  If either of $p$ or $q$ is infinite then the result is trivial.
+
+  Suppose $0 = p < q$.  Since $\log$ is concave we have by Jensen's inequality
+  \[
+  \log \E[X^p] &\ge \E[\log X^p] \\
+  \frac1p \log \E[X^p] &\ge \E[\log X] \\
+  \E[X^p]^{1/p} &\ge \exp \E[\log X] \\
+  \]
+  The case where $p < q = 0$ is analogous.
+
+  Now suppose $0 < p < q$.  Since $u \mapsto u^{q/p}$ is convex we have
+  \[
+  \E[X^p]^{q/p} &\le \E[X^q] \\
+  \E[X^p]^{1/p} &\le \E[X^q]^{1/q} \\
+  \]
+  The case where $p < q < 0$ is analogous.
+\end{proof}
+
+% xxx need to prove existence of M_0 so there's no issue with transitivity
+
+For instance this generalizes the AM-GM inequality since $M_0$ is the geometric mean and $M_1$ is the arithmetic mean.
+
+\section*{H\"older's Inequality}
+
+Let $f : S \to \R$ be a nonnegative measurable function.
+Define \[\norm{f}_p = \begin{cases}
+  \left(\int f\,d\mu\right)^{1/p} & 1 \le p < \infty \\
+  \esssup f & p = \infty \\
+  \end{cases}
+\]
+Note that the results from the previous section do not directly apply here since $S$ is not necessarily a probability space.  Nonetheless we can make use of them by defining an appropriate probability measure.
+
+\begin{theorem}[H\"older's Inequality]
+  Let $f, g : S \to \R$ be nonnegative measurable functions,
+  and let $p, q \in [1, \infty]$ such that $\frac1p + \frac1q = 1$.
+  Then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$.
+\end{theorem}
+\begin{proof}
+  The case where $p$ or $q$ is $\infty$ is trivial, so we skip it.
+  Define $\nu$ to be a probability measure on $S$ via $\nu(A) = \frac{\int_A g^q\,d\mu}{\int g^q\,d\mu}$,
+  and let $X = fg^{1-q}$.
+  Then we have
+  \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
+  &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
+  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} \\
+  &= \left(\int g^q\,d\mu\right)\left(\int f^p g^{p(1-q)}\frac{g^q}{\int g^q\,d\mu}\,d\mu \right)^{1/p} \\
+  &= \left(\int g^q\,d\mu\right)^{1 - 1/p}\left(\int f^p g^{p + q - pq}\,d\mu \right)^{1/p} \\
+  &= \norm{f}_p \norm{g}_q \\
+\]
+\end{proof}
 
 \end{document}
