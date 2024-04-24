@@ -1,0 +1,151 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[shortlabels]{enumitem}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+\newcommand*{\E}[0]{\mathbf{E}}
+\DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\Cov}{\mathrm{Cov}}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand*{\Normal}[0]{\mathcal{N}}
+\newcommand*{\Exp}[0]{\text{Exp}}
+\newcommand*{\Fl}[0]{\mathcal{F}}
+\newcommand*{\tp}[0]{\mathsf{T}}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
+\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\renewcommand*{\iff}[0]{\leftrightarrow}
+
+\makeatletter
+\newcommand{\superimpose}[2]{{%
+  \ooalign{%
+    \hfil$\m@th#1\@firstoftwo#2$\hfil\cr
+    \hfil$\m@th#1\@secondoftwo#2$\hfil\cr
+  }%
+}}
+\makeatother
+
+\newcommand{\dotcup}[0]{\mathbin{\mathpalette\superimpose{{\cdot}{\cup}}}}
+\DeclareMathOperator*{\bigdotcup}{\mathpalette\superimpose{{\cdot}{\bigcup}}}
+
+\title{Kolmogorov's Zero-One Law}
+
+\author{
+  Lily Chung
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+We start by reviewing a basic property of set systems.
+
+\begin{definition}
+  Fix a universe $U$, and let $S \subset U$.
+  \begin{itemize}
+  \item $S$ is a \defn{$\pi$-system} if it is closed under finite intersection.
+  \item $S$ is a \defn{$\lambda$-system} if it is closed under complement and countable disjoint union.
+  \item $S$ is a \defn{$\sigma$-algebra} if it is closed under complement and countable union.
+  \end{itemize}
+\end{definition}
+
+\begin{theorem}[Dynkin $\pi$-$\lambda$]
+  \label{thm:dynkin}
+  Let $S$ be a $\pi$-system.  Then $\sigma(S) = \lambda(S)$.
+\end{theorem}
+\begin{proof}
+  It suffices to show that $\lambda(S)$ is closed under intersection,
+  since then it is a $\sigma$-algebra.
+  Define an undirected graph whose vertices are subsets of $U$,
+  and which has an edge $(A, B)$ if $A \cap B \in \lambda(S)$.
+
+  For each $A \in \lambda(S)$ its neighborhood $\Gamma(A)$ is a $\lambda$-system:
+  \begin{itemize}
+  \item $A \cap \overline{B} = \overline{\overline{A} \dotcup (A \cap B)}$
+  \item $A \cap \left(\bigdotcup_i B_i\right) = \bigdotcup_i (A \cap B_i)$
+  \end{itemize}
+  So by definition of $\lambda(S)$, it follows that any vertex in $\lambda(S)$ which is adjacent to every element of $S$ must in fact be adjacent to every element of $\lambda(S)$.
+
+  Since $S$ is a $\pi$-system it forms a clique in this graph.
+  By the above property there is an edge between every element of $S$ and every element of $\lambda(S)$.
+  Finally, using the property again we find $\lambda(S)$ is a clique,
+  thus it is closed under intersection as desired.
+\end{proof}
+
+Now we focus on probability spaces.
+
+\begin{lemma}
+  \label{lem:pi ind}
+  Let $\{A_i : i \in I\}$ be an independent collection of $\pi$-systems.
+  Then $\{\sigma(A_i) : i \in I\}$ are independent also.
+\end{lemma}
+\begin{proof}
+  It suffices to consider a finite independent collection of of $\pi$-systems $\{A_1, \dots, A_n\}$, and show just that $\{\sigma(A_1)\} \cup \{A_i : i > 1\}$ is independent.
+
+  Pick an event $E_1 \in \sigma(A_1)$
+  and events $E_i \in A_i$ for $i \in \{2, \dots, n\}$; we will show that these events are independent.
+  Let $L$ be the set of events independent of $\bigwedge_{i=2}^n E_i$.
+  Then $L$ is a $\lambda$-system which contains $A_1$, so by Theorem~\ref{thm:dynkin} it contains $\sigma(A_1)$ also.
+
+  We thus have
+  \[
+  \Pr\left[\bigwedge_{i=1}^n E_i\right]
+   = \Pr[E_1]\Pr\left[\bigwedge_{i=2}^n E_i\right]
+   = \prod_{i=1}^{n} \Pr[E_i]
+  \]
+  as desired.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:partition ind}
+  Let $\{A_i : i \in I\}$ be an independent collection of $\pi$-systems,
+  and let $\{P_j : j \in J\}$ be a partition of $I$.
+  Then $\left\{\sigma(B_j) : j \in J\right\}$ is independent, where $B_j = \bigcup_{i \in P_j} A_i$.
+\end{lemma}
+\begin{proof}
+  By Lemma~\ref{lem:pi ind} it suffices to show that
+  $\{\pi(B_j) : j \in J\}$ is independent.
+  An element of $\pi(B_j)$ is just a finite intersection
+  of elements of $A_i$ for $i \in P_j$,
+  so this follows easily.
+\end{proof}
+
+\begin{definition}
+  Let $\{A_i : i \in \N\}$ be an independent sequence of $\pi$-systems.
+  The \defn{tail $\sigma$-algebra} is \[T = \bigcap_{n \in \N} \sigma\left(\bigcup_{i > n} A_i\right)\]
+\end{definition}
+
+\begin{theorem}
+  Every event in $T$ has probability zero or one.
+\end{theorem}
+\begin{proof}
+  For any finite set $n$ let $B_n = \bigcup_{i \le n} A_i$ and $C_n = \bigcup_{i > n} A_i$.
+  By Lemma~\ref{lem:partition ind} we have $\sigma(B_n) \perp \sigma(C_n)$ and so $T \perp \sigma(B_n)$ since $T \subset \sigma(C_n)$.
+  We have shown $T \perp \bigcup_{n \in N} \sigma(B_n)$.  But $\bigcup_{n \in N} \sigma(B_n)$ is a $\pi$-system, so in fact
+  \[T \perp \sigma\left(\bigcup_{n \in N} \sigma(B_n)\right) = \sigma\left(\bigcup_{n \in N} A_n\right)\]
+  Since $T \subset \sigma\left(\bigcup_{n \in N} A_n\right)$
+  we conclude $T \perp T$, which is the desired result.
+\end{proof}
+
+\end{document}
