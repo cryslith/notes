@@ -6,6 +6,8 @@
 \usepackage{mathtools}
 \usepackage[margin=1in]{geometry}
 \usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
 
 \usepackage{libertine}
 \usepackage[libertine,vvarbb]{newtxmath}
@@ -32,29 +34,26 @@
 
 \def\[#1\]{\begin{align*}#1\end{align*}}
 
-\title{Notes on Majorization Inequalities}
+\title{Notes on Convexity Inequalities}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-These are some notes on inequalities arising from majorization.
-We start with a very general majorization inequality and use this to obtain many useful and well-known results.
-I collected these so that I could remember how to derive these results without circularity.
+These are some notes on inequalities arising from convexity.
+We start with a general inequality and use this to obtain more familiar results.
 
-In the following $(S, \Lambda, \mu)$ will be a measure space.
+In the following $(S, \Lambda, \mu)$ will be a $\sigma$-finite measure space.
 We will mostly be interested in the cases where $S$ is a probability space ($\mu(S) = 1$) or where $S = \N$ and $\mu$ is counting measure.
 
 \begin{definition}
-  A real-valued function $f$ is \defn{convex} on an interval $[a, b]$ if for all $t \in [0, 1]$ we have $f(ta + (1 - t)b) \le tf(a) + (1 - t)f(b)$.
+  Let $T$ be a convex subset of $\R$.
+  A real-valued function $f : T \to \R$ is \defn{convex} if for any $a, b \in T$ and any $t \in [0, 1]$ we have $f(ta + (1 - t)b) \le tf(a) + (1 - t)f(b)$.
 \end{definition}
 
 It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a, b)$, left-differentiable on $(a, b]$, and right-differentiable on $[a, b)$.
 
-%% \section{Majorization on measure spaces}
-
-%% The following summary of majorization on measure spaces is from (Joe, 1987).
 %% Let $h: S \to \R_{\ge 0}$ be a nonnegative measurable function.
 %% We define functions $m_h : \R_{\ge 0} \to [0, \mu(S)]$ and $h^* : [0, \mu(S)] \to \R_{\ge 0}$ via
 %% \[
@@ -62,32 +61,50 @@ It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a
 %% h^*(u) &= \sup\{t : m_h(t) > u\}
 %% \]
 
-%% We can think of $h^*$ as a ``decreasing rearrangement'' of $h$; it has the same mass distribution as $h$ but is a decreasing function on $\R$.
-%% Now for the main theorem:
+%% We can think of $h^*$ as a ``decreasing rearrangement'' of $h$; it is a decreasing measurable function on $[0, \mu(S)]$ with the same distribution as $h$.
 
 \begin{definition}
-  Let $f, g : S \to \R_{\ge 0}$ be nonnegative integrable functions such that $\int f\,d\mu = \int g\,d\mu < \infty$.
+  Let $f, g : S \to \R_{\ge 0}$ be nonnegative measurable functions such that $\int f\,d\mu = \int g\,d\mu < \infty$.
   We say $g$ \defn{majorizes} $f$ if any of the following equivalent conditions hold:
   \begin{itemize}
   \item $\int \max\{f - t, 0\}\,d\mu \le \int \max\{g - t, 0\}\,d\mu$ for every $t \ge 0$.
   \item $\int_t^\infty m_f(u)\,du \le \int_t^\infty m_g(u)\,du$ for all $t \ge 0$, where $m_h(u) = \mu(\{x : h(x) > u\})$.
   \item $\int_0^r f^*(\ell)\,d\ell \le \int_0^r g^*(\ell)\,d\ell$ for all $0 \le r < \mu(S)$, where $h^*(\ell) = \sup\{t : m_h(t) > \ell\}$.
   \end{itemize}
-  We write $f \prec g$ to mean $g$ majorizes $f$.
 \end{definition}
+
+We write $f \prec g$ to mean $g$ majorizes $f$.
+We prove a technical lemma:
+
+\begin{lemma}\label{lem:attain max}
+  Suppose $f \prec g$, and let $b = \max\{\esssup f, \esssup g\}$.  Then $\mu(\{x : f(x) = b\}) \le \mu(\{x : g(x) = b\})$.
+\end{lemma}
+\begin{proof}
+  If $\esssup f \ne \esssup g$ the result is trivial.
+  For $h \in \{f, g\}$ and $\epsilon > 0$ we have
+  \[
+  \int \max\{h - (b - \epsilon), 0\}\,d\mu &\in \epsilon[\mu(h = b), \mu(h \ge b - \epsilon)] \\
+  \frac{\int \max\{h - (b - \epsilon), 0\}\,d\mu}{\epsilon} &\in \mu(h = b) + [0, \mu(b - \epsilon \le h < b)] \\
+  \lim_{\epsilon \to 0^+} \frac{\int \max\{h - (b - \epsilon), 0\}\,d\mu}{\epsilon} &= \mu(h = b)
+  \]
+  But $\frac{\int \max\{f - (b - \epsilon), 0\}\,d\mu}{\epsilon} \le \frac{\int \max\{g - (b - \epsilon), 0\}\,d\mu}{\epsilon}$ for all $\epsilon > 0$
+  and so $\mu(f = b) \le \mu(g = b)$.
+\end{proof}
+
 
 \begin{theorem}[Theorem 2.1 in Joe 1987]
   \label{thm:majorize}
-  Let $\phi$ be a continuous convex function on an interval $[0, b]$
+  Let $\phi$ be a convex function on an interval $T \subset \R$ containing 0
   such that $\phi(0) = 0$.
-  Let $f \prec g$ where $f, g$ take values in $[0, b]$.
+  Let $f \prec g$ where $f, g$ take values in $T$.
   Then \[\int (\phi \circ f)\,d\mu \le \int (\phi \circ g)\,d\mu\]
   provided that the integrals exist and are finite.
 \end{theorem}
 \begin{proof}
-  First we consider the case where $\phi'(0^+) > -\infty$.  In this case, we can approximate $\phi$ by an increasing sequence of finite sums of the form $\phi_n(u) = \sum_i a_i \max\{u - b_i, 0\}$.  Linearity gives us $\int (\phi_n \circ f)\,d\mu \le \int (\phi_n \circ g)\,d\mu$ and the result follows from the monotone convergence theorem.  In this case we don't need the condition that the integrals are finite: they always exist and the result holds even if one or both is $\infty$.
+  First we consider the case where $\phi$ is continuous and $\phi'(0^+) > -\infty$.  In this case, we can approximate $\phi$ by an increasing sequence of finite sums of the form $\phi_n(u) = \phi'(0^+)u + \sum_i a_i \max\{u - b_i, 0\}$ where $a_i, b_i \ge 0$.  Linearity gives us $\int (\phi_n \circ f)\,d\mu \le \int (\phi_n \circ g)\,d\mu$ and the result follows from the monotone convergence theorem.  In this case we don't need the condition that the integrals are finite: they always exist and the result holds even if one or both is $\infty$.
 
-  In the case where $\phi'(0^+) = -\infty$ we approximate $\phi$ by a sequence of convex functions
+  For the next case we allow $\phi'(0^+) = -\infty$, and assume $\phi$ is continuous at its right endpoint but not necessarily its left.
+  We approximate $\phi$ by a sequence of continuous convex functions
   \[\psi_n(u) = 
   \begin{cases}
     n\phi(n^{-1})u & 0 \le u < n^{-1}\\
@@ -95,15 +112,27 @@ It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a
   \end{cases}\]
   where each $\psi_n'(0^+) > -\infty$.
   By the first case we have $\int (\psi_n \circ f)\,d\mu \le \int (\psi_n \circ g)\,d\mu$ and we can finish using the dominated convergence theorem since $|\psi_n| \le |\phi|$.
+
+  Finally we handle the case where $\phi$ is discontinuous at its right endpoint, which we call $b$.  We can write $\phi(u) = \widetilde\phi(u) + c[u = b]$ for some $c > 0$ and some $\widetilde\phi$ which satisfies the conditions of the previous case.
+  The result then follows from Lemma~\ref{lem:attain max}.
 \end{proof}
 
 Note that if $\mu(S) < \infty$ we can work with a general interval $[a, b]$ and dispense with the assumption $\phi(0) = 0$,
 by considering the functions \[\phi_a(u) &= \phi(u + a) - \phi(a) \\ f_a(x) &= f(x) - a \\ g_a(x) &= g(x) - a\]
+% so we're dropping the non-negativity requirement too? what does majorization mean if they aren't nonnegative? and how does that work with jensen.
+% need to be clearer about this so we can get jensen out of it
+
+% i think we can get rid of continuity requirement.  for left end approximating with psi_n already works
+% what about for right end?
+
+% can we also generalize to locally-convex topological vector space instead of real-valued?  where does the nonnegativity come in?
+
+% would also need hahn-banach in that case...
 
 From this we can derive familiar results:
 
 \begin{theorem}[Jensen's Inequality]
-  Let $X$ be a random variable and $\phi$ a continuous convex function.
+  Let $X$ be a random variable and $\phi$ a continuous convex function. % xxx shouldnt need phi continuous, also be careful about nonnegativity in majorization...
   Then $\phi(\E X) \le \E[\phi(X)]$.
 \end{theorem}
 \begin{proof}
@@ -112,7 +141,7 @@ From this we can derive familiar results:
   $\phi(\E X) = \E[\phi(Y)] \le \E[\phi(X)]$.
 \end{proof}
 
-For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \mapsto x^2$ is convex.
+For random variables with the same mean, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \mapsto x^2$ is convex.
 
 \section*{Power Means}
 
@@ -149,6 +178,7 @@ Let $X$ be a nonnegative random variable, and define:
 \end{proof}
 
 % xxx need to prove existence of M_0 so there's no issue with transitivity
+% also maybe clarify 1/0 = +inf in this context
 
 For instance this generalizes the AM-GM inequality since $M_0$ is the geometric mean and $M_1$ is the arithmetic mean.
 
@@ -170,7 +200,7 @@ Note that the results from the previous section do not directly apply here since
 \begin{proof}
   The case where $p$ or $q$ is $\infty$ is trivial, so we skip it.
   Define $\nu$ to be a probability measure on $S$ via $\nu(A) = \frac{\int_A g^q\,d\mu}{\int g^q\,d\mu}$,
-  and let $X = fg^{1-q}$.
+  and let $X = fg^{1-q}$.  (We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.)
   Then we have
   \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
   &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
