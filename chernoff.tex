@@ -1,43 +1,68 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage{amsthm}
-\usepackage{latexsym}
-\usepackage{xcolor}
-\usepackage{mathtools}
-\usepackage{tcolorbox}
+\documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{latexsym}
+\usepackage{gensymb}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[shortlabels]{enumitem}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\usepackage{xcolor}
+\usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
+
+\usepackage{tcolorbox}
+
+\usepackage[noabbrev,capitalise]{cleveref}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}[theorem]{Definition}
-\newtheorem{question}[theorem]{Question}
-\newtheorem{claim}[theorem]{Claim}
 
-\newcommand*{\defn}[1]{\emph{#1}}
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+\newcommand*{\E}[0]{\mathbf{E}}
+\DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\Cov}{\mathrm{Cov}}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand*{\Normal}[0]{\mathcal{N}}
+\newcommand*{\Exp}[0]{\text{Exp}}
+\newcommand*{\Fl}[0]{\mathcal{F}}
+\newcommand*{\tp}[0]{\mathsf{T}}
 
-\title{Notes on Chernoff Bounds for Randomized Algorithms}
+\def\[#1\]{\begin{align*}#1\end{align*}}
+\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
+\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\renewcommand*{\iff}[0]{\leftrightarrow}
+
+\title{Concentration Bounds for Randomized Algorithms}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-In this note I show how to easily apply the Chernoff bound to get results of practical use in randomized algorithms.
-In particular I will ignore constant factors, which simplifies everything considerably.
-Throughout this document, any uses of big-O notation will refer to functions in the variable \(n\).
+Here I collect some simplified concentration inequalities for bounding quantities which commonly appear in randomized algorithms.
+These bounds are quite loose since the only goal is to obtain asymptotic results which can be applied quickly and easily.
 
 \section{With High Probability}
 
 First, we clarify the kinds of results which we want to obtain.
 
 \begin{definition}
-  Let \(A(n, c)\) be an event depending on \(n\) and a value \(c\).
+  Let \(A_{n, c}\) be an event depending on \(n\) and a value \(c\).
   We say \(A\) holds \defn{with high probability} if
   for any choice of \(c\),
-  \(Pr[\neg A(n, c)] \in O(n^{-c})\).
+  \(Pr[\overline{A_{n, c}}] \in O(n^{-c})\).\footnote{This notion of ``w.h.p.'' in algorithms differs from other fields which use it to mean that $\Pr[\overline{A_n}] \in o(1)$.}
 \end{definition}
 
 In particular we might have a random variable \(X(n)\) depending on \(n\).
@@ -46,67 +71,56 @@ we mean that for any constant \(c\), there exist constants \(a, b, N\) such that
 \(\Pr[X(n) > af(n)] < bn^{-c}\) for all \(n > N\).
 In other words, the constants \(a, b, N\) hidden by the big-O notation are allowed to depend on \(c\).
 
-The motivation for this is as follows.
-Suppose \(p\) is a polynomial, and we have \(p(n)\) random variables \(X_i\)
+In particular, suppose \(p\) is a polynomial and we have \(p(n)\) random variables \(X_i\),
 such that each \(X_i\) is \(O(f)\) with high probability.
-Then by a union bound, all \(p(n)\) of the \(X_i\) are \(O(f)\) with high probability.
+Then by a union bound, \(\max_i X_i\) is \(O(f)\) with high probability.
 
-We will focus on getting results that hold with high probability.
+\section{Applying Chernoff-Hoeffding Bounds}
 
-\section{Applying Chernoff Bounds}
-
-\begin{theorem}[Chernoff]
-  \label{thm:chernoff}
-  Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
-  Let \(\mu = E[X]\) and \(\delta \ge 0\).
-  Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right).\]
+\begin{theorem}[Hoeffding]
+  \label{thm:hoeffding}
+  Let $X = \sum_i X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
+  Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2)\]
+  for all $t \ge 0$.
 \end{theorem}
 
 Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
-It will be helpful to specialize the theorem to make it easier to apply:
+It will be helpful to specialize this theorem to make it easier to apply:
 
 \begin{tcolorbox}
   \begin{corollary}
     \label{cor:chernoff-simple}
-    Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
-    Let \(\mu \ge E[X]\).
-    Then \[\Pr[X \ge 3\mu] \le \exp(-\mu).\]  
+    Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X_i \in [0, 1]\), and let $t \ge \E X$.
+    Then \[\Pr[X \ge 2t] \le \exp(-2t^2).\]
   \end{corollary}
 \end{tcolorbox}
 \begin{proof}
-  Let \(Y = X + \mu - E[X]\).
-  Then \(Y\) is a sum of fully independent \([0, 1]\) random variables with \(\mu = E[Y]\).
-  Apply Theorem~\ref{thm:chernoff} to \(Y\) with \(\delta = 2\) to obtain
-  \(\Pr[X \ge 3\mu] \le \Pr[Y \ge 3\mu] \le \exp(-\mu)\)
-  as desired.
+  Let \(Y = X + t - E[X]\).
+  Then \(Y\) is a sum of fully independent random variables in \([0, 1]\) with \(\E Y = t\) and $X \le Y$.
+  Applying \cref{thm:hoeffding} to \(Y\) gives the result.
 \end{proof}
 
-First, we've replaced the exact value \(\mu = E[X]\) with an upper bound \(\mu \ge E[X]\).
-This lets us get rid of the unnecessary parameter \(\delta\),
-since in the regimes relevant to us, the exponent scales linearly with both \(\delta\) and \(\mu\)
-and so \(\delta\) is superfluous.
-
-Now we can easily use this to get bounds with high probability.
+This is useful since we need only to upper bound $\E X$ in order to get an asymptotic bound on $X$ with high probability.
 
 \begin{tcolorbox}
   \begin{corollary}
     Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
     \begin{itemize}
-    \item If \(E[X] \in O(\log n)\), then with high probability \(X \in O(\log n)\).
-    \item If \(E[X] \in \Omega(\log n)\), then with high probability \(X \in O(E[X])\).
+    \item If \(\E X \in O(\sqrt{\log n})\), then with high probability \(X \in O(\sqrt{\log n})\).
+    \item If \(\E X \in \Omega(\sqrt{\log n})\), then with high probability \(X \in O(\E X)\).
     \end{itemize}
   \end{corollary}
 \end{tcolorbox}
 \begin{proof}\hfill
   \begin{itemize}
   \item
-    Apply Corollary~\ref{cor:chernoff-simple} with \(\mu = c \log n\) for \(c\) large enough so that eventually \(E[X] \le \mu\).
-    Then eventually \(\Pr[X \ge 3c \log n] \le \exp(-c\log n) = n^{-c}\).
+    Apply Corollary~\ref{cor:chernoff-simple} with \(t = c \sqrt{\log n}\) for \(c\) large enough so that eventually \(\E X \le t\).
+    Then eventually \(\Pr[X \ge 2c \sqrt{\log n}] \le \exp(-2c^2 \log n) = n^{-2c^2}\).
   \item
     Pick a constant \(c\),
-    and let \(d \ge 1\) be a constant large enough so that eventually \(dE[X] \ge c \log n\).
-    Apply Corollary~\ref{cor:chernoff-simple} with \(\mu = dE[X]\).
-    Then eventually \(\Pr[X \ge 3dE[X]] \le \exp(-dE[X]) \le \exp(-c\log n) = n^{-c}\).
+    and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \sqrt{\log n}\).
+    Apply Corollary~\ref{cor:chernoff-simple} with \(t = d \E X\).
+    Then eventually \(\Pr[X \ge 2d\E X] \le \exp(-2(d \E X)^2) \le \exp(-2c^2\log n) = n^{-2c^2}\).
   \end{itemize}
 \end{proof}
 
