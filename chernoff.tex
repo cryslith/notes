@@ -75,39 +75,62 @@ Then by a union bound, \(\max_i X_i\) is \(O(f)\) with high probability.
 
 \section{Applying Chernoff-Hoeffding Bounds}
 
-% all of this is wrong because i copied down the hoeffding bound wrong sigh.  redo it later
+\begin{theorem}[Hoeffding]
+  \label{thm:hoeffding}
+  Let $X = \sum_{i=1}^n X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
+  Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2/n)\]
+  for all $t \ge 0$.
+\end{theorem}
 
-%% \begin{theorem}[Hoeffding]
-%%   \label{thm:hoeffding}
-%%   Let $X = \sum_i X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
-%%   Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2)\]
-%%   for all $t \ge 0$.
-%% \end{theorem}
+\begin{theorem}[Chernoff]
+  \label{thm:chernoff}
+  Let \(X = \sum_i X_i\) where the \(X_i\) are independent and $X_i \in [0, 1]$, and let \(\mu = \E X\).
+  Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right)\]
+  for all \(\delta \ge 0\).
+\end{theorem}
 
-%% Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
-%% A simple consequence is the following:
+Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
+We will use the following convenient simplification:
 
-%% \begin{tcolorbox}
-%%   \begin{corollary}
-%%     Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
-%%     \begin{itemize}
-%%     \item If \(\E X \in O(\sqrt{\log n})\), then with high probability \(X \in O(\sqrt{\log n})\).
-%%     \item If \(\E X \in \Omega(\sqrt{\log n})\), then with high probability \(X \in O(\E X)\).
-%%     \end{itemize}
-%%   \end{corollary}
-%% \end{tcolorbox}
-%% \begin{proof}\hfill
-%%   \begin{itemize}
-%%   \item
-%%     Let \(t = c \sqrt{\log n}\) for any \(c\) large enough so that eventually \(\E X \le t\).
-%%     Then \[\Pr[X \ge 2c \sqrt{\log n}] \le \exp(-2c^2 \log n) = n^{-2c^2}\] by \cref{thm:hoeffding}.
-%%   \item
-%%     Pick any \(c\),
-%%     and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \sqrt{\log n}\).
-%%     Applying \cref{thm:hoeffding},
-%%     we find that \[\Pr[X \ge (d + 1)\E X] \le \exp(-2(d \E X)^2) \le \exp(-2c^2\log n) = n^{-2c^2}\]
-%%   \end{itemize}
-%% \end{proof}
+\begin{tcolorbox}
+  \begin{corollary}
+    \label{cor:chernoff-simple}
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are independent and $X_i \in [0, 1]$,
+    and let \(t \ge \E X\).
+    Then \[\Pr[X \ge 3t] \le \exp(-t).\]  
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}
+  Let \(Y = X + t - \E X\), so that $\E Y = t$ and $X \le Y$.
+  Then \(Y\) can be expressed as a sum of independent $[0, 1]$ random variables,
+  and applying \cref{thm:chernoff} to \(Y\) gives the result.
+\end{proof}
+
+This gives the following asymptotic result:
+
+\begin{tcolorbox}
+  \begin{corollary}
+    Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
+    \begin{itemize}
+    \item If \(\E X \in O(\log n)\), then with high probability \(X \in O(\log n)\).
+    \item If \(\E X \in \Omega(\log n)\), then with high probability \(X \in O(\E X)\).
+    \end{itemize}
+  \end{corollary}
+\end{tcolorbox}
+\begin{proof}\hfill
+  \begin{itemize}
+  \item
+    Let \(t = c \log n\) for any \(c\) large enough so that eventually \(\E X \le t\).
+    Then we have
+    \[\Pr[X \ge 3c \log n] \le \exp(-c\log n) = n^{-c}\]
+    by \cref{cor:chernoff-simple}.
+  \item
+    Pick any \(c\),
+    and let \(d \ge 1\) be a constant large enough so that eventually \(d\E X \ge c \log n\).
+    Then \[\Pr[X \ge 3d \E X] \le \exp(-d \E X) \le \exp(-c\log n) = n^{-c}\]
+    by \cref{cor:chernoff-simple}.
+  \end{itemize}
+\end{proof}
 
 % todo amplifying distinguisher (biased coin)
 
@@ -120,7 +143,7 @@ It turns out we still have useful concentration bounds even when the variables a
 
 \begin{theorem}[Theorem 5(IIa) of \cite{limited-chernoff}]
   \label{thm:limited-chernoff}
-  Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu = E[X]\).
+  Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu = \E X\).
   Let \(\delta \ge 1\) and suppose \(k \le \lfloor \delta \mu e^{-1/3} \rfloor.\)
   Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp(-\lfloor k/2 \rfloor).\]
 \end{theorem}
@@ -130,14 +153,14 @@ Again we'll put this into an easier form to apply:
 \begin{tcolorbox}
   \begin{corollary}
     \label{cor:limited-chernoff-simple}
-    Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu \ge E[X]\).
+    Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\) with \(\mu \ge \E X\).
     Suppose \(k \le \mu.\)
     Then \[\Pr[X \ge 4\mu] \le \exp(-\lfloor k/2 \rfloor).\]
   \end{corollary}
 \end{tcolorbox}
 \begin{proof}
   Without loss of generality assume \(\mu \ge 2\) since otherwise the statement is trivial.
-  Let \(Y = X + \mu - E[X]\) as before; then \(Y\) is a sum of \(k\)-wise independent \([0, 1]\) random variables with \(\mu = E[Y]\).
+  Let \(Y = X + \mu - \E X\) as before; then \(Y\) is a sum of \(k\)-wise independent \([0, 1]\) random variables with \(\mu = E[Y]\).
   Set \(\delta = 3\) so that \(k \le \mu \le \lfloor 2\mu \rfloor \le \lfloor \delta \mu e^{-1/3} \rfloor\).
   Applying Theorem~\ref{thm:limited-chernoff} to \(Y\), we obtain
   \(\Pr[X \ge 4\mu] \le \Pr[Y \ge 4\mu] \le \exp(-\lfloor k/2 \rfloor).\)
@@ -149,21 +172,21 @@ We can now show similar results to before but with only \(\Theta(\log n)\) indep
   \begin{corollary}
     Let \(X = \sum_i X_i\) such that the \(X_i\) are \(k\)-wise independent and confined to the range \([0, 1]\), where \(k = 2\lceil c\log n \rceil\).
     \begin{itemize}
-    \item If \(E[X] \in O(\log n)\), then  \(X \in O(\log n)\) with probability \(1 - n^{-c}\).
-    \item If \(E[X] \in \Omega(\log n)\), then \(X \in O(E[X])\) with probability \(1 - n^{-c}\).
+    \item If \(\E X \in O(\log n)\), then  \(X \in O(\log n)\) with probability \(1 - n^{-c}\).
+    \item If \(\E X \in \Omega(\log n)\), then \(X \in O(\E X)\) with probability \(1 - n^{-c}\).
     \end{itemize}
   \end{corollary}
 \end{tcolorbox}
 \begin{proof}\hfill
   \begin{itemize}
   \item
-    Let \(d \ge k\) be a constant large enough so that eventually \(E[X] \le d \log n\).
+    Let \(d \ge k\) be a constant large enough so that eventually \(\E X \le d \log n\).
     Apply Corollary~\ref{cor:limited-chernoff-simple} with \(\mu = d \log n\); 
     then eventually \(\Pr[X \ge 4d \log n] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
   \item
-    Let \(d\) be a constant large enough so that eventually \(d E[X] \ge k\).
-    Apply Corollary~\ref{cor:limited-chernoff-simple} with \(\mu = dE[X]\);
-    then eventually \(\Pr[X \ge 4dE[X]] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
+    Let \(d\) be a constant large enough so that eventually \(d \E X \ge k\).
+    Apply Corollary~\ref{cor:limited-chernoff-simple} with \(\mu = d\E X\);
+    then eventually \(\Pr[X \ge 4d\E X] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
   \end{itemize}
 \end{proof}
 
