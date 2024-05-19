@@ -54,9 +54,7 @@
 Here I collect some simplified concentration inequalities for bounding quantities which commonly appear in randomized algorithms.
 These bounds are quite loose since the only goal is to obtain asymptotic results which can be applied quickly and easily.
 
-\section{With High Probability}
-
-First, we clarify the kinds of results which we want to obtain.
+\section{High Probability Bounds}
 
 \begin{definition}
   Let \(A_{n, c}\) be an event depending on \(n\) and a value \(c\).
@@ -77,58 +75,48 @@ Then by a union bound, \(\max_i X_i\) is \(O(f)\) with high probability.
 
 \section{Applying Chernoff-Hoeffding Bounds}
 
-\begin{theorem}[Hoeffding]
-  \label{thm:hoeffding}
-  Let $X = \sum_i X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
-  Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2)\]
-  for all $t \ge 0$.
-\end{theorem}
+% all of this is wrong because i copied down the hoeffding bound wrong sigh.  redo it later
 
-Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
-It will be helpful to specialize this theorem to make it easier to apply:
+%% \begin{theorem}[Hoeffding]
+%%   \label{thm:hoeffding}
+%%   Let $X = \sum_i X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
+%%   Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2)\]
+%%   for all $t \ge 0$.
+%% \end{theorem}
 
-\begin{tcolorbox}
-  \begin{corollary}
-    \label{cor:chernoff-simple}
-    Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X_i \in [0, 1]\), and let $t \ge \E X$.
-    Then \[\Pr[X \ge 2t] \le \exp(-2t^2).\]
-  \end{corollary}
-\end{tcolorbox}
-\begin{proof}
-  Let \(Y = X + t - E[X]\).
-  Then \(Y\) is a sum of fully independent random variables in \([0, 1]\) with \(\E Y = t\) and $X \le Y$.
-  Applying \cref{thm:hoeffding} to \(Y\) gives the result.
-\end{proof}
+%% Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
+%% A simple consequence is the following:
 
-This is useful since we need only to upper bound $\E X$ in order to get an asymptotic bound on $X$ with high probability.
+%% \begin{tcolorbox}
+%%   \begin{corollary}
+%%     Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
+%%     \begin{itemize}
+%%     \item If \(\E X \in O(\sqrt{\log n})\), then with high probability \(X \in O(\sqrt{\log n})\).
+%%     \item If \(\E X \in \Omega(\sqrt{\log n})\), then with high probability \(X \in O(\E X)\).
+%%     \end{itemize}
+%%   \end{corollary}
+%% \end{tcolorbox}
+%% \begin{proof}\hfill
+%%   \begin{itemize}
+%%   \item
+%%     Let \(t = c \sqrt{\log n}\) for any \(c\) large enough so that eventually \(\E X \le t\).
+%%     Then \[\Pr[X \ge 2c \sqrt{\log n}] \le \exp(-2c^2 \log n) = n^{-2c^2}\] by \cref{thm:hoeffding}.
+%%   \item
+%%     Pick any \(c\),
+%%     and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \sqrt{\log n}\).
+%%     Applying \cref{thm:hoeffding},
+%%     we find that \[\Pr[X \ge (d + 1)\E X] \le \exp(-2(d \E X)^2) \le \exp(-2c^2\log n) = n^{-2c^2}\]
+%%   \end{itemize}
+%% \end{proof}
 
-\begin{tcolorbox}
-  \begin{corollary}
-    Let \(X = \sum_i X_i\) such that the \(X_i\) are fully independent and confined to the range \([0, 1]\).
-    \begin{itemize}
-    \item If \(\E X \in O(\sqrt{\log n})\), then with high probability \(X \in O(\sqrt{\log n})\).
-    \item If \(\E X \in \Omega(\sqrt{\log n})\), then with high probability \(X \in O(\E X)\).
-    \end{itemize}
-  \end{corollary}
-\end{tcolorbox}
-\begin{proof}\hfill
-  \begin{itemize}
-  \item
-    Apply Corollary~\ref{cor:chernoff-simple} with \(t = c \sqrt{\log n}\) for \(c\) large enough so that eventually \(\E X \le t\).
-    Then eventually \(\Pr[X \ge 2c \sqrt{\log n}] \le \exp(-2c^2 \log n) = n^{-2c^2}\).
-  \item
-    Pick a constant \(c\),
-    and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \sqrt{\log n}\).
-    Apply Corollary~\ref{cor:chernoff-simple} with \(t = d \E X\).
-    Then eventually \(\Pr[X \ge 2d\E X] \le \exp(-2(d \E X)^2) \le \exp(-2c^2\log n) = n^{-2c^2}\).
-  \end{itemize}
-\end{proof}
+% todo amplifying distinguisher (biased coin)
 
 \section{Bounded Independence}
+% todo revise section
 
 The Chernoff bound requires that the variables \(X_i\) are fully independent.
 In some contexts it can be useful to reduce the amount of independence, and thus the number of random bits needed to generate the variables.
-It turns out that it is possible to get Chernoff bounds even when the variables are only \(k\)-wise independent.
+It turns out we still have useful concentration bounds even when the variables are only \(k\)-wise independent.
 
 \begin{theorem}[Theorem 5(IIa) of \cite{limited-chernoff}]
   \label{thm:limited-chernoff}
@@ -178,7 +166,5 @@ We can now show similar results to before but with only \(\Theta(\log n)\) indep
     then eventually \(\Pr[X \ge 4dE[X]] \le \exp(-\lfloor k/2 \rfloor) \le n^{-c}\).
   \end{itemize}
 \end{proof}
-
-% todo summarize results on read-k families too
 
 \end{document}
