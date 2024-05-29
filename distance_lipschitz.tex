@@ -1,0 +1,165 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[shortlabels]{enumitem}
+
+\usepackage{xcolor}
+\usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+\newcommand*{\E}[0]{\mathbf{E}}
+\DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\Cov}{\mathrm{Cov}}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand*{\tp}[0]{\mathsf{T}}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
+\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\renewcommand*{\iff}[0]{\leftrightarrow}
+
+\newcommand*{\Lip}[0]{\mathsf{Lip}}
+\newcommand*{\Mon}[0]{\mathsf{Mon}}
+
+\title{Distance to Lipschitz}
+
+\author{
+  Lily Chung, Jane Lange
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+In this note we show that the $\ell_1$ distance from a real-valued function $f$ to the closest Lipschitz function is the minimum weight of a fractional vertex cover of the violation graph.
+The proof is simpler than the existing proof of this fact in the literature.
+We also cover the analogous statements for monotonicity and for $\ell_0$ distance.
+
+\begin{definition}
+  Let $X$ be a finite set and $C$ be a class of functions $X \to \R$.
+  If $f : X \to \R$ then we define the $\ell_p$ distance from $f$ to $C$ as
+  \[
+  d_p(f, C) &= \inf_{g \in C} \left(\sum_{x \in X} |f(x) - g(x)|^p\right)^{1/p} & p \ge 1 \\
+  d_0(f, C) &= \inf_{g \in C} \#\{x \in X : f(x) \ne g(x)\} \\
+  \]
+\end{definition}
+
+We write $\Lip(X)$ for the class of Lipschitz functions on a metric space $X$, and $\Mon(X)$ for the class of monotone functions on a poset $X$.
+
+\begin{definition}
+  Let $X$ be a finite metric space and $f : X \to \R$.
+  For any pair of elements $x, y \in X$ the \defn{Lipschitz violation score} induced by $f$
+  is \[V_{xy} = |f(x) - f(y)| - d(x, y)\]
+  The \defn{Lipschitz violation graph} of $f$ is the weighted graph whose vertices are elements of $X$
+  and which has an edge $(x, y)$ whenever $V_{xy} > 0$.
+\end{definition}
+
+\begin{definition}
+  Let $X$ be a finite metric space and $f : X \to \R$.
+  For any pair of elements $x \le y \in X$ the \defn{monotone violation score} induced by $f$
+  is \[M_{xy} = f(x) - f(y)\]
+  The \defn{monotone violation graph} of $f$ is the weighted graph whose vertices are elements of $X$
+  and which has an edge $(x, y)$ whenever $M_{xy} > 0$.
+\end{definition}
+
+\begin{definition}
+  A \defn{vertex cover} of a graph $G = (V, E)$ is a set $S$ such that $\{u, v\} \cap S \ne \emptyset$ for each edge $(u, v) \in E$.
+\end{definition}
+
+\begin{definition}
+  A \defn{fractional vertex cover} of a weighted graph $G = (V, E, w)$ is a function $b : V \to \R_{\ge 0}$ such that $b_u + b_v \ge w_{uv}$ for each edge $(u, v) \in E$.
+  The \defn{weight} of $b$ is $\sum_{v \in V} b_v$.
+\end{definition}
+
+\begin{theorem}
+  Let $X$ be a finite metric space and $f : X \to \R$.
+  Then $d_1(f, \Lip(X))$ is equal to the minimum weight $W$ of
+  a fractional vertex cover of the Lipschitz violation graph of $f$.
+\end{theorem}
+\begin{proof}
+  The direction $d_1(f, \Lip(X)) \ge W$ is easy: for every Lipschitz function $g$
+  the fractional vertex cover $x \mapsto |f(x) - g(x)|$
+  has weight exactly $\norm{f - g}_1$.
+  It is a fractional vertex cover because
+  \[
+  |f(x) - g(x)| + |f(y) - g(y)|
+  &\ge |f(x) - f(y)| - |g(x) - g(y)| \\
+  &\ge |f(x) - f(y)| - d(x, y) \\
+  &= V_{xy}
+  \]
+
+  Now suppose $b$ is a fractional vertex cover of the Lipschitz violation graph of $f$.
+  Define
+  \[g(x) = \sup_{z \in X} (f(z) - b_z - d(x, z))\]
+  We claim $g$ is Lipschitz.  Let $x, y \in X$; without loss of generality $g(x) \le g(y)$.
+  Then indeed
+  \[
+  g(y) - g(x) &= \sup_{z \in X} (f(z) - b_z - d(y, z) - g(x)) \\
+  &\le \sup_{z \in X} (f(z) - b_z - d(y, z) - (f(z) - b_z - d(x, z))) \\
+  &= \sup_{z \in X} (d(x, z) - d(y, z)) \\
+  &\le d(x, y)
+  \]
+
+  We also claim that $\norm{f - g}_1$ is at most the weight of $b$;
+  it suffices to show that $g(x) \in [f(x) - b_x, f(x) + b_x]$ for each $x$.
+  The lower bound $g(x) \ge f(x) - b_x$ is obvious since we can choose $x$ in the supremum.
+  As for the upper bound, we need to show $f(z) - b_z - d(x, z) \le f(x) + b_x$ for every $z \in X$.
+  In the case $f(z) \le f(x)$ this inequality is trivial,
+  and when $f(z) \ge f(x)$ it is exactly the fractional vertex cover property.
+
+  This shows $d_1(f, \Lip(X)) \le W$ and concludes the proof.
+\end{proof}
+
+The following results follow essentially the same argument, so we just give the critical part.
+
+\begin{theorem}
+  Let $X$ be a finite metric space and $f : X \to \R$.
+  Then $d_0(f, \Lip(X))$ is equal to the minimum size of
+  a vertex cover of the unweighted Lipschitz violation graph of $f$.
+\end{theorem}
+\begin{proof}[Proof sketch.]
+  Given a vertex cover $S$,
+  consider $g(x) = \sup_{z \in X - S}(f(z) - d(x, z))$.
+\end{proof}
+
+\begin{theorem}
+  Let $X$ be a finite poset and $f : X \to \R$.
+  Then $d_1(f, \Mon(X))$ is equal to the minimum weight of
+  a fractional vertex cover of the monotone violation graph of $f$.
+\end{theorem}
+\begin{proof}[Proof sketch.]
+  Given a fractional vertex cover $b$,
+  consider $g(x) = \sup_{z \le x} (f(z) - b_z)$.
+\end{proof}
+
+\begin{theorem}
+  Let $X$ be a finite poset and $f : X \to \R$.
+  Then $d_0(f, \Mon(X))$ is equal to the minimum weight of
+  a vertex cover of the unweighted monotone violation graph of $f$.
+\end{theorem}
+\begin{proof}[Proof sketch.]
+  Given a vertex cover $S$,
+  consider $g(x) = \sup\{f(z) : z \in X - S \land z \le x\}$.
+\end{proof}
+
+\end{document}
