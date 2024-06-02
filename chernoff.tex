@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+ \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 
 \usepackage[utf8]{inputenc}
@@ -44,15 +44,14 @@
 \newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
 \renewcommand*{\iff}[0]{\leftrightarrow}
 
-\title{Concentration Bounds for Randomized Algorithms}
+\title{Concentration Bound Tricks}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-Here I collect some simplified concentration inequalities for bounding quantities which commonly appear in randomized algorithms.
-These bounds are quite loose since the only goal is to obtain asymptotic results which can be applied quickly and easily.
+Here I note some simple tricks for applying Chernoff-Hoeffding type concentration inequalities, and collect some useful facts for applications.
 
 \section{High Probability Bounds}
 
@@ -73,66 +72,86 @@ In particular, suppose \(p\) is a polynomial and we have \(p(n)\) random variabl
 such that each \(X_i\) is \(O(f)\) with high probability.
 Then by a union bound, \(\max_i X_i\) is \(O(f)\) with high probability.
 
-\section{Applying Chernoff-Hoeffding Bounds}
+\section{Chernoff-Hoeffding Bounds}
+
+We will use the following versions of the Chernoff-Hoeffding bounds:
 
 \begin{theorem}[Hoeffding]
   \label{thm:hoeffding}
-  Let $X = \sum_{i=1}^n X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
-  Then \[\Pr[X - \E X \ge t] \le \exp(-2t^2/n)\]
-  for all $t \ge 0$.
+  Let $X = \sum_{i=1}^k X_i$ where the $X_i$ are independent and $X_i \in [0, 1]$.
+  Then \[\Pr[X - \E X \ge t] &\le \exp(-2t^2/k) & t \ge 0\]
 \end{theorem}
 
 \begin{theorem}[Chernoff]
   \label{thm:chernoff}
   Let \(X = \sum_i X_i\) where the \(X_i\) are independent and $X_i \in [0, 1]$, and let \(\mu = \E X\).
-  Then \[\Pr[X \ge (1 + \delta)\mu] \le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right)\]
-  for all \(\delta \ge 0\).
+  Then \[
+  \Pr[X \ge (1 + \delta)\mu] &\le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right) & \delta \ge 0 \\
+  \Pr[X \le (1 - \delta)\mu] &\le \exp\left(-\frac{\delta^2}{2}\mu\right) & \delta \in (0, 1) \\
+  \]
 \end{theorem}
 
-Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\).
-We will use the following convenient simplification:
+Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\). % todo prove this via convexity?
+One elementary observation is that even without knowing $\mu$ exactly, we can still apply the Chernoff bound using an upper or lower bound on $\mu$:
 
-\begin{tcolorbox}
-  \begin{corollary}
-    \label{cor:chernoff-simple}
-    Let \(X = \sum_i X_i\) such that the \(X_i\) are independent and $X_i \in [0, 1]$,
-    and let \(t \ge \E X\).
-    Then \[\Pr[X \ge 3t] \le \exp(-t).\]  
-  \end{corollary}
-\end{tcolorbox}
+\begin{corollary}
+  \label{cor:chernoff-ineq}
+  Let \(X = \sum_i X_i\) such that the \(X_i\) are independent and $X_i \in [0, 1]$,
+  and suppose $\ell \le \E X \le u$.
+  Then \[
+  \Pr[X \ge (1 + \delta)u] &\le \exp\left(-\frac{\delta^2}{2+\delta}u\right) & \delta \ge 0 \\
+  \Pr[X \le (1 - \delta)\ell] &\le \exp\left(-\frac{\delta^2}{2}\ell\right) & \delta \in (0, 1) \\
+  \]
+\end{corollary}
 \begin{proof}
-  Let \(Y = X + t - \E X\), so that $\E Y = t$ and $X \le Y$.
+  The lower bound in terms of $\ell$ is trivial since all the inequalities are in the correct direction,
+  but the upper bound is a bit more difficult because $\exp(-u) \le \exp(-\E X)$.
+  To prove it, let \(Y = X + u - \E X\), so that $\E Y = u$ and $X \le Y$.
   Then \(Y\) can be expressed as a sum of independent $[0, 1]$ random variables,
   and applying \cref{thm:chernoff} to \(Y\) gives the result.
 \end{proof}
 
-This gives the following asymptotic result:
+%% \Pr[X \ge 3t] \le \exp(-t).\]  
+Using this we can obtain the following asymptotic results:
 
 \begin{tcolorbox}
-  \begin{corollary}
-    Let \(X = \sum_i X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
+  \begin{lemma}
+    Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
     \begin{itemize}
+    \item With high probability $X = \E X \pm O(\sqrt{k(n) \log n})$.
     \item If \(\E X \in O(\log n)\), then with high probability \(X \in O(\log n)\).
     \item If \(\E X \in \Omega(\log n)\), then with high probability \(X \in O(\E X)\).
+    \item If \(\E X \in \omega(\log n)\), then with high probability \(X \in \Theta(\E X)\).
     \end{itemize}
-  \end{corollary}
+  \end{lemma}
 \end{tcolorbox}
 \begin{proof}\hfill
   \begin{itemize}
   \item
-    Let \(t = c \log n\) for any \(c\) large enough so that eventually \(\E X \le t\).
+    This follows directly from \cref{thm:hoeffding}.
+  \item
+    Pick $c$ large enough so that eventually \(\E X \le c \log n\).
     Then we have
     \[\Pr[X \ge 3c \log n] \le \exp(-c\log n) = n^{-c}\]
-    by \cref{cor:chernoff-simple}.
+    by \cref{cor:chernoff-ineq}.
   \item
     Pick any \(c\),
-    and let \(d \ge 1\) be a constant large enough so that eventually \(d\E X \ge c \log n\).
-    Then \[\Pr[X \ge 3d \E X] \le \exp(-d \E X) \le \exp(-c\log n) = n^{-c}\]
-    by \cref{cor:chernoff-simple}.
+    and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \log n\).
+    Then \[
+    \Pr[X \ge 3d \E X] \le \exp(-d \E X) \le \exp(-c\log n) = n^{-c} \\
+    \]
+    by \cref{cor:chernoff-ineq}.
+  \item
+    Pick any $c$; then eventually $\E X \ge 8c \log n$,
+    so
+    \[
+    \Pr[X \le \E X / 2] \le \exp(-\E X / 8) \le \exp(-c\log n) = n^{-c}
+    \]
+    by \cref{thm:chernoff}.
   \end{itemize}
 \end{proof}
 
-% todo amplifying distinguisher (biased coin)
+% todo amplifying distinguisher (biased coin), mean estimation by sampling
 
 \section{Bounded Independence}
 % todo revise section
