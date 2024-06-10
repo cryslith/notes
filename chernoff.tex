@@ -35,6 +35,7 @@
 \DeclareMathOperator*{\Cov}{\mathrm{Cov}}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 \newcommand*{\Normal}[0]{\mathcal{N}}
+\newcommand*{\Ber}[0]{\text{Ber}}
 \newcommand*{\Exp}[0]{\text{Exp}}
 \newcommand*{\Fl}[0]{\mathcal{F}}
 \newcommand*{\tp}[0]{\mathsf{T}}
@@ -52,6 +53,8 @@
 \maketitle
 
 Here I note some simple tricks for applying Chernoff-Hoeffding type concentration inequalities, and collect some useful facts for applications.
+
+% todo: subgauss, subexp, subgamma, subpoisson versions?
 
 \section{High Probability Bounds}
 
@@ -111,16 +114,14 @@ One elementary observation is that even without knowing $\mu$ exactly, we can st
   and applying \cref{thm:chernoff} to \(Y\) gives the result.
 \end{proof}
 
-%% \Pr[X \ge 3t] \le \exp(-t).\]  
-Using this we can obtain the following asymptotic results:
+If we are only interested in asymptotic quantities, we can use the following rules:
 
 \begin{tcolorbox}
   \begin{lemma}
     Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
     \begin{itemize}
     \item With high probability $X = \E X \pm O(\sqrt{k(n) \log n})$.
-    \item If \(\E X \in O(\log n)\), then with high probability \(X \in O(\log n)\).
-    \item If \(\E X \in \Omega(\log n)\), then with high probability \(X \in O(\E X)\).
+    \item With high probability \(X \in O(\E X + \log n)\).
     \item If \(\E X \in \omega(\log n)\), then with high probability \(X \in \Theta(\E X)\).
     \end{itemize}
   \end{lemma}
@@ -130,16 +131,9 @@ Using this we can obtain the following asymptotic results:
   \item
     This follows directly from \cref{thm:hoeffding}.
   \item
-    Pick $c$ large enough so that eventually \(\E X \le c \log n\).
+    Pick any $c \ge 1$, and set $u = \max\{\E X, c \log n\}$.
     Then we have
-    \[\Pr[X \ge 3c \log n] \le \exp(-c\log n) = n^{-c}\]
-    by \cref{cor:chernoff-ineq}.
-  \item
-    Pick any \(c\),
-    and let \(d \ge 1\) be a constant large enough so that eventually \(d \E X \ge c \log n\).
-    Then \[
-    \Pr[X \ge 3d \E X] \le \exp(-d \E X) \le \exp(-c\log n) = n^{-c} \\
-    \]
+    \[\Pr[X \ge 3u] \le \exp(-u) \le \exp(-c\log n) = n^{-c}\]
     by \cref{cor:chernoff-ineq}.
   \item
     Pick any $c$; then eventually $\E X \ge 8c \log n$,
@@ -151,7 +145,17 @@ Using this we can obtain the following asymptotic results:
   \end{itemize}
 \end{proof}
 
-% todo amplifying distinguisher (biased coin), mean estimation by sampling
+Some useful applications:
+
+\begin{itemize}
+\item
+  Suppose we have a biased coin which flips heads with an unknown probability $p$.
+  We wish to estimate $p$ by averaging the results of $k$ flips.
+  Then by \cref{thm:hoeffding} we should take $k = \Theta(\epsilon^{-2} \log \delta^{-1})$ flips
+  to get an additive estimate $p \pm \epsilon$ with probability $1 - \delta$.
+\end{itemize}
+
+% todo bernstein version
 
 \section{Bounded Independence}
 % todo revise section
