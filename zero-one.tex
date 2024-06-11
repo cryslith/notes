@@ -142,9 +142,9 @@ Now we focus on probability spaces.
 \begin{proof}
   For any finite set $n$ let $B_n = \bigcup_{i \le n} A_i$ and $C_n = \bigcup_{i > n} A_i$.
   By Lemma~\ref{lem:partition ind} we have $\sigma(B_n) \perp \sigma(C_n)$ and so $T \perp \sigma(B_n)$ since $T \subset \sigma(C_n)$.
-  We have shown $T \perp \bigcup_{n \in N} \sigma(B_n)$.  But $\bigcup_{n \in N} \sigma(B_n)$ is a $\pi$-system, so in fact
-  \[T \perp \sigma\left(\bigcup_{n \in N} \sigma(B_n)\right) = \sigma\left(\bigcup_{n \in N} A_n\right)\]
-  Since $T \subset \sigma\left(\bigcup_{n \in N} A_n\right)$
+  We have shown $T \perp \bigcup_{n \in \N} \sigma(B_n)$.  But $\bigcup_{n \in \N} \sigma(B_n)$ is a $\pi$-system, so in fact
+  \[T \perp \sigma\left(\bigcup_{n \in \N} \sigma(B_n)\right) = \sigma\left(\bigcup_{n \in \N} A_n\right)\]
+  Since $T \subset \sigma\left(\bigcup_{n \in \N} A_n\right)$
   we conclude $T \perp T$, which is the desired result.
 \end{proof}
 
