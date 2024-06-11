@@ -45,39 +45,19 @@
 \newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
 \renewcommand*{\iff}[0]{\leftrightarrow}
 
-\title{Concentration Bound Tricks}
+\title{Applying Concentration}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-Here I note some simple tricks for applying Chernoff-Hoeffding type concentration inequalities, and collect some useful facts for applications.
+We discuss some common concentration inequalities with a view towards easily conceptualizing and applying them.
+For most applications in computer science we don't need to be concerned about the exact numerical constants,
+so we will ignore constant factors.  Instances of asymptotic notation ($O, \Theta$, etc.) are with respect to the inverse error probability $\delta^{-1}$.
 
-% todo: subgauss, subexp, subgamma, subpoisson versions?
-
-\section{High Probability Bounds}
-
-\begin{definition}
-  Let \(A_{n, c}\) be an event depending on \(n\) and a value \(c\).
-  We say \(A\) holds \defn{with high probability} if
-  for any choice of \(c\),
-  \(Pr[\overline{A_{n, c}}] \in O(n^{-c})\).\footnote{This notion of ``w.h.p.'' in algorithms differs from other fields which use it to mean that $\Pr[\overline{A_n}] \in o(1)$.}
-\end{definition}
-
-In particular we might have a random variable \(X(n)\) depending on \(n\).
-If we say, ``\(X\) is \(O(f)\) with high probability'',
-we mean that for any constant \(c\), there exist constants \(a, b, N\) such that
-\(\Pr[X(n) > af(n)] < bn^{-c}\) for all \(n > N\).
-In other words, the constants \(a, b, N\) hidden by the big-O notation are allowed to depend on \(c\).
-
-In particular, suppose \(p\) is a polynomial and we have \(p(n)\) random variables \(X_i\),
-such that each \(X_i\) is \(O(f)\) with high probability.
-Then by a union bound, \(\max_i X_i\) is \(O(f)\) with high probability.
-
-\section{Chernoff-Hoeffding Bounds}
-
-We will use the following versions of the Chernoff-Hoeffding bounds:
+One common scenario is that we have a sequence of independent $[0, 1]$ random variables,
+and we are interested in their sum.  The following theorems are often used to understand the deviations of this sum from its mean.
 
 \begin{theorem}[Hoeffding]
   \label{thm:hoeffding}
@@ -89,21 +69,33 @@ We will use the following versions of the Chernoff-Hoeffding bounds:
   \label{thm:chernoff}
   Let \(X = \sum_i X_i\) where the \(X_i\) are independent and $X_i \in [0, 1]$, and let \(\mu = \E X\).
   Then \[
-  \Pr[X \ge (1 + \delta)\mu] &\le \exp\left(-\frac{\delta^2}{2+\delta}\mu\right) & \delta \ge 0 \\
-  \Pr[X \le (1 - \delta)\mu] &\le \exp\left(-\frac{\delta^2}{2}\mu\right) & \delta \in (0, 1) \\
+  \Pr[X \ge (1 + \delta)\mu] &\le \exp\left(-\frac{b^2}{2+b}\mu\right) & b \ge 0 \\
+  \Pr[X \le (1 - \delta)\mu] &\le \exp\left(-\frac{b^2}{2}\mu\right) & b \in (0, 1) \\
   \]
 \end{theorem}
 
-Note that the \(X_i\) need not be identically distributed, nor are they required to take only the values \(\{0, 1\}\). % todo prove this via convexity?
-One elementary observation is that even without knowing $\mu$ exactly, we can still apply the Chernoff bound using an upper or lower bound on $\mu$:
+How can we understand what these theorems are saying in practice?
+One way is to fix a small ``error'' probability $\delta$,
+and ask how large the fluctuations of $X$ are while ignoring an exceptional event of probability $\le \delta$.
+If we invert \cref{thm:hoeffding} in this way, we find that with probability $1 - \delta$,
+\[X = \E X \pm \sqrt{\frac12 k \log(2\delta^{-1})} = \E X \pm O\left(\sqrt{k \log \delta^{-1}}\right)\]
+
+How should we understand the quantity $\log \delta^{-1}$ occurring in the above?  One consideration is that we often are not interested in just one of these bounds in isolation, but rather in the behavior of a large system.  For instance, suppose $n$ is some parameter, and we have a polynomial number $n^c$ of random variables distributed as $X$ (not necessarily independent).
+If we wish to control the fluctuations of all of these variables at once with only $1\%$ of error probability, we can take a union bound, which $\delta = .01 n^{-c}$.
+In this case we learn that with $99\%$ probability, all of our $n^c$ variables lie in the range
+\[\E X \pm O\left(\sqrt{k \log n}\right)\]
+where the constant in the $O$ depends only on $c$.
+
+We can similarly analyze \cref{thm:chernoff}.
+An elementary observation which is useful in practice is that even without knowing $\mu$ exactly, we can still apply the Chernoff bound using an upper or lower bound on $\mu$:
 
 \begin{corollary}
   \label{cor:chernoff-ineq}
   Let \(X = \sum_i X_i\) such that the \(X_i\) are independent and $X_i \in [0, 1]$,
   and suppose $\ell \le \E X \le u$.
   Then \[
-  \Pr[X \ge (1 + \delta)u] &\le \exp\left(-\frac{\delta^2}{2+\delta}u\right) & \delta \ge 0 \\
-  \Pr[X \le (1 - \delta)\ell] &\le \exp\left(-\frac{\delta^2}{2}\ell\right) & \delta \in (0, 1) \\
+  \Pr[X \ge (1 + \delta)u] &\le \exp\left(-\frac{b^2}{2+b}u\right) & b \ge 0 \\
+  \Pr[X \le (1 - \delta)\ell] &\le \exp\left(-\frac{b^2}{2}\ell\right) & b \in (0, 1) \\
   \]
 \end{corollary}
 \begin{proof}
@@ -114,38 +106,35 @@ One elementary observation is that even without knowing $\mu$ exactly, we can st
   and applying \cref{thm:chernoff} to \(Y\) gives the result.
 \end{proof}
 
-If we are only interested in asymptotic quantities, we can use the following rules:
+The results of inverting these theorems and dropping constant factors are as follows: 
 
 \begin{tcolorbox}
   \begin{lemma}
-    Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).
+    Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).  Then the following hold with probability $1 - \delta$:
     \begin{itemize}
-    \item With high probability $X = \E X \pm O(\sqrt{k(n) \log n})$.
-    \item With high probability \(X \in O(\E X + \log n)\).
-    \item If \(\E X \in \omega(\log n)\), then with high probability \(X \in \Theta(\E X)\).
+    \item $X = \E X \pm O(\sqrt{k(n) \log \delta^{-1}})$.
+    \item $X \in O(\E X + \log \delta^{-1})$.
+    \item If $\E X \in \omega(\log \delta^{-1})$, then $X \in \Theta(\E X)$.
     \end{itemize}
   \end{lemma}
 \end{tcolorbox}
 \begin{proof}\hfill
   \begin{itemize}
   \item
-    This follows directly from \cref{thm:hoeffding}.
+    Union bound the upper and lower tails of \cref{thm:hoeffding} together.
   \item
-    Pick any $c \ge 1$, and set $u = \max\{\E X, c \log n\}$.
+    Set $u = \max\{\E X, \log \delta^{-1}\}$.
     Then we have
-    \[\Pr[X \ge 3u] \le \exp(-u) \le \exp(-c\log n) = n^{-c}\]
+    \[\Pr[X \ge 3u] \le \exp(-u) \le \exp(-\log \delta^{-1}) = \delta\]
     by \cref{cor:chernoff-ineq}.
   \item
-    Pick any $c$; then eventually $\E X \ge 8c \log n$,
-    so
-    \[
-    \Pr[X \le \E X / 2] \le \exp(-\E X / 8) \le \exp(-c\log n) = n^{-c}
-    \]
+    Eventually $\E X \ge 8 \log \delta^{-1}$, so
+    \[\Pr[X \le \E X / 2] \le \exp(-\E X / 8) \le \exp(-\log \delta^{-1}) = \delta\]
     by \cref{thm:chernoff}.
   \end{itemize}
 \end{proof}
 
-Some useful applications:
+Some more applications:
 
 \begin{itemize}
 \item
@@ -153,9 +142,18 @@ Some useful applications:
   We wish to estimate $p$ by averaging the results of $k$ flips.
   Then by \cref{thm:hoeffding} we should take $k = \Theta(\epsilon^{-2} \log \delta^{-1})$ flips
   to get an additive estimate $p \pm \epsilon$ with probability $1 - \delta$.
+\item
+  Suppose we have an algorithm which distinguishes distributions $P, Q$ with advantage $\epsilon$:
+  \[
+  \left|\Pr_{X \sim P}[A(X) = 1] - \Pr_{X \sim Q}[A(X) = 1]\right| \ge \epsilon
+  \]
+  What if we wish to amplify this distinguisher so that we are very likely to obtain the correct answer?
+  We can accomplish this by taking $k$ independent samples from the unknown distribution,
+  running $A$ on each of them, and determining whether the average output is closer to $\Pr_{X \sim P}[A(X) = 1]$ or to $\Pr_{X \sim Q}[A(X) = 1]$.
+  We need to take enough samples so that our estimate is within $\epsilon/2$ of the true answer.
+  So this is just the previous application in disguise, and we should again take $k = \Theta(\epsilon^{-2} \log \delta^{-1})$
+  to ensure we get the correct answer with probability $1 - \delta$.
 \end{itemize}
-
-% todo bernstein version
 
 \section{Bounded Independence}
 % todo revise section
