@@ -16,6 +16,7 @@
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}[theorem]{Definition}
@@ -27,6 +28,7 @@
 \newcommand*{\R}[0]{\mathbb{R}}
 \newcommand*{\E}[0]{\mathbf{E}}
 \DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\Cov}{\mathrm{Cov}}
 \DeclareMathOperator*{\esssup}{ess\,sup}
 \DeclareMathOperator*{\essinf}{ess\,inf}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
@@ -41,8 +43,7 @@
 \begin{document}
 \maketitle
 
-These are some notes on inequalities arising from convexity.
-We start with a general inequality and use this to obtain more familiar results.
+These are some notes on inequalities arising from convexity---currently unfinished/wrong/disorganized.
 
 In the following $(S, \Lambda, \mu)$ will be a $\sigma$-finite measure space.
 We will mostly be interested in the cases where $S$ is a probability space ($\mu(S) = 1$) or where $S = \N$ and $\mu$ is counting measure.
@@ -52,7 +53,7 @@ We will mostly be interested in the cases where $S$ is a probability space ($\mu
   A real-valued function $f : T \to \R$ is \defn{convex} if for any $a, b \in T$ and any $t \in [0, 1]$ we have $f(ta + (1 - t)b) \le tf(a) + (1 - t)f(b)$.
 \end{definition}
 
-It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a, b)$, left-differentiable on $(a, b]$, and right-differentiable on $[a, b)$.
+It can be checked that if $f$ is convex on $[a, b]$ then it is continuous on $(a, b)$, left-differentiable on $(a, b]$, and right-differentiable on $[a, b)$, the derivatives are increasing, and $f(y) - f(x) = \int_x^y f'(t)\,dt$ where $x, y \in (a, b)$ and $f'$ is either derivative of $f$.
 
 %% Let $h: S \to \R_{\ge 0}$ be a nonnegative measurable function.
 %% We define functions $m_h : \R_{\ge 0} \to [0, \mu(S)]$ and $h^* : [0, \mu(S)] \to \R_{\ge 0}$ via
@@ -126,13 +127,12 @@ by considering the functions \[\phi_a(u) &= \phi(u + a) - \phi(a) \\ f_a(x) &= f
 % what about for right end?
 
 % can we also generalize to locally-convex topological vector space instead of real-valued?  where does the nonnegativity come in?
-
 % would also need hahn-banach in that case...
 
 From this we can derive familiar results:
 
 \begin{theorem}[Jensen's Inequality]
-  Let $X$ be a random variable and $\phi$ a continuous convex function. % xxx shouldnt need phi continuous, also be careful about nonnegativity in majorization...
+  Let $X$ be a random variable and $\phi$ a continuous convex function. % xxx shouldnt need phi continuous, also be careful about nonnegativity in majorization.  also might be easier to derive in the other direction
   Then $\phi(\E X) \le \E[\phi(X)]$.
 \end{theorem}
 \begin{proof}
@@ -141,74 +141,115 @@ From this we can derive familiar results:
   $\phi(\E X) = \E[\phi(Y)] \le \E[\phi(X)]$.
 \end{proof}
 
-For random variables with the same mean, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \mapsto x^2$ is convex.
+For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrated than $X$; for instance we have $\Var Y \le \Var X$ since $x \mapsto x^2$ is convex.  Similarly the best Chernoff bound for $X$ is also a bound on $Y$, since $x \mapsto \exp(\lambda x)$ is convex.
 
-\section*{Power Means}
+% todo: material from Statistical Orders, especially Markov kernel formulation
 
-Let $X$ be a nonnegative random variable, and define:
+\section*{Negative Association}
 
-\[M_p(X) =
-\begin{cases}
-  \E[X^p]^{1/p} & p \in \R - \{0\} \\
-  \exp \E[\log X] & p = 0 \\
-  \essinf(X) & p = -\infty \\
-  \esssup(X) & p = \infty \\
-\end{cases}\]
+% see: NA notes
 
-\begin{theorem}[Power Mean Inequality]
-  If $p \le q$ then $M_p(X) \le M_q(X)$ whenever both exist.
+We prove Shao's comparison theorem for negatively associated random variables.  The first part of the proof is identical to Shao's, but we give a nicer proof for the second part.  We also impose some additional conditions needed to apply Fubini's theorem in the proof.
+
+% cite: A Comparison Theorem on Moment Inequalities Between Negatively Associated and Independent Random Variables 🔍
+% Springer US; Springer-Verlag; Kluwer Academic Publishers; Springer Science and Business Media LLC (ISSN 0894-9840), Journal of Theoretical Probability, #2, 13, pages 343-356, 2000
+% Qi-Man Shao
+
+\begin{definition}[Negative Association]
+  A set $\{X_i : i \in T\}$ of random variables is \defn{negatively associated} if for any pair of finite disjoint subsets $A, B \subset T$
+  we have
+  \[\E[f_A(X_i: i \in A)f_B(X_i: i \in B)] \le \E[f_A(X_i: i \in A)]\E[f_B(X_i: i \in B)]\]
+  where $f_A : \R^{|A|} \to \R$ and $f_B : \R^{|B|} \to \R$ are increasing functions.
+\end{definition}
+
+\begin{fact}[Monotonicity Property]1
+  Let $\{X_i : i \in T\}$ be a set of negatively associated random variables,
+  and let $P$ be a partition of $T$.
+  Then $\{f_p(X_i : i \in p) : p \in P\}$ are negatively associated,
+  where each $f_p$ is an increasing function $\R^{|p|} \to \R$.
+\end{fact}
+
+\begin{theorem}
+  Suppose $X_1, \dots, X_n$ are negatively associated.
+  Let $X_1^*, \dots, X_n^*$ be independent random variables with the same distribution as $X_1, \dots, X_n$.
+  Then if $f$ is a convex function,
+  \[\E\left[f\left(\sum_i X_i\right)\right] \le \E\left[f\left(\sum_i X_i^*\right)\right]\]
+  provided that for each $0 \le r \le n$, the expectation $\E\left[f\left(\sum_{i=1}^k Z_i\right)\right]$ is finite, where $Z_i = 
+  \begin{cases}
+    X_i^* & i \le r \\
+    X_i & i > r
+  \end{cases}$.
+  Furthermore if either $n = 2$ or $f$ is increasing,
+  \[\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i\right)\right] \le \E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i^*\right)\right]\]
+  provided that each $\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k Z_i\right)\right]$ is finite.
 \end{theorem}
-\begin{proof}
-  If either of $p$ or $q$ is infinite then the result is trivial.
-
-  Suppose $0 = p < q$.  Since $\log$ is concave we have by Jensen's inequality
+\begin{proof}[Proof of first part.]
+  We start with the case where $n = 2$.
+  Let $Y_1, Y_2$ have the same joint distribution as $X_1, X_2$ with $\{X_1, X_2\} \perp \{Y_1, Y_2\}$.
+  We can write
   \[
-  \log \E[X^p] &\ge \E[\log X^p] \\
-  \frac1p \log \E[X^p] &\ge \E[\log X] \\
-  \E[X^p]^{1/p} &\ge \exp \E[\log X] \\
+  f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)
+  &= \int_{X_2}^{Y_2} (f'(Y_1 + t) - f'(X_1 + t))\,dt \\
+  &= \int_{-\infty}^\infty (f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])\,dt \\
   \]
-  The case where $p < q = 0$ is analogous.
-
-  Now suppose $0 < p < q$.  Since $u \mapsto u^{q/p}$ is convex we have
+  and so
   \[
-  \E[X^p]^{q/p} &\le \E[X^q] \\
-  \E[X^p]^{1/p} &\le \E[X^q]^{1/q} \\
+  \E[f(X_1 + X_2)] - \E[f(X_1^* + X_2^*)]
+  &= \frac12\E[f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)] \\
+  &= \frac12\E\left[\int_{-\infty}^\infty (f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])\,dt \right] \\
+  &= \frac12\int_{-\infty}^\infty \E[(f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])]\,dt &\text{by Fubini} \\
+  &= \int_{-\infty}^\infty \Cov(f'(X_1 + t), [t < X_2])\,dt \\
+  &\le 0
   \]
-  The case where $p < q < 0$ is analogous.
+  where the last inequality is because $f'(X_1 + t)$ and $[t < X_2]$ are negatively associated for each $t$ by monotonicity.
+  The use of Fubini's theorem is justified since the integrand is absolutely integrable (by working backwards).
+
+  For $n > 2$ we induct on $n$.
+  Let $X_1, \dots, X_{n+1}$ be negatively associated.
+  Define $S = \sum_{i=2}^{n+1} X_i$
+  and $S^* = \sum_{i=2}^{n+1} X_i^*$.
+  We have
+  \[
+  \E\left[f\left(\sum_{i=1}^{n+1} X_i\right)\right]
+  &= \E[f(X_1 + S)] \\
+  &\le \E[f(X_1^* + S)] &\text{since $X_1, S$ are NA} \\
+  &= \E[\E[f(X_1^* + S) \mid X_1^*]] \\
+  &\le \E[\E[f(X_1^* + S^*) \mid X_1^*]] &\text{by inductive hypothesis} \\
+  &= \E[f(X_1^* + S^*)]] \\
+  &= \E\left[f\left(\sum_{i=1}^{n+1} X_i^*\right)\right] \\
+  \]
+  Here the inductive hypothesis is applied using the function $x \mapsto f(X_1^* + x)$ which is convex for every value of $X_1^*$.
 \end{proof}
 
-% xxx need to prove existence of M_0 so there's no issue with transitivity
-% also maybe clarify 1/0 = +inf in this context
+The proof for the second part is very similar.
 
-For instance this generalizes the AM-GM inequality since $M_0$ is the geometric mean and $M_1$ is the arithmetic mean.
+\begin{proof}[Proof of second part.]
+  The statement for $n = 2$ follows easily from the first part
+  since $X_1$ and $X_2^+$ are negatively associated:
+  \[
+  \E[f(\max\{X_1, X_1 + X_2\})]
+  &= \E[f(X_1 + X_2^+)] \\
+  &\le \E[f(X_1^* + {X_2^*}^+)] \\
+  &= \E[f(\max\{X_1^*, X_1^* + X_2^*\})] \\
+  \]
 
-\section*{H\"older's Inequality}
-
-Let $f : S \to \R$ be a nonnegative measurable function.
-Define \[\norm{f}_p = \begin{cases}
-  \left(\int f\,d\mu\right)^{1/p} & 1 \le p < \infty \\
-  \esssup f & p = \infty \\
-  \end{cases}
-\]
-Note that the results from the previous section do not directly apply here since $S$ is not necessarily a probability space.  Nonetheless we can make use of them by defining an appropriate probability measure.
-
-\begin{theorem}[H\"older's Inequality]
-  Let $f, g : S \to \R$ be nonnegative measurable functions,
-  and let $p, q \in [1, \infty]$ such that $\frac1p + \frac1q = 1$.
-  Then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$.
-\end{theorem}
-\begin{proof}
-  The case where $p$ or $q$ is $\infty$ is trivial, so we skip it.
-  Define $\nu$ to be a probability measure on $S$ via $\nu(A) = \frac{\int_A g^q\,d\mu}{\int g^q\,d\mu}$,
-  and let $X = fg^{1-q}$.  (We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.)
-  Then we have
-  \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
-  &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
-  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} \\
-  &= \left(\int g^q\,d\mu\right)\left(\int f^p g^{p(1-q)}\frac{g^q}{\int g^q\,d\mu}\,d\mu \right)^{1/p} \\
-  &= \left(\int g^q\,d\mu\right)^{1 - 1/p}\left(\int f^p g^{p + q - pq}\,d\mu \right)^{1/p} \\
-  &= \norm{f}_p \norm{g}_q \\
-\]
+  For $n > 2$ we induct on $n$.
+  Let $X_1, \dots, X_{n+1}$ be negatively associated.
+  Define $L = \max_{2 \le k \le n+1} \sum_{i=2}^k X_i$
+  and $L^* = \max_{2 \le k \le n+1} \sum_{i=2}^k X_i^*$.
+  Then we have:
+  \[
+  \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i\right)\right]
+  &= \E[f(X_1 + L^+)] \\
+  &\le \E[f(X_1^* + L^+)] &\text{since $X_1, L^+$ are NA} \\
+  &= \E[\E[f(X_1^* + L^+) \mid X_1^*]] \\
+  &\le \E[\E[f(X_1^* + {L^*}^+) \mid X_1^*]] & \text{by inductive hypothesis} \\
+  &= \E[f(X_1^* + {L^*}^+)] \\
+  &= \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i^*\right)\right]
+  \]
+  Here the inductive hypothesis is applied using the function $x \mapsto f(X_1^* + x^+)$ which is convex because $f$ is increasing and convex.
+  % what about fubini conditions??
 \end{proof}
 
 \end{document}
+

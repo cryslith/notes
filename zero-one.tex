@@ -59,6 +59,8 @@
 \begin{document}
 \maketitle
 
+This note rigorously proves the zero-one law.
+
 We start by reviewing a basic property of set systems.
 
 \begin{definition}
@@ -101,10 +103,11 @@ Now we focus on probability spaces.
   Then $\{\sigma(A_i) : i \in I\}$ are independent also.
 \end{lemma}
 \begin{proof}
-  It suffices to consider a finite independent collection of of $\pi$-systems $\{A_1, \dots, A_n\}$, and show just that $\{\sigma(A_1)\} \cup \{A_i : i > 1\}$ is independent.
+  It suffices to consider a finite independent collection $\{A_1, \dots, A_n\}$ of $\pi$-systems.
+  We start by showing the simpler claim that $\{\sigma(A_1)\} \cup \{A_i : i > 1\}$ is independent.
 
   Pick an event $E_1 \in \sigma(A_1)$
-  and events $E_i \in A_i$ for $i \in \{2, \dots, n\}$; we will show that these events are independent.
+  and events $E_i \in A_i$ for $i > 1$; we will show that these events are independent.
   Let $L$ be the set of events independent of $\bigwedge_{i=2}^n E_i$.
   Then $L$ is a $\lambda$-system which contains $A_1$, so by Theorem~\ref{thm:dynkin} it contains $\sigma(A_1)$ also.
 
@@ -115,6 +118,8 @@ Now we focus on probability spaces.
    = \prod_{i=1}^{n} \Pr[E_i]
   \]
   as desired.
+
+  To prove the lemma, we can use induction on $k$ to show that $\{\sigma(A_i) : i \le k\} \cup \{A_i : i > k\}$ is independent, since the inductive step is just the above argument.
 \end{proof}
 
 \begin{lemma}
