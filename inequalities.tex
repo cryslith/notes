@@ -1,0 +1,113 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+\newcommand*{\E}[0]{\mathbf{E}}
+\DeclareMathOperator*{\Var}{\mathrm{Var}}
+\DeclareMathOperator*{\esssup}{ess\,sup}
+\DeclareMathOperator*{\essinf}{ess\,inf}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+
+\title{Common Inequalities}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+Some nice derivations of common inequalities.
+
+\section*{Power Means}
+
+Let $X$ be a nonnegative random variable, and define:
+
+\[M_p(X) =
+\begin{cases}
+  \E[X^p]^{1/p} & p \in \R - \{0\} \\
+  \exp \E[\log X] & p = 0 \\
+  \essinf(X) & p = -\infty \\
+  \esssup(X) & p = \infty \\
+\end{cases}\]
+
+\begin{theorem}[Power Mean Inequality]
+  If $p \le q$ then $M_p(X) \le M_q(X)$ whenever both exist.
+\end{theorem}
+\begin{proof}
+  If either of $p$ or $q$ is infinite then the result is trivial.
+
+  Suppose $0 = p < q$.  Since $\log$ is concave we have by Jensen's inequality
+  \[
+  \log \E[X^p] &\ge \E[\log X^p] \\
+  \frac1p \log \E[X^p] &\ge \E[\log X] \\
+  \E[X^p]^{1/p} &\ge \exp \E[\log X] \\
+  \]
+  The case where $p < q = 0$ is analogous.
+
+  Now suppose $0 < p < q$.  Since $u \mapsto u^{q/p}$ is convex we have
+  \[
+  \E[X^p]^{q/p} &\le \E[X^q] \\
+  \E[X^p]^{1/p} &\le \E[X^q]^{1/q} \\
+  \]
+  The case where $p < q < 0$ is analogous.
+\end{proof}
+
+% xxx need to prove existence of M_0 so there's no issue with transitivity
+% also maybe clarify 1/0 = +inf in this context
+
+For instance this generalizes the AM-GM inequality since $M_0$ is the geometric mean and $M_1$ is the arithmetic mean.
+
+\section*{H\"older's Inequality}
+
+Let $f : S \to \R$ be a nonnegative measurable function.
+Define \[\norm{f}_p = \begin{cases}
+  \left(\int f\,d\mu\right)^{1/p} & 1 \le p < \infty \\
+  \esssup f & p = \infty \\
+  \end{cases}
+\]
+Note that the results from the previous section do not directly apply here since $S$ is not necessarily a probability space.  Nonetheless we can make use of them by defining an appropriate probability measure.
+
+\begin{theorem}[H\"older's Inequality]
+  Let $f, g : S \to \R$ be nonnegative measurable functions,
+  and let $p, q \in [1, \infty]$ such that $\frac1p + \frac1q = 1$.
+  Then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$.
+\end{theorem}
+\begin{proof}
+  The case where $p$ or $q$ is $\infty$ is trivial, so we skip it.
+  Define $\nu$ to be a probability measure on $S$ via $\nu(A) = \frac{\int_A g^q\,d\mu}{\int g^q\,d\mu}$,
+  and let $X = fg^{1-q}$.  (We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.)
+  Then we have
+  \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
+  &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
+  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} \\
+  &= \left(\int g^q\,d\mu\right)\left(\int f^p g^{p(1-q)}\frac{g^q}{\int g^q\,d\mu}\,d\mu \right)^{1/p} \\
+  &= \left(\int g^q\,d\mu\right)^{1 - 1/p}\left(\int f^p g^{p + q - pq}\,d\mu \right)^{1/p} \\
+  &= \norm{f}_p \norm{g}_q \\
+\]
+\end{proof}
+
+\end{document}

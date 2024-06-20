@@ -9,6 +9,8 @@
 \usepackage{xcolor}
 \usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
 
+\usepackage[noabbrev,capitalise]{cleveref}
+
 \usepackage{libertine}
 \usepackage[libertine,vvarbb]{newtxmath}
 \usepackage[scaled=0.96]{zi4}
@@ -146,6 +148,51 @@ For random variables, $Y \prec X$ intuitively means that $Y$ is more concentrate
 
 % todo: material from Statistical Orders, especially Markov kernel formulation
 
+The following observation can slightly simplify uses of convex ordering:
+
+\begin{lemma}
+  \label{lem:rhs-suffices}
+  Let $X, Y$ be random variables such that $\E[f(X)] \le \E[f(Y)]$ for any convex function $f$
+  whenever both expectations exist.
+  Then in fact $\E[f(X)]$ exists whenever $\E[f(Y)]$ does.
+\end{lemma}
+
+To prove this we first show:
+
+\begin{lemma}\label{lem:asymptote}
+  Suppose $f$ is an increasing function with an oblique asymptote as $x \to \infty$;
+  that is, there is a function $g(x) = cx + d$ such that $\lim_{x \to \infty} |f(x) - g(x)| = 0$, where $c > 0$.
+  Then for any random variable $W$ we have $\E[f(W)^+] = \infty$ if and only if $\E[W^+] = \infty$.
+\end{lemma}
+\begin{proof}
+  Without loss of generality we can assume $f(0) = 0$.
+  Let $M = \sup_{x \ge 0} |f(x) - cx| < \infty$.
+  Then \[\E[|f(W)^+ - cW^+|] \le \E[M] = M\]
+  implies the statement via the triangle inequality.
+\end{proof}
+
+\begin{proof}[Proof of \cref{lem:rhs-suffices}]
+  Fix a convex function $f$.
+  It suffices to show the implications
+  \[
+  \E[f(Y)^+] < \infty &\to \E[f(X)^+] < \infty \\
+  \E[f(Y)^-] < \infty &\to \E[f(X)^-] < \infty \\
+  \]
+
+  The first implication is easy to prove since we have $\E[f(X)^+] \le \E[f(Y)^+]$
+  by convexity of $f^+$.
+
+  Now, if $f > c$ everywhere for some $c \in \R$ then $\E[f(X)^-] < \infty$ trivially, so we can assume this isn't the case.
+  This implies that $f$ is monotone and has an oblique asymptote either as $x \to -\infty$ or as $x \to \infty$; without loss of generality assume it's the former.
+  This implies there is a slope $c > 0$ such that
+  
+
+  Suppose $\E[f(Y)^-] < \infty$.  By \cref{lem:asymptote} we have $\E[f(Y)^-] < \infty$ also.
+  But then $\E[X^-] \le \E[{Y}^-]$ by convexity of $x \mapsto x^-$,
+  and so finally $\E[f(X)^-]$ by \cref{lem:asymptote} again.
+\end{proof}
+
+
 \section*{Negative Association}
 
 % see: NA notes
@@ -171,21 +218,27 @@ We prove Shao's comparison theorem for negatively associated random variables.  
 \end{fact}
 
 \begin{theorem}
+  \label{thm:na-convex}
   Suppose $X_1, \dots, X_n$ are negatively associated.
   Let $X_1^*, \dots, X_n^*$ be independent random variables with the same distribution as $X_1, \dots, X_n$.
   Then if $f$ is a convex function,
   \[\E\left[f\left(\sum_i X_i\right)\right] \le \E\left[f\left(\sum_i X_i^*\right)\right]\]
-  provided that for each $0 \le r \le n$, the expectation $\E\left[f\left(\sum_{i=1}^k Z_i\right)\right]$ is finite, where $Z_i = 
-  \begin{cases}
-    X_i^* & i \le r \\
-    X_i & i > r
-  \end{cases}$.
+  provided that the expectation on the right-hand side exists.
+
+%% provided that for each $0 \le r \le n$, the expectation $\E\left[f\left(\sum_{i=1}^k Z_i\right)\right]$ is finite, where $Z_i = 
+%%   \begin{cases}
+%%     X_i^* & i \le r \\
+%%     X_i & i > r
+%%   \end{cases}$.
   Furthermore if either $n = 2$ or $f$ is increasing,
   \[\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i\right)\right] \le \E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i^*\right)\right]\]
-  provided that each $\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k Z_i\right)\right]$ is finite.
+  provided that the expectation on the right-hand side exists.
+  %% provided that each $\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k Z_i\right)\right]$ is finite.
 \end{theorem}
+
 \begin{proof}[Proof of first part.]
   We start with the case where $n = 2$.
+  Assume for now that $X_1$ and $X_2$ are bounded.
   Let $Y_1, Y_2$ have the same joint distribution as $X_1, X_2$ with $\{X_1, X_2\} \perp \{Y_1, Y_2\}$.
   We can write
   \[
@@ -203,12 +256,12 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   &\le 0
   \]
   where the last inequality is because $f'(X_1 + t)$ and $[t < X_2]$ are negatively associated for each $t$ by monotonicity.
-  The use of Fubini's theorem is justified since the integrand is absolutely integrable:
+  The use of Fubini's theorem is justified since the integrand is absolutely integrable: % rework using bounded variables and monotone convergence.....
   \[
   &\pheq \frac12\E\left[\int_{-\infty}^\infty |(f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])|\,dt \right] \\
   &= \frac12\E\left[\left|\int_{-\infty}^\infty (f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])\,dt \right|\right] \\
   &= \frac12\E[|f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)] \\
-  &\le \E[|f(X_1 + X_2)|] + \E[|f(X_1^* + X_2^*)|] < \infty & \text{by assumption}
+  &\le \E[|f(X_1 + X_2)|] + \E[|f(X_1^* + X_2^*)|] < \infty & \text{$X_i$ bounded}
   \]
   where the first equality is because both $x \mapsto f'(x + t)$ and $x \mapsto [t < x]$ are increasing,
   so for fixed $X_1, Y_1, X_2, Y_2$, the integrand has the same sign for all $t$.
