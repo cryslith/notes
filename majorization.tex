@@ -33,6 +33,7 @@
 \DeclareMathOperator*{\essinf}{ess\,inf}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 
+\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
 
 \def\[#1\]{\begin{align*}#1\end{align*}}
 
@@ -202,7 +203,15 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   &\le 0
   \]
   where the last inequality is because $f'(X_1 + t)$ and $[t < X_2]$ are negatively associated for each $t$ by monotonicity.
-  The use of Fubini's theorem is justified since the integrand is absolutely integrable (by working backwards).
+  The use of Fubini's theorem is justified since the integrand is absolutely integrable:
+  \[
+  &\pheq \frac12\E\left[\int_{-\infty}^\infty |(f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])|\,dt \right] \\
+  &= \frac12\E\left[\left|\int_{-\infty}^\infty (f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])\,dt \right|\right] \\
+  &= \frac12\E[|f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)] \\
+  &\le \E[|f(X_1 + X_2)|] + \E[|f(X_1^* + X_2^*)|] < \infty & \text{by assumption}
+  \]
+  where the first equality is because both $x \mapsto f'(x + t)$ and $x \mapsto [t < x]$ are increasing,
+  so for fixed $X_1, Y_1, X_2, Y_2$, the integrand has the same sign for all $t$.
 
   For $n > 2$ we induct on $n$.
   Let $X_1, \dots, X_{n+1}$ be negatively associated.
