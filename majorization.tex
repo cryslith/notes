@@ -5,7 +5,7 @@
 \usepackage{latexsym}
 \usepackage{mathtools}
 \usepackage[margin=1in]{geometry}
-\usepackage{enumitem}
+\usepackage[shortlabels]{enumitem}
 \usepackage{xcolor}
 \usepackage[colorlinks, linkcolor=purple, citecolor=blue!75!black, urlcolor=purple]{hyperref}
 
@@ -42,6 +42,10 @@
 \title{Notes on Convexity Inequalities}
 \author{Lily Chung}
 \date{}
+
+\newlist{thmenum}{enumerate}{1}
+\setlist[thmenum]{label=\alph*), ref=\thetheorem~(\alph*)}
+\crefalias{thmenumi}{theorem} 
 
 \begin{document}
 \maketitle
@@ -182,16 +186,13 @@ To prove this we first show:
   The first implication is easy to prove since we have $\E[f(X)^+] \le \E[f(Y)^+]$
   by convexity of $f^+$.
 
-  Now, if $f > c$ everywhere for some $c \in \R$ then $\E[f(X)^-] < \infty$ trivially, so we can assume this isn't the case.
-  This implies that $f$ is monotone and has an oblique asymptote either as $x \to -\infty$ or as $x \to \infty$; without loss of generality assume it's the former.
-  This implies there is a slope $c > 0$ such that
-  
+  Now, if $f$ is bounded from below then $\E[f(X)^-] < \infty$ trivially, so we can assume this isn't the case.
+  Since $f$ is convex, this means it has a decreasing oblique asymptote as $x \to -\infty$ or as $x \to \infty$; without loss of generality assume it's the former.
 
-  Suppose $\E[f(Y)^-] < \infty$.  By \cref{lem:asymptote} we have $\E[f(Y)^-] < \infty$ also.
+  From $\E[f(Y)^-] < \infty$, we know by \cref{lem:asymptote} that $\E[f(Y)^-] < \infty$ also.
   But then $\E[X^-] \le \E[{Y}^-]$ by convexity of $x \mapsto x^-$,
   and so finally $\E[f(X)^-]$ by \cref{lem:asymptote} again.
 \end{proof}
-
 
 \section*{Negative Association}
 
@@ -210,7 +211,7 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   where $f_A : \R^{|A|} \to \R$ and $f_B : \R^{|B|} \to \R$ are increasing functions.
 \end{definition}
 
-\begin{fact}[Monotonicity Property]1
+\begin{fact}[Monotonicity Property]
   Let $\{X_i : i \in T\}$ be a set of negatively associated random variables,
   and let $P$ be a partition of $T$.
   Then $\{f_p(X_i : i \in p) : p \in P\}$ are negatively associated,
@@ -221,24 +222,21 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   \label{thm:na-convex}
   Suppose $X_1, \dots, X_n$ are negatively associated.
   Let $X_1^*, \dots, X_n^*$ be independent random variables with the same distribution as $X_1, \dots, X_n$.
-  Then if $f$ is a convex function,
-  \[\E\left[f\left(\sum_i X_i\right)\right] \le \E\left[f\left(\sum_i X_i^*\right)\right]\]
-  provided that the expectation on the right-hand side exists.
+  \begin{thmenum}
+  \item \label{thm:na-convex-sum} If $f : \R \to \R$ is convex, then
+    \[\E\left[f\left(\sum_i X_i\right)\right] \le \E\left[f\left(\sum_i X_i^*\right)\right]\]
+    provided that the expectation on the right-hand side exists.
 
-%% provided that for each $0 \le r \le n$, the expectation $\E\left[f\left(\sum_{i=1}^k Z_i\right)\right]$ is finite, where $Z_i = 
-%%   \begin{cases}
-%%     X_i^* & i \le r \\
-%%     X_i & i > r
-%%   \end{cases}$.
-  Furthermore if either $n = 2$ or $f$ is increasing,
-  \[\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i\right)\right] \le \E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i^*\right)\right]\]
-  provided that the expectation on the right-hand side exists.
-  %% provided that each $\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k Z_i\right)\right]$ is finite.
+  \item \label{thm:na-convex-maxsum}
+    If $f : \R \to \R$ is convex and increasing, then
+    \[\E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i\right)\right] \le \E\left[f\left(\max_{1 \le k \le n} \sum_{i=1}^k X_i^*\right)\right]\]
+    provided that the expectation on the right-hand side exists.
+  \end{thmenum}
 \end{theorem}
 
-\begin{proof}[Proof of first part.]
-  We start with the case where $n = 2$.
-  Assume for now that $X_1$ and $X_2$ are bounded.
+We build up the proof of this theorem in stages.  We start with just the first part for $n = 2$ and assume the random variables involved are bounded.
+
+\begin{proof}[Proof of \cref{thm:na-convex-sum} for two bounded variables.]
   Let $Y_1, Y_2$ have the same joint distribution as $X_1, X_2$ with $\{X_1, X_2\} \perp \{Y_1, Y_2\}$.
   We can write
   \[
@@ -256,16 +254,66 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   &\le 0
   \]
   where the last inequality is because $f'(X_1 + t)$ and $[t < X_2]$ are negatively associated for each $t$ by monotonicity.
-  The use of Fubini's theorem is justified since the integrand is absolutely integrable: % rework using bounded variables and monotone convergence.....
+  The use of Fubini's theorem is justified since the integrand is absolutely integrable:
   \[
   &\pheq \frac12\E\left[\int_{-\infty}^\infty |(f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])|\,dt \right] \\
   &= \frac12\E\left[\left|\int_{-\infty}^\infty (f'(Y_1 + t) - f'(X_1 + t))([t < Y_2] - [t < X_2])\,dt \right|\right] \\
-  &= \frac12\E[|f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)] \\
+  &= \frac12\E[|f(X_1 + X_2) + f(Y_1 + Y_2) - f(X_1 + Y_2) - f(Y_1 + X_2)|] \\
   &\le \E[|f(X_1 + X_2)|] + \E[|f(X_1^* + X_2^*)|] < \infty & \text{$X_i$ bounded}
   \]
   where the first equality is because both $x \mapsto f'(x + t)$ and $x \mapsto [t < x]$ are increasing,
   so for fixed $X_1, Y_1, X_2, Y_2$, the integrand has the same sign for all $t$.
+\end{proof}
 
+Now we extend this to arbitrary random variables.
+
+\begin{lemma}\label{lem:monotone-convergence-2}
+  Let $A$ be a measurable set in a measure space $(S, \Lambda, \mu)$,
+  and let $f_1, f_2, \dots$ be a sequence of measurable functions
+  such that $f_i$ is increasing in $i$ on $A$ and decreasing on $i$ outside of $A$.
+  Assume that $\int |f_1| d\mu < \infty$, the $f_i$ converge to a pointwise limit,
+  and $\int \lim_i f_i\,d\mu$ exists.
+  Then
+  \[
+  \int \lim_i f_i\,d\mu = \lim_i \int f_i\,d\mu
+  \]
+\end{lemma}
+\begin{proof}
+    \[
+  \int \lim_i f_i\,d\mu
+  &= \int_A \lim_i f_i\,d\mu + \int_{\overline A} \lim_i f_i\,d\mu \\
+  &= \lim_i \int_A f_i\,d\mu + \lim_i \int_{\overline A} f_i\,d\mu &\text{by MCT} \\
+  &= \lim_i \int_A f_i\,d\mu \\
+  \]
+\end{proof}
+
+\begin{proof}[Proof of \cref{thm:na-convex-sum} for two random variables.]
+  By \cref{lem:rhs-suffices} we can assume that both $\E[f(X_1 + X_2)]$ and $\E[f(X_1^* + X_2^*)]$ exist.
+  For $i \in \N$ define
+  \[
+  S_i &= ((X_1 \vee -i) \wedge i) + ((X_2 \vee -i) \wedge i) \\
+  S_i^* &= ((X_1^* \vee -i) \wedge i) + ((X_2^* \vee -i) \wedge i)
+  \]
+  By the previous proof we have
+  \[
+  \E[f(X_1 + X_2)] = \E[\lim_i f(S_i)] = \lim_i \E[f(S_i)] \le \lim_i \E[f(S_i^*)] = \E[\lim_i f(S_i)] = \E[f(X_1^* + X_2^*)]
+  \]
+  provided that we can show that the limits and expectations commute.
+
+  Since $f$ is convex, it is either bounded from below or monotone.
+  If $f$ is bounded from below then 
+  $f(S_i)$ and $f(S_i^*)$ are eventually increasing in $i$, so the limits and expectations commute by the monotone convergence theorem.
+
+  Otherwise, $f$ is monotone; without loss of generality assume it is increasing.
+  Define the event $A = [X_1 \ge X_2]$.
+  Then $S_i$ (and thus $f(S_i)$) is increasing in $i$ on $A$ and
+  decreasing in $i$ on $\overline A$.
+  So $\E[\lim_i f(S_i)] = \lim_i \E[f(S_i)]$ by \cref{lem:monotone-convergence-2}, and the same reasoning works for $S_i^*$.
+\end{proof}
+
+Now we can prove the rest of the theorem.
+
+\begin{proof}[Proof of \cref{thm:na-convex-sum}.]
   For $n > 2$ we induct on $n$.
   Let $X_1, \dots, X_{n+1}$ be negatively associated.
   Define $S = \sum_{i=2}^{n+1} X_i$
@@ -275,17 +323,17 @@ We prove Shao's comparison theorem for negatively associated random variables.  
   \E\left[f\left(\sum_{i=1}^{n+1} X_i\right)\right]
   &= \E[f(X_1 + S)] \\
   &\le \E[f(X_1^* + S)] &\text{since $X_1, S$ are NA} \\
-  &= \E[\E[f(X_1^* + S) \mid X_1^*]] \\
-  &\le \E[\E[f(X_1^* + S^*) \mid X_1^*]] &\text{by inductive hypothesis} \\
+  &= \E[(c \mapsto \E[f(c + S)])(X_1^*)] \\
+  &= \E[(c \mapsto \E[f(c + S^*)])(X_1^*)] &\text{by inductive hypothesis} \\
   &= \E[f(X_1^* + S^*)]] \\
   &= \E\left[f\left(\sum_{i=1}^{n+1} X_i^*\right)\right] \\
   \]
-  Here the inductive hypothesis is applied using the function $x \mapsto f(X_1^* + x)$ which is convex for every value of $X_1^*$.
+  Here the inductive hypothesis is applied using the function $x \mapsto f(c + x)$ which is convex for every value of $c$.
 \end{proof}
 
 The proof for the second part is very similar.
 
-\begin{proof}[Proof of second part.]
+\begin{proof}[Proof of \cref{thm:na-convex-maxsum}.]
   The statement for $n = 2$ follows easily from the first part
   since $X_1$ and $X_2^+$ are negatively associated:
   \[
@@ -304,13 +352,12 @@ The proof for the second part is very similar.
   \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i\right)\right]
   &= \E[f(X_1 + L^+)] \\
   &\le \E[f(X_1^* + L^+)] &\text{since $X_1, L^+$ are NA} \\
-  &= \E[\E[f(X_1^* + L^+) \mid X_1^*]] \\
-  &\le \E[\E[f(X_1^* + {L^*}^+) \mid X_1^*]] & \text{by inductive hypothesis} \\
+  &= \E[(c \mapsto \E[f(c + L^+)])(X_1^*)]] \\
+  &\le \E[(c \mapsto \E[f(X_1^* + {L^*}^+))(X_1^*)] & \text{by inductive hypothesis} \\
   &= \E[f(X_1^* + {L^*}^+)] \\
   &= \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i^*\right)\right]
   \]
-  Here the inductive hypothesis is applied using the function $x \mapsto f(X_1^* + x^+)$ which is convex because $f$ is increasing and convex.
-  % what about fubini conditions??
+  Here the inductive hypothesis is applied using the function $x \mapsto f(c + x^+)$ which is convex because $f$ is increasing and convex.
 \end{proof}
 
 \end{document}
