@@ -315,26 +315,28 @@ Now we can prove the rest of the theorem.
 
 \begin{proof}[Proof of \cref{thm:na-convex-sum}.]
   For $n > 2$ we induct on $n$.
-  Let $X_1, \dots, X_{n+1}$ be negatively associated.
   Define $S = \sum_{i=2}^{n+1} X_i$
   and $S^* = \sum_{i=2}^{n+1} X_i^*$.
+
   We have
   \[
   \E\left[f\left(\sum_{i=1}^{n+1} X_i\right)\right]
   &= \E[f(X_1 + S)] \\
   &\le \E[f(X_1^* + S)] &\text{since $X_1, S$ are NA} \\
-  &= \E[(c \mapsto \E[f(c + S)])(X_1^*)] \\
+  &= \E[(c \mapsto \E[f(c + S)])(X_1^*)] &\text{by independence} \\
   &= \E[(c \mapsto \E[f(c + S^*)])(X_1^*)] &\text{by inductive hypothesis} \\
   &= \E[f(X_1^* + S^*)]] \\
   &= \E\left[f\left(\sum_{i=1}^{n+1} X_i^*\right)\right] \\
   \]
   Here the inductive hypothesis is applied using the function $x \mapsto f(c + x)$ which is convex for every value of $c$.
+  Note that in this proof we are actually considering $X_i$ and $X_i^*$
+  to come from a single joint distribution where $X^*$ is independent from $X$.
 \end{proof}
 
-The proof for the second part is very similar.
+Finally we use the same ideas to show \cref{thm:na-convex-maxsum}.
 
 \begin{proof}[Proof of \cref{thm:na-convex-maxsum}.]
-  The statement for $n = 2$ follows easily from the first part
+  The statement for $n = 2$ follows easily from \cref{thm:na-convex-sum}
   since $X_1$ and $X_2^+$ are negatively associated:
   \[
   \E[f(\max\{X_1, X_1 + X_2\})]
@@ -352,12 +354,12 @@ The proof for the second part is very similar.
   \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i\right)\right]
   &= \E[f(X_1 + L^+)] \\
   &\le \E[f(X_1^* + L^+)] &\text{since $X_1, L^+$ are NA} \\
-  &= \E[(c \mapsto \E[f(c + L^+)])(X_1^*)]] \\
-  &\le \E[(c \mapsto \E[f(X_1^* + {L^*}^+))(X_1^*)] & \text{by inductive hypothesis} \\
+  &= \E[(c \mapsto \E[f(c + L^+)])(X_1^*)]] &\text{by independence} \\
+  &\le \E[(c \mapsto \E[f(c + {L^*}^+)])(X_1^*)] & \text{by inductive hypothesis} \\
   &= \E[f(X_1^* + {L^*}^+)] \\
   &= \E\left[f\left(\max_{1 \le i \le n+1} \sum_i X_i^*\right)\right]
   \]
-  Here the inductive hypothesis is applied using the function $x \mapsto f(c + x^+)$ which is convex because $f$ is increasing and convex.
+  Here the inductive hypothesis is applied using the function $x \mapsto f(c + x^+)$ which is increasing and convex because $f$ is.
 \end{proof}
 
 \end{document}
