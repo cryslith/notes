@@ -1,53 +1,11 @@
 \documentclass[11pt,a4paper]{article}
-\usepackage[margin=1in]{geometry}
-
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath,amsfonts,amssymb,amsthm}
-\usepackage{latexsym}
-\usepackage{mathtools}
 \usepackage[margin=1in]{geometry}
-\usepackage[shortlabels]{enumitem}
+\input{liatex/preamble.tex}
 
-\usepackage{libertine}
-\usepackage[libertine,vvarbb]{newtxmath}
-\usepackage[scaled=0.96]{zi4}
-\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{question}{Question}
-\newtheorem{claim}[theorem]{Claim}
-
-\newcommand*{\defn}[1]{\textbf{#1}}
-\newcommand*{\N}[0]{\mathbb{N}}
-\newcommand*{\R}[0]{\mathbb{R}}
-\newcommand*{\E}[0]{\mathbf{E}}
-\DeclareMathOperator*{\Var}{\mathrm{Var}}
-\DeclareMathOperator*{\Cov}{\mathrm{Cov}}
-\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 \newcommand*{\Normal}[0]{\mathcal{N}}
 \newcommand*{\Exp}[0]{\text{Exp}}
 \newcommand*{\Fl}[0]{\mathcal{F}}
-\newcommand*{\tp}[0]{\mathsf{T}}
-
-\def\[#1\]{\begin{align*}#1\end{align*}}
-\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
-\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
-\renewcommand*{\iff}[0]{\leftrightarrow}
-
-\makeatletter
-\newcommand{\superimpose}[2]{{%
-  \ooalign{%
-    \hfil$\m@th#1\@firstoftwo#2$\hfil\cr
-    \hfil$\m@th#1\@secondoftwo#2$\hfil\cr
-  }%
-}}
-\makeatother
-
-\newcommand{\dotcup}[0]{\mathbin{\mathpalette\superimpose{{\cdot}{\cup}}}}
-\DeclareMathOperator*{\bigdotcup}{\mathpalette\superimpose{{\cdot}{\bigcup}}}
 
 \title{Kolmogorov's Zero-One Law}
 

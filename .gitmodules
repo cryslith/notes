@@ -1,0 +1,3 @@
+[submodule "liatex"]
+	path = liatex
+	url = https://github.com/cryslith/liatex.git
