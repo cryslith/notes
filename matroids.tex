@@ -1,31 +1,10 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage{amsthm}
-\usepackage{latexsym}
-\usepackage{mathtools}
 \usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
+\input{liatex/preamble}
 
-\usepackage{libertine}
-\usepackage[libertine,vvarbb]{newtxmath}
-\usepackage[scaled=0.96]{zi4}
-\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{question}[theorem]{Question}
-\newtheorem{claim}[theorem]{Claim}
-
-\def\[#1\]{\begin{align*}#1\end{align*}}
-
-\newcommand*{\Symbol}[2]{\newcommand*{#1}[0]{#2}}
-\Symbol{\I}{\mathcal{I}}
-\Symbol{\C}{\mathcal{C}}
-\newcommand*{\defn}[1]{\textbf{\textit{\boldmath #1}}}
+\newcommand*{\I}[0]{\mathcal{I}}
+\newcommand*{\Cc}[0]{\mathcal{C}}
 
 \title{Notes on Matroid Algorithms}
 \author{Lily Chung}
@@ -34,7 +13,7 @@
 \begin{document}
 \maketitle
 
-In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\C$ are the circuits.
+In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\Cc$ are the circuits.
 I sometimes write set union as $A + B$ when $A, B$ are disjoint, and I write set difference as $C - D$ when $D \subset C$.
 I also sometimes write $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
 
@@ -68,7 +47,7 @@ If the algorithm cannot make progress it still works to take $Y$ as the set of v
 \end{definition}
 
 \begin{definition}
-  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is a matroid on $E - B$ where $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$.  Equivalently $\C_{M/B} = \{C \cap (E - B) \mid C \in \C_M\}$.
+  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is a matroid on $E - B$ where $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$.  Equivalently $\Cc_{M/B} = \{C \cap (E - B) \mid C \in \Cc_M\}$.
 \end{definition}
 
 For graphic matroids, the submatroid corresponds to deleting the edges of $A$, and the quotient corresponds to contracting the edges in $B$.  Submatroids and quotients commute with themselves and each other.
