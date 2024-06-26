@@ -255,8 +255,8 @@ Now we extend this to arbitrary random variables.
   By \cref{lem:rhs-suffices} we can assume that both $\E[f(X_1 + X_2)]$ and $\E[f(X_1^* + X_2^*)]$ exist.
   For $i \in \N$ define
   \[
-  S_i &= ((X_1 \vee -i) \wedge i) + ((X_2 \vee -i) \wedge i) \\
-  S_i^* &= ((X_1^* \vee -i) \wedge i) + ((X_2^* \vee -i) \wedge i)
+  S_i &= (-i \vee X_1 \wedge i) + (-i \vee X_2 \wedge i) \\
+  S_i^* &= (-i \vee X_1^* \wedge i) + (-i \vee X_2^* \wedge i)
   \]
   By the previous proof we have
   \[
