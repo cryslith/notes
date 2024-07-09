@@ -13,34 +13,150 @@
 \begin{document}
 \maketitle
 
-In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\Cc$ are the circuits.
+\section*{Matroids}
+
+todo define matroids and show some lemmas
+
+%% In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\Cc$ are the circuits.
 I sometimes write set union as $A + B$ when $A, B$ are disjoint, and I write set difference as $C - D$ when $D \subset C$.
 I also sometimes write $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
 
-% based on 
+\section*{Matroid Partitioning}
 
-Matroid partitioning: \href{https://page.math.tu-berlin.de/\~felsner/Lehre/SemMatS/Literatur/ScheinermanUllman:FractionalArboricity.pdf}{based on book chapter}.
-Note that it works even when applied to $k$ different matroids instead of $k$ copies of the same matroid; this generalization is checking for independence of a set in a $k$-wise matroid sum.
-Also it's helpful to use the following lemma when analyzing the algorithm:
+\href{https://page.math.tu-berlin.de/\~felsner/Lehre/SemMatS/Literatur/ScheinermanUllman:FractionalArboricity.pdf}{based on book chapter}.
 
-\begin{lemma}
-  Let $S \subset E$ and $a, b, c \in E - S$ where $a, b, c$ are distinct.
-  It cannot be simultaneously true that:
-  \[
-  S + \{a\} &\in \I \\
-  S + \{b, c\} &\in \I \\
-  S + \{a, b\} &\not\in \I \\
-  S + \{a, c\} &\not\in \I \\
-  \]
+Let $\I_1, \dots, \I_n$ be matroid independence systems over the same ground set $E$.
+
+A \defn{proper coloring} $S$ of $E$ with respect to $\I_1, \dots, \I_n$ is a partition of $E$ into sets $S_1, \dots, S_n$ such that each $S_i \in \I_i$.
+The goal of matroid partitioning is to either find a proper coloring, or a certificate proving that no proper coloring exists.
+
+The algorithm works by maintaining a \defn{partial proper coloring},
+a collection of disjoint sets $S_1, \dots, S_n$ such that $S_i \in \I_i$ which don't necessarily cover all of $E$.
+Initially the elements of $E$ are uncolored, so the sets $S_i$ are empty.
+The algorithm repeatedly finds an \emph{augmenting path}
+which it uses to color an element of $E$,
+maintaining the invariant that the partial coloring is proper.
+This continues until no augmenting path exists.
+
+\begin{definition}
+  Let $S$ be a partial proper coloring.
+  We write $x \gets \langle i \rangle$ if $x$ doesn't have color $i$, and $S_i + x \in \I_i$.
+  We also write $x \gets y$ if $y$ has color $i$, $x$ doesn't have color $i$, and $S_i - y + x \in \I_i$.
+  An \defn{augmenting path} is a directed path of the form
+  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle a \rangle\]
+  such that $x_0$ is uncolored, $x_i \not\gets x_j$ for $j > i + 1$, and $x_i \not\gets \langle a \rangle$ for $i < k$.
+\end{definition}
+
+When the algorithm finds an augmenting path, it shifts all the colors one step along the path to the left.
+The following lemma proves that this preserves the invariant:
+
+\begin{lemma}\label{lem:augmenting path}
+  Let $S$ be a partial proper coloring,
+  and let
+  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle a \rangle\]
+  be an augmenting path.
+  Define $T$ to be the partial coloring obtained from $S$ by simultaneously recoloring each $x_i$ to the color of $x_{i+1}$ for $i < k$, and recoloring $x_k$ to color $a$.
+  Then $T$ is proper.
 \end{lemma}
 \begin{proof}
-  Since $|S + \{b, c\}| > |S + \{a\}|$, one of $b$ or $c$ can be added to $S + \{a\}$ while maintaining independence.
+  By induction on $k$.  The case $k = 0$ is trivial.
+
+  Let
+  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_{k+1} \gets \langle a \rangle\]
+  be an augmenting path for $S$.
+  Suppose $x_{k+1}$ has color $b$ in $S$.
+  Let $U$ be the proper partial coloring obtained from $S$ by recoloring $x_{k+1}$ to color $a$.
+  We claim that
+  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle b \rangle\]
+  is an augmenting path in $U$:
+  \begin{itemize}
+  \item $x_k \gets \langle b \rangle$ in $U$:
+
+    Follows from $x_k \gets x_{k+1}$ in $S$.
+  \item $x_i \gets x_{i+1}$ in $U$ for $i < k$:
+
+    We can assume $x_{i+1}$ has color $a$, since otherwise this follows from $x_i \gets x_{i+1}$ in $S$.
+    We must show $U_a' \in \I_a$, where
+    \[U_a' = U_a - x_{i+1} + x_i = S_a - x_{i+1} + x_i + x_k.\]
+    We know the following:
+    \[
+    S_a + x_k &\in \I_a & \text{since $x_k \gets \langle a \rangle$ in $S$} \\
+    S_a - x_{i+1} + x_i &\in \I_a & \text{since $x_i \gets x_{i+1}$ in $S$} \\
+    S_a + x_i &\not\in \I_a & \text{since $x_i \not\gets \langle a \rangle$ in $S$} \\
+    \]
+    Since $|S_a + x_k| > |S_a - x_{i+1} + x_i|$
+    we must be able to augment $S_a - x_{i+1} + x_i$ by either $x_{i+1}$ or $x_k$.
+    The former is impossible so it must be the latter, which shows $U_a' \in \I_a$.
+  \item $x_i \not\gets \langle b \rangle$ in $U$ for $i < k$:
+  
+    Follows from $x_i \not\gets x_{k+1}$ in $S$.
+  \item $x_i \not\gets x_j$ in $U$ for $j > i+1$:
+
+    Suppose for contradiction that $x_i \gets x_j$ in $U$.
+    We can assume that $x_j$ has color $b$
+    since otherwise this contradicts $x_i \not\gets x_j$ in $S$.
+
+    We know the following:
+    \[
+    S_b &\in \I_b & \text{by assumption} \\
+    S_b - x_{k+1} - x_j + x_i &\in \I_b & \text{since $x_i \gets x_j$ in $U$} \\
+    S_b - x_j + x_i &\not\in \I_b & \text{since $x_i \not\gets x_j$ in $S$} \\
+    S_b - x_{k+1} + x_i &\not\in \I_b & \text{since $x_i \not\gets x_{k+1}$ in $S$} \\
+    \]
+    Since $|S_b| > |S_b - x_{k+1} - x_j + x_i|$
+    we must be able to augment $S_b - x_{k+1} - x_j + x_i$ by either $x_j$ or $x_{k+1}$, but this contradicts the facts.
+  \end{itemize}
+  Thus
+  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle b \rangle\]
+  is an augmenting path in $U$, so $T$ is proper by the inductive hypothesis.
 \end{proof}
 
-The certificate for nonexistence of a matroid partition in the case of $k$ different matroids
-is a $Y \subset E$ such that $|Y| > \sum_i r_i(Y)$.
-Clearly if such a $Y$ exists then the partitioning cannot be accomplished, since in any partition we have \[|Y| = \sum_i |Y \cap S_i| = \sum_i r_i(Y \cap S_i) \le \sum_i r_i(Y)\]
-If the algorithm cannot make progress it still works to take $Y$ as the set of vertices which can reach an uncolored vertex.
+Now we can describe the full matroid partitioning algorithm.
+
+\begin{theorem}\label{thm:matroid partitioning}
+  Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$ with rank functions $r_1, \dots, r_n$.
+  There is a polynomial-time algorithm which finds either a proper coloring,
+  or a set $Y \subset E$ such that $|Y| > \sum_i r_i(Y)$.
+\end{theorem}
+
+A set $Y$ with $|Y| > \sum_i r_i(Y)$ is a certificate proving that no proper coloring exists, since if $S$ is a proper coloring then
+\[|Y| = \sum_i |Y \cap S_i| = \sum_i r_i(Y \cap S_i) \le \sum_i r_i(Y)\]
+for any set $Y$.
+
+\begin{proof}[Proof of \cref{thm:matroid partitioning}.]
+  As described earlier, the algorithm starts by finding a proper partial coloring $S$ with no augmenting path; the correctness of this part follows from \label{lem:augmenting path}.
+  Having found such an $S$, if $S$ is a proper coloring of $E$, then the algorithm outputs $S$.
+  Otherwise, there exists at least one uncolored element.
+  In this case the algorithm outputs $Y$,
+  where $Y$ is the set of elements which can reach an uncolored element via directed paths.
+  We must show that $|Y| > \sum_i r_i(Y)$.
+
+  We claim that $r_i(Y) = |Y \cap S_i|$ for each $i$.
+  We know $r_i(Y) \ge |Y \cap S_i|$ since $S_i \in \I_i$,
+  so suppose for contradiction that $r_i(Y) > |Y \cap S_i|$; this means
+  there is an element $y \in Y$ such that $Y \cap S_i + y \in \I_i$.
+  We know:
+  \[
+  S_i &\in \I_i \\
+  S_i + y &\not\in \I_i &\text{since $y \not\gets \langle i \rangle$} \\
+  \]
+  so there is a unique circuit $C \in S_i + y$.
+  We cannot have $C \subset Y$ since $Y \cap S_i + y$ is independent,
+  so $C$ contains some element $z \in S_i \setminus Y$,
+  which means $S_i - z + y \in \I_i$.
+  But this is just $y \gets z$, which contradicts $z \notin Y$.
+  So the claim is proved.
+
+  Finally we compute
+  \[
+  \sum_i r_i(Y)
+  &= \sum_i |Y \cap S_i| \\
+  &= \left|Y \cap \bigcup_i S_i\right| &\text{since the $S_i$ are disjoint} \\
+  &< |Y| &\text{since there exists an uncolored element}
+  \]
+\end{proof}
+
+\section*{Shannon switching game}
 
 \begin{definition}
   Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is a matroid on $A$ where $\I_{M|_A} = \{I \subset A \mid I \in \I_M\}$.
@@ -55,8 +171,10 @@ For graphic matroids, the submatroid corresponds to deleting the edges of $A$, a
 \begin{definition}
   The \defn{Shannon switching game} is defined by a matroid $M$ and a subset $F \subset E$.
   Two players, \emph{Cut} and \emph{Short} take turns claiming elements of $E - F$ for themselves, with Cut moving first, until all elements of $E - F$ have been claimed.
-  Letting $B$ be the set of edges claimed by Short,
-  the game is won by Short if $B$ spans $F$.
+  Let $B$ be the set of elements claimed by Short.
+  We say that Short wins if $B$ spans $F$; otherwise Cut wins.
 \end{definition}
+
+% todo: shannon switching game, duality, matroid packing/covering/intersection connections, TRVB application
 
 \end{document}
