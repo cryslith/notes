@@ -151,9 +151,9 @@ To prove this we first show:
   by convexity of $f^+$.
 
   Now, if $f$ is bounded from below then $\E[f(X)^-] < \infty$ trivially, so we can assume this isn't the case.
-  Since $f$ is convex, this means it has a decreasing oblique asymptote as $x \to -\infty$ or as $x \to \infty$; without loss of generality assume it's the former.
+  Since $f$ is convex, this means it is monotone and has a decreasing oblique asymptote as $x \to -\infty$ or as $x \to \infty$; without loss of generality assume it's the former.
 
-  From $\E[f(Y)^-] < \infty$, we know by \cref{lem:asymptote} that $\E[f(Y)^-] < \infty$ also.
+  From $\E[f(Y)^-] < \infty$, we know by \cref{lem:asymptote} that $\E[Y^-] < \infty$ also.
   But then $\E[X^-] \le \E[{Y}^-]$ by convexity of $x \mapsto x^-$,
   and so finally $\E[f(X)^-]$ by \cref{lem:asymptote} again.
 \end{proof}

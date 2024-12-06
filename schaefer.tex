@@ -1,0 +1,129 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\newcommand*{\D}{\mathcal{D}}
+\newcommand*{\CC}{\mathcal{C}}
+\DeclareMathOperator{\rows}{\mathsf{rows}}
+\DeclareMathOperator{\cols}{\mathsf{cols}}
+\DeclareMathOperator{\Inv}{\mathsf{Inv}}
+\DeclareMathOperator{\Pol}{\mathsf{Pol}}
+\newcommand*{\ppc}[1]{\langle {#1} \rangle}
+
+\title{Notes on Schaefer dichotomy}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+Some notes on \href{https://arxiv.org/abs/cs/0611018}{Hubie Chen's exposition} with certain clarifications and my preferred notation.
+
+For a function $f : X \to Y$ I write $f^{\tensor n} : X^n \to Y^n$ for the function which applies $f$ coordinate-wise.
+
+If $M \in X^{m \times n}$ is a matrix with $m$ rows and $n$ columns, then $\rows(M) \in (X^n)^m$ is the view of $M$ as a vector of $m$ rows,
+and $\cols(M) \in (X^m)^n$ is the view of $M$ as a vector of $n$ columns.
+
+We give some equivalent definitions:
+
+\begin{definition}
+  Let $R \subset \D^n$ be a relation.
+  A function $f : \D^m \to \D$ is a \defn{polymorphism} of $R$ if for any matrix $M \in \D^{m \times n}$ where each row of $M$ satisfies $R$,
+  we have $f^{\tensor n}(\cols(M)) \in R$.
+\end{definition}
+
+\begin{definition}
+  \label{defn:ppc}
+  $\ppc{\Gamma}$ is the set of relations definable by first-order formulae using only relations in $\Gamma$, equality, conjunction, and existential quantification.
+\end{definition}
+
+\bigskip
+
+Now we make explicit some details in the proof of Theorem 3.13.
+
+\begin{lemma}
+  \label{lem:polyppc}
+  If $f$ is a polymorphism of $\Gamma$ then $f$ is a polymorphism of $\ppc{\Gamma}$.
+\end{lemma}
+\begin{proof}
+  It is simple to check that the property of having $f$ as a polymorphism is closed under the constructions in \cref{defn:ppc}.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:polyformula}
+  Let $\Gamma$ be a constraint language over a finite domain $\D$, and fix an arity $m$.
+  For each element $v \in \D^m$ define a variable $x_v$.
+  Then there exists a formula $\CC$ over the variables $x_v$ which is a conjunction of relations in $\Gamma$ with the following property:
+  an assignment $f : \D^m \to \D$ of values to the variables $x_v$
+  satisfies $\CC$ if and only if $f$ is a polymorphism of $\Gamma$.
+\end{lemma}
+\begin{proof}
+  We construct $\CC$ iteratively by adding clauses starting from the empty conjunction $\CC_0 \eqdef \top$.  At each iteration we maintain the fact that every polymorphism of $\Gamma$ satisfies $\CC_i$.
+
+  We now describe the iterative process.
+  If every satisfying assignment of $\CC_i$ is a polymorphism of $\Gamma$, the process terminates, outputting $\CC \eqdef \CC_i$.
+  Otherwise, there exists some satisfying assignment of $\CC_i$ which is not a polymorphism of some $S \in \Gamma$.
+  We form $\CC_{i+1}$ from $\CC_i$ by adding a clause $S(x_{s_1}, \dots, x_{s_m})$
+  for every sequence of $m$ tuples $s_1, \dots, s_m \in S$.
+  Note that the new clauses are satisfied exactly by polymorphisms of $S$, which implies that every polymorphism of $\Gamma$ still satisfies $\CC_{i+1}$.
+
+  It also implies that $\CC_{i+1}$ has strictly fewer satisfying assignments than $\CC_i$.
+  Since the set $\D^m \to \D$ of possible assignments is finite,
+  the process eventually terminates.
+\end{proof}
+
+\begin{theorem}[Theorem 3.13]
+  Let $\Gamma$ be a constraint language over a finite domain $\D$.
+  Then $\ppc{\Gamma} = \Inv(\Pol(\Gamma))$.
+\end{theorem}
+\begin{proof}
+  The easy direction is $\ppc{\Gamma} \subset \Inv(\Pol(\Gamma))$, which follows directly from \cref{lem:polyppc}.
+
+  Now for the $\Inv(\Pol(\Gamma)) \subset \ppc{\Gamma}$ direction.
+  Let $R \in \Inv(\Pol(\Gamma))$ be a relation with arity $n$ which has $m$ satisfying assignments.
+  Define $\hat R \in \D^{m \times n}$ to be the matrix whose rows consist of the satisfying assignments of $R$.
+
+  We can assume without loss of generality that no two columns of $\hat R$ are identical.  Indeed, suppose $\cols(\hat R)_0 = \cols(\hat R)_1$.
+  Consider the relation $R_0 \subset \D^{n-1}$ defined by
+  \[
+  R_0(v) &\eqdef [\exists z \in \D, R(z, v)] \\
+  R &= [v_0 = v_1 \land v_{\ge 1} \in R_0]
+  \]
+  Since $R$ and $R_0$ are pp-definable from each other we can consider $R_0$ instead of $R$ (using the easy direction we already proved); and $\hat R_0$ has fewer duplicated columns than $\hat R$.
+
+  For each element $v \in \D^m$ define a variable $x_v$,
+  and let $\CC$ be the formula from \cref{lem:polyformula} which is satisfied exactly by assignments $f : \D^m \to \D$ which are polymorphisms of $\Gamma$.
+  Define the relation $R' \subset \D^n$ by the formula
+  \[
+  R'(x_{c_1}, \dots, x_{c_n}) &\eqdef [\exists x_{v_1} \dots \exists x_{v_p}, \CC] & p \eqdef |\D|^m - n
+  \]
+  where $c_1, \dots, c_n$ are the columns of $\hat R$ and $v_1, \dots, v_p$ are the remaining elements of $\D^m - \cols(\hat R)$.
+  Note that this formula is well-formed because the columns of $\hat R$ are pairwise distinct.
+  Then by definition of $\CC$ we have
+  \[R' = \{f^{\tensor n}(\cols(\hat R)) : \text{$f : \D^m \to D$ is a polymorphism of $\Gamma$}\}\]
+  We claim that $R = R'$, which proves $R \in \ppc{\Gamma}$.
+
+  The $R' \subset R$ direction is true because if $f$ is a polymorphism of $\Gamma$ then it is also a polymorphism of $R$,
+  so $f^{\tensor n}(\cols(\hat R)) \in R$.
+
+  The $R \subset R'$ direction is true because the coordinate projections $\pi_i : \D^m \to \D$ are polymorphisms of all relations,
+  and $\pi_i^{\tensor n}(\cols(\hat R)) = \rows(\hat R)_i$.
+\end{proof}
+
+\bigskip
+
+Now we rephrase certain of the algorithms for Schaefer tractability.
+Also, contra Chen, we define the constant operations 0 and 1 to be zero-ary rather than unary, so that 0 is a polymorphism of $R$ if and only if $R(0)$ holds.
+
+\begin{description}
+  \item[Constant $0$.] Trivially satisfied by the all-0 vector.
+  \item[Constant $1$.] By symmetry.
+  \item[Conjunction $\land$.] Determine if any clause has a \textit{commonality}, i.e. the clause forces one of its variables.\footnote{In fact we only need to find commonalities which force the value 1.}  If so, propagate the forced variable and repeat.  Otherwise terminate, setting all remaining variables to 0.
+
+    Consider a remaining clause $R$.  We know $R$ has no commonalities forcing the value 1, so for each variable in $R$ there is an element of $R$ which sets that variable to 0.  Applying the conjunction polymorphism to these elements shows that 0 is also a solution of $R$.
+  \item[Disjunction $\lor$.] By symmetry.
+  \item[Majority.] sdlkfsjlfs
+  \item[Triple modular addition.] lksjdlfjslkdsf
+\end{description}
+\end{document}

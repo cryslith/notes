@@ -113,7 +113,7 @@ The following lemma proves that this preserves the invariant:
 
 Now we can describe the full matroid partitioning algorithm.
 
-\begin{theorem}\label{thm:matroid partitioning}
+\begin{theorem}[Matroid Partitioning]\label{thm:matroid partitioning}
   Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$ with rank functions $r_1, \dots, r_n$.
   There is a polynomial-time algorithm which finds either a proper coloring,
   or a set $Y \subset E$ such that $|Y| > \sum_i r_i(Y)$.
@@ -155,6 +155,18 @@ for any set $Y$.
   &< |Y| &\text{since there exists an uncolored element}
   \]
 \end{proof}
+
+\begin{theorem}[Matroid Sum]
+  Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$.
+  Let $\mathcal{J}$ be the set of all sets $S \subset E$ such that
+  $S$ can be partitioned into subsets $S_1, \dots, S_n$ where each $S_i \in \I_i$.
+  Then $\mathcal{J}$ is a matroid independence system.
+\end{theorem}
+\begin{proof}
+  
+\end{proof}
+
+\section*{Matroid Intersection}
 
 \section*{Shannon switching game}
 

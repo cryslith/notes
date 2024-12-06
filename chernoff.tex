@@ -29,8 +29,8 @@ and we are interested in their sum.  The following theorems are often used to un
   \label{thm:chernoff}
   Let \(X = \sum_i X_i\) where the \(X_i\) are independent and $X_i \in [0, 1]$, and let \(\mu = \E X\).
   Then \[
-  \Pr[X \ge (1 + \delta)\mu] &\le \exp\left(-\frac{b^2}{2+b}\mu\right) & b \ge 0 \\
-  \Pr[X \le (1 - \delta)\mu] &\le \exp\left(-\frac{b^2}{2}\mu\right) & b \in (0, 1) \\
+  \Pr[X \ge (1 + b)\mu] &\le \exp\left(-\frac{b^2}{2+b}\mu\right) & b \ge 0 \\
+  \Pr[X \le (1 - b)\mu] &\le \exp\left(-\frac{b^2}{2}\mu\right) & b \in (0, 1) \\
   \]
 \end{theorem}
 
@@ -54,8 +54,8 @@ An elementary observation which is useful in practice is that even without knowi
   Let \(X = \sum_i X_i\) such that the \(X_i\) are independent and $X_i \in [0, 1]$,
   and suppose $\ell \le \E X \le u$.
   Then \[
-  \Pr[X \ge (1 + \delta)u] &\le \exp\left(-\frac{b^2}{2+b}u\right) & b \ge 0 \\
-  \Pr[X \le (1 - \delta)\ell] &\le \exp\left(-\frac{b^2}{2}\ell\right) & b \in (0, 1) \\
+  \Pr[X \ge (1 + b)u] &\le \exp\left(-\frac{b^2}{2+b}u\right) & b \ge 0 \\
+  \Pr[X \le (1 - b)\ell] &\le \exp\left(-\frac{b^2}{2}\ell\right) & b \in (0, 1) \\
   \]
 \end{corollary}
 \begin{proof}

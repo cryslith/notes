@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\usepackage{tikz}
+\usepackage{tcolorbox}
+\usepackage{lipsum}
+
+\newcommand{\example}[2]{
+  \begin{minipage}[t]{\textwidth/2-1em}   
+    \textbf{Example problem:}\\
+    \itshape
+    {#1}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{\textwidth/2-1em}
+    \textbf{Example proof:}\\
+    {#2}
+  \end{minipage}
+}
+
+\newtcolorbox{logicbox}[1]{colbacktitle=red!40!white, coltitle=black, title={How to prove {#1}}}
+
+\title{How to prove it}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{tcolorbox}[title=Start]
+  Write down the problem statement, including \textbf{all} assumptions.
+  \\[1em]
+  \example{
+    Suppose $p$ is a prime and $a$ is not a
+    multiple of $p$. Prove that $a^{p-1} \equiv 1 \pmod p$.
+  }{
+    Assume $p$ is a prime.
+    Assume $a$ is not a multiple of $p$.
+    We want to show $a^{p-1} \equiv 1 \pmod p$. [Proof.]
+  }
+\end{tcolorbox}
+
+\begin{logicbox}{$P \to Q$}
+  Assume $P$ and prove $Q$.
+  \\[1em]
+  \example{
+    Prove $(3a = 3b) \to (a = b)$ for real numbers $a, b$.
+  }{
+    Assume $3a = 3b$.
+    We want to show $a = b$. [Proof.]
+  }
+\end{logicbox}
+
+\begin{logicbox}{$P \land Q$}
+  First prove $P$, then prove $Q$.
+\end{logicbox}
+
+\begin{logicbox}{$P \lor Q$}
+  Choose one of $P$ or $Q$ to prove, then prove it.
+\end{logicbox}
+
+\begin{logicbox}{$\neg P$}
+  Assume $P$ and prove a contradiction.
+  \\[1em]
+  \example{
+    Prove that there is no integer $n$ such that $n^2 = -1$.
+  }{
+    Assume for contradiction that there does exist $n$ such that $n^2 = -1$.
+    [Proof of contradiction.]
+    We have arrived at a contradiction, so no such integer $n$ exists.
+  }
+\end{logicbox}
+
+\begin{logicbox}{$P \iff Q$}
+  This is the same as $(P \to Q) \land (Q \to P)$.
+  First prove $P \to Q$, then prove $Q \to P$.
+  \\[1em]
+  \example{
+    Prove that $x$ is divisible by 9 if and
+only if the sum of the digits of $x$ is a multiple of 9.
+  }{
+    First, we assume $x$ is divisible by 9, and prove that
+    the sum of the digits of $x$ is a multiple of 9.
+    [Proof.]
+    \\[0.5em]
+    Now, we assume the sum of the digits of $x$ is a multiple of 9,
+    and prove that $x$ is divisible by 9. [Proof.]
+  }
+\end{logicbox}
+
+\end{document}
