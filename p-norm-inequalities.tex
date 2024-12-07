@@ -13,12 +13,48 @@
 Let $f : S \to \R_{\ge 0}$ be a nonnegative measurable function on a measure space $(S, \Lambda, \mu)$.
 Define \[\norm{f}_p = \begin{cases}
   \left(\int f^p\,d\mu\right)^{1/p} & p \in \R - \{0\} \\
-  \exp \left(\int \log f\,d\mu\right) & p = 0 \\
+  \exp \left(\int \log f\,d\mu\right) & p = 0, \mu[f > 0] = 1 \\
   \essinf f & p = -\infty \\
   \esssup f & p = \infty \\
   \end{cases}
 \]
 Note that this is not actually a norm unless $p \ge 1$.
+
+\section*{Limits}
+
+\begin{theorem}
+  Let $f$ be a nonnegative measurable function.
+  Then \[
+  \lim_{p \to -\infty} \norm{f}_p &= \norm{f}_{-\infty} \\
+  \lim_{p \to \infty} \norm{f}_p &= \norm{f}_\infty \\
+  \]
+\end{theorem}
+\begin{proof}
+  todo
+\end{proof}
+
+\begin{theorem}
+  Let $f$ be a nonnegative measurable function,
+  and let $L^- = \lim_{p \to 0^-} \norm{f}_p$, $L^+ = \lim_{p \to 0^+} \norm{f}_p$.
+  Then:
+  \begin{itemize}
+  \item if $\mu[f > 0] > 1$ then $L^- = 0$ and $L^+ = \infty$
+  \item if $\mu[f > 0] < 1$ then $L^- = \infty$ and $L^+ = 0$
+  \item if $\mu[f > 0] = 1$ then $L^- = L^+ = \norm{f}_0$
+  \end{itemize}
+  provided $\norm{f}_p < \infty$ for some $p$ with the relevant sign.
+\end{theorem}
+\begin{proof}
+  For the first two cases, we can observe that:
+  \begin{itemize}
+  \item For $c \ge 1$ we have $c^p \nearrow 1$ as $p \to 0^-$ and $c^p \searrow 1$ as $p \to 0^+$.
+  \item For $0 < c \le 1$ we have $c^p \searrow 1$ as $p \to 0^-$ and $c^p \nearrow 1$ as $p \to 0^+$.
+  \end{itemize}
+  So by writing $f = f[f \le 1] + f[f > 1]$, we can use monotone convergence to conclude
+  that $\lim_{p \to 0^-} \int f^p\,d\mu = \lim_{p \to 0^+} \int f^p\,d\mu = \mu[f > 0]$, from which the first two cases follow.
+
+  For the last case, todo.
+\end{proof}
 
 \section*{Power Means}
 
@@ -52,18 +88,17 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 \section*{H\"older's Inequality}
 
 \begin{theorem}[H\"older's Inequality]
-  Let $f, g : S \to \R$ be nonnegative measurable functions,
-  and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$ or $p=q=0$.
+  Let $f, g$ be nonnegative measurable functions,
+  and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$.% or $p=q=0$.  <- doesn't work
   Then:
   \begin{itemize}
   \item if $p, q \in [1, \infty]$ then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$
   \item if $p, q \in [-\infty, 1]$ then $\norm{fg}_1 \ge \norm{f}_p \norm{g}_q$
-  \item if $p = q = 0$ then $\norm{fg}_1 = \norm{f}_p \norm{g}_q$
   \end{itemize}
   provided that the integrals exist.
 \end{theorem}
 \begin{proof}
-  The $-\infty, 0, \infty$ cases are easily checked.
+  The $\pm\infty$ cases are easily checked.
   Define $\nu$ to be a probability measure on $S$ via $d\nu = \frac{g^q}{\int g^q\,d\mu} d\mu$,
   and let $X = fg^{1-q}$.  (We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.)
   Then we have
