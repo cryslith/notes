@@ -89,7 +89,7 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 
 \begin{theorem}[H\"older's Inequality]
   Let $f, g$ be nonnegative measurable functions,
-  and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$.% or $p=q=0$.  <- doesn't work
+  and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$.
   Then:
   \begin{itemize}
   \item if $p, q \in [1, \infty]$ then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$
@@ -100,14 +100,22 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 \begin{proof}
   The $\pm\infty$ cases are easily checked.
   Define $\nu$ to be a probability measure on $S$ via $d\nu = \frac{g^q}{\int g^q\,d\mu} d\mu$,
-  and let $X = fg^{1-q}$.  (We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.)
+  and let $X = fg^{1-q}$; we can assume this is well-defined.%
+  \footnote{
+  We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.
+  We can also assume $g > 0$ a.e. as follows.
+  If $q < 0$ this follows because the integrals are hypothesized to exist,
+  and if $p < 0$ we can swap $f, p$ with $g, q$.
+  Otherwise we restrict the measure space to $[g > 0]$,
+  which gives $\norm{fg}_1 \le \norm{f[g > 0]}_p \norm{g}_q \le \norm{f}_p \norm{g}_q$.
+  }
   Then we have
   \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
   &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
-  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} &\text{by \cref{thm:power mean}}\\
+  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} &\text{Jensen's inequality}\\
   &= \left(\int g^q\,d\mu\right)\left(\int f^p g^{p(1-q)}\frac{g^q}{\int g^q\,d\mu}\,d\mu \right)^{1/p} \\
   &= \left(\int g^q\,d\mu\right)^{1 - 1/p}\left(\int f^p g^{p + q - pq}\,d\mu \right)^{1/p} \\
-  &= \norm{f}_p \norm{g}_q \\
+  &= \norm{f}_p \norm{g}_q &\text{since $\frac1p + \frac1q = 1$} \\
   \]
   where the sign of the inequality is flipped if $p, q < 1$.
 \end{proof}
