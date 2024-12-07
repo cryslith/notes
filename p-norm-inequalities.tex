@@ -3,24 +3,22 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
-\title{Common Inequalities}
+\title{$p$-norm inequalities}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-Some nice derivations of common inequalities.
-
 Let $f : S \to \R_{\ge 0}$ be a nonnegative measurable function on a measure space $(S, \Lambda, \mu)$.
 Define \[\norm{f}_p = \begin{cases}
-  \left(\int f\,d\mu\right)^{1/p} & p \in \R - \{0\} \\
+  \left(\int f^p\,d\mu\right)^{1/p} & p \in \R - \{0\} \\
   \exp \left(\int \log f\,d\mu\right) & p = 0 \\
   \essinf f & p = -\infty \\
   \esssup f & p = \infty \\
   \end{cases}
 \]
-Note: this is not actually a norm unless $p \ge 1$.
+Note that this is not actually a norm unless $p \ge 1$.
 
 \section*{Power Means}
 
