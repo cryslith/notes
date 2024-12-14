@@ -10,85 +10,152 @@
 \begin{document}
 \maketitle
 
-Let $f : S \to \R_{\ge 0}$ be a nonnegative measurable function on a measure space $(S, \Lambda, \mu)$.
-Define \[\norm{f}_p = \begin{cases}
+Let $f : S \to [0, \infty]$ be a measurable function on a nonzero measure space $(S, \Lambda, \mu)$.
+Define \[\norm{f}_p \eqdef \begin{cases}
   \left(\int f^p\,d\mu\right)^{1/p} & p \in \R - \{0\} \\
-  \exp \left(\int \log f\,d\mu\right) & p = 0, \mu[f > 0] = 1 \\
+  \lim_{p \to 0^-} \norm{f}_p & p = 0^- \\
+  \lim_{p \to 0^+} \norm{f}_p & p = 0^+ \\
   \essinf f & p = -\infty \\
   \esssup f & p = \infty \\
   \end{cases}
 \]
+where $x \mapsto x^{-1}$ is extended continuously to zero and infinite values.
+We also write $\norm{f}_0 = \lim_{p \to 0} \norm{f}_p$ if the limit exists.
 Note that this is not actually a norm unless $p \ge 1$.
 
-\section*{Limits}
+It's useful to observe the symmetry $\norm{f}_{-p} = \norm{f^{-1}}_p^{-1}$.
 
-\begin{theorem}
-  Let $f$ be a nonnegative measurable function.
-  Then \[
-  \lim_{p \to -\infty} \norm{f}_p &= \norm{f}_{-\infty} \\
-  \lim_{p \to \infty} \norm{f}_p &= \norm{f}_\infty \\
-  \]
-\end{theorem}
-\begin{proof}
-  todo
-\end{proof}
+\section*{Power Mean Inequality}
 
-\begin{theorem}
-  Let $f$ be a nonnegative measurable function,
-  and let $L^- = \lim_{p \to 0^-} \norm{f}_p$, $L^+ = \lim_{p \to 0^+} \norm{f}_p$.
-  Then:
-  \begin{itemize}
-  \item if $\mu[f > 0] > 1$ then $L^- = 0$ and $L^+ = \infty$
-  \item if $\mu[f > 0] < 1$ then $L^- = \infty$ and $L^+ = 0$
-  \item if $\mu[f > 0] = 1$ then $L^- = L^+ = \norm{f}_0$
-  \end{itemize}
-  provided $\norm{f}_p < \infty$ for some $p$ with the relevant sign.
-\end{theorem}
-\begin{proof}
-  For the first two cases, we can observe that:
-  \begin{itemize}
-  \item For $c \ge 1$ we have $c^p \nearrow 1$ as $p \to 0^-$ and $c^p \searrow 1$ as $p \to 0^+$.
-  \item For $0 < c \le 1$ we have $c^p \searrow 1$ as $p \to 0^-$ and $c^p \nearrow 1$ as $p \to 0^+$.
-  \end{itemize}
-  So by writing $f = f[f \le 1] + f[f > 1]$, we can use monotone convergence to conclude
-  that $\lim_{p \to 0^-} \int f^p\,d\mu = \lim_{p \to 0^+} \int f^p\,d\mu = \mu[f > 0]$, from which the first two cases follow.
-
-  For the last case, todo.
-\end{proof}
-
-\section*{Power Means}
-
-For this section we suppose $\mu$ is a probability measure.
+The following monotonicity result holds for probability spaces:
 
 \begin{theorem}[Power Mean Inequality]\label{thm:power mean}
-  Let $X$ be a nonnegative random variable.
-  If $p \le q$ then $\norm{X}_p \le \norm{X}_q$ whenever both exist.
+  Suppose $\mu(S) = 1$ and let $X : S \to [0, \infty]$ be a random variable.
+  If $p \le q$ then $\norm{X}_p \le \norm{X}_q$.
 \end{theorem}
 \begin{proof}
-  The cases where $p$ or $q$ are infinite are easily checked.
-
-  Suppose $0 = p < q$.  Since $\log$ is concave we have by Jensen's inequality
-  \[
-  \log \E[X^q] &\ge \E[\log X^q] \\
-  &= q \E[\log X] \\
-  \E[X^q]^{1/q} &\ge \exp \E[\log X] \\
-  \]
-  The case where $p < q = 0$ is analogous.
-
-  Now suppose $p < q$ with $p \ne 0, q > 0$.  Since $u \mapsto u^{q/p}$ is convex we have
-  \[
-  \E[X^p]^{q/p} &\le \E[X^q] \\
-  \E[X^p]^{1/p} &\le \E[X^q]^{1/q} \\
-  \]
-  The case where $p < q < 0$ is analogous.
+  Suppose $p < q$ with $p, q \in \R - \{0\}$.
+  Applying Jensen's inequality to the map $u \mapsto u^{q/p}$,
+  which is convex if $q > 0$ and concave if $q < 0$,
+  yields the inequality.
+  The $0^-, 0^+$ cases follow from these,
+  and the cases where $p$ or $q$ are infinite are trivial.
 \end{proof}
 
 For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the geometric mean and $\norm{\cdot}_1$ is the arithmetic mean.
 
+\section*{Limits}
+
+\begin{theorem}\label{thm:limit infinity}
+  Let $f : S \to [0, \infty]$ be a measurable function.
+  Then \[
+  \lim_{p \to \infty} \norm{f}_p &= \norm{f}_\infty \\
+  \lim_{p \to -\infty} \norm{f}_p &= \norm{f}_{-\infty} \\
+  \]
+\end{theorem}
+\begin{proof}
+  By symmetry we only need to prove the first statement.
+  todo
+\end{proof}
+
+\begin{theorem}\label{thm:limit positive}
+  Let $f : S \to [0, \infty]$ be a measurable function
+  such that $\norm{f}_q < \infty$ for some $q > 0$.
+  Then $p \mapsto \norm{f}_p$ is continuous on $(0, q]$.
+  Similarly if $\norm{f}_q > 0$ for some $q < 0$ then $p \mapsto \norm{f}_p$ is continuous on $[q, 0)$.
+\end{theorem}
+\begin{proof}
+  By symmetry we only need to prove the first statement;
+  the provision implies $f < \infty$ almost everywhere.
+  We can observe that $x \mapsto x^p$ is increasing for $x \ge 1$
+  and decreasing for $x \le 1$.
+  Thus we can decompose $f^p = f^p[f \le 1] + f^p[f > 1]$
+  and apply monotone convergence separately for each part;
+  the decreasing part requires the hypothesis $\norm{f}_q < \infty$.
+\end{proof}
+
+%% \begin{lemma}
+%%   Suppose $\mu(S) = 1$ and let $X : S \to [0, \infty]$ be a random variable
+%%   such that $\norm{X}_q < \infty$ for some $q > 0$.
+%%   Then $p \mapsto \E[X^p]$ is differentiable on $(0, q]$
+%%   with derivative $\E[X^p \ln X]$.
+%% \end{lemma}
+%% \begin{proof}
+%%   Fix $0 < r < p \le q$.
+%%   By \cref{lem:power mean positive} we know $\norm{X}_r \le \norm{X}_q < \infty$.
+%%   \[
+%%   \frac{d}{dp}\E[X^p]
+%%   \]
+%% \end{proof}
+
+
+\begin{theorem}\label{thm:limit zero}
+  Let $f : S \to [0, \infty]$ be a measurable function. 
+  Then
+  \[
+  \norm{f}_{0^+} &= 
+  \begin{cases}
+    \infty & \mu[f > 0] > 1 \\
+    0 & \mu[f > 0] < 1 \\
+    \exp \int_{f > 0} \log f\,d\mu & \mu[f > 0] = 1 \\
+  \end{cases}
+  \]
+  provided $\norm{f}_q < \infty$ for some $q > 0$.
+  Similarly
+  \[
+  \norm{f}_{0^-} &=
+  \begin{cases}
+    0 & \mu[f < \infty] > 1 \\
+    \infty & \mu[f < \infty] < 1 \\
+    \exp \int_{f < \infty} \log f\,d\mu & \mu[f < \infty] = 1 \\    
+  \end{cases}
+  \]
+  provided $\norm{f}_q > 0$ for some $q < 0$.
+\end{theorem}
+\begin{proof}
+  It suffices to consider only $\norm{f}_{0^+}$, since the other statement follows via $\norm{f}_p = \norm{f^{-1}}_{-p}^{-1}$.
+
+  The provision implies $f < \infty$ almost everywhere.
+  For the first two cases, we decompose $f$ into monotone parts $f^p[0 < f \le 1] + f^p[f > 1]$ as in \cref{thm:limit positive}
+  to show $\lim_{p \to 0^+} \int f^p\,d\mu = \mu[f > 0]$, which implies the result.
+
+  For the last case, we observe that $\frac{x^p - 1}{p} \searrow \ln x$ as $p \to 0^+$ for $x \in [0, \infty]$;
+  this follows from convexity of $p \mapsto x^p$ and L'H\^opital's rule.
+  We know by \cref{thm:power mean} applied to the probability space $[f < 0]$ that the limit exists.
+  Thus we can show the inequality:
+  \[
+  \lim_{p \to 0^+} \ln \norm{f}_p &\le \lim_{p \to 0^+} \frac{\norm{f}_p^p - 1}{p} \\
+  &= \lim_{p \to 0^+} \int_{f > 0} \frac{f^p - 1}{p}\,d\mu &\mu[f > 0] = 1 \\
+  &= \int_{f > 0} \lim_{p \to 0^+} \frac{f^p - 1}{p}\,d\mu &\text{monotone convergence} \\
+  &= \int_{f > 0} \ln f\,d\mu \\
+  \lim_{p \to 0^+} \norm{f}_p &\le \exp \int_{f > 0} \log f\,d\mu \\
+  \]
+  where monotone convergence again applies because $\norm{f}_q < \infty$.
+  On the other hand we can apply Jensen's inequality to find
+  \[
+  \exp \int_{f > 0} \log f\,d\mu 
+  &= \exp \frac1p \int_{f > 0} \log f^p \,d\mu \\
+  &\le \exp \frac1p \log \int_{f > 0} f^p \,d\mu \\
+  &= \norm{f}_p
+  \]
+  for every $p > 0$,
+  which completes the proof.
+\end{proof}
+
+In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$ always exist.
+
+\begin{corollary}
+  If $\mu(S) = 1$, then $\norm{f}_{0^+} = \exp \int \log f\,d\mu$ provided $\norm{f}_q < \infty$ for some $q > 0$.
+\end{corollary}
+\begin{proof}
+  If $\mu[f > 0] = 1$ then we have $\norm{f}_{0^+} = \exp \int_{f > 0} \log f\,d\mu = \exp \int \log f\,d\mu$.
+  On the other hand, if $\mu[f > 0] < 1$ then we have $\norm{f}_{0^+} = 0 = \exp(-\infty) = \exp \int \log f\,d\mu$.
+\end{proof}
+
 \section*{H\"older's Inequality}
 
 \begin{theorem}[H\"older's Inequality]
-  Let $f, g$ be nonnegative measurable functions,
+  Let $f, g$ be positive measurable functions,
   and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$.
   Then:
   \begin{itemize}
@@ -100,15 +167,7 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 \begin{proof}
   The $\pm\infty$ cases are easily checked.
   Define $\nu$ to be a probability measure on $S$ via $d\nu = \frac{g^q}{\int g^q\,d\mu} d\mu$,
-  and let $X = fg^{1-q}$; we can assume this is well-defined.%
-  \footnote{
-  We can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.
-  We can also assume $g > 0$ a.e. as follows.
-  If $q < 0$ this follows because the integrals are hypothesized to exist,
-  and if $p < 0$ we can swap $f, p$ with $g, q$.
-  Otherwise we restrict the measure space to $[g > 0]$,
-  which gives $\norm{fg}_1 \le \norm{f[g > 0]}_p \norm{g}_q \le \norm{f}_p \norm{g}_q$.
-  }
+  and let $X = fg^{1-q}$; we can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.
   Then we have
   \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
   &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
@@ -119,5 +178,6 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
   \]
   where the sign of the inequality is flipped if $p, q < 1$.
 \end{proof}
+
 
 \end{document}
