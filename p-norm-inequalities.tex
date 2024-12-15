@@ -13,15 +13,14 @@
 Let $f : S \to [0, \infty]$ be a measurable function on a nonzero measure space $(S, \Lambda, \mu)$.
 Define \[\norm{f}_p \eqdef \begin{cases}
   \left(\int f^p\,d\mu\right)^{1/p} & p \in \R - \{0\} \\
-  \lim_{p \to 0^-} \norm{f}_p & p = 0^- \\
-  \lim_{p \to 0^+} \norm{f}_p & p = 0^+ \\
-  \essinf f & p = -\infty \\
   \esssup f & p = \infty \\
+  \essinf f & p = -\infty \\
+  \lim_{r \to p} \norm{f}_r & p \in \{0^-, 0, 0^+\} \\
   \end{cases}
 \]
 where $x \mapsto x^{-1}$ is extended continuously to zero and infinite values.
-We also write $\norm{f}_0 = \lim_{p \to 0} \norm{f}_p$ if the limit exists.
-Note that this is not actually a norm unless $p \ge 1$.
+Be aware that this does not define a seminorm unless $p \ge 1$.
+Also note that $\norm{f}_0$ may not exist, but $\norm{f}_p$ exists for every other $p$.
 
 It's useful to observe the symmetry $\norm{f}_{-p} = \norm{f^{-1}}_p^{-1}$.
 
@@ -49,20 +48,40 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 \begin{theorem}\label{thm:limit infinity}
   Let $f : S \to [0, \infty]$ be a measurable function.
   Then \[
-  \lim_{p \to \infty} \norm{f}_p &= \norm{f}_\infty \\
-  \lim_{p \to -\infty} \norm{f}_p &= \norm{f}_{-\infty} \\
+  \lim_{p \to \infty} \norm{f}_p = \norm{f}_\infty
   \]
+  provided $\norm{f}_q < \infty$ for some $q \in (0, \infty)$,
+  and similarly
+  \[
+  \lim_{p \to -\infty} \norm{f}_p = \norm{f}_{-\infty}
+  \]
+  provided $\norm{f}_q > 0$ for some $q \in (-\infty, 0)$.
 \end{theorem}
 \begin{proof}
   By symmetry we only need to prove the first statement.
-  todo
+  In one direction, suppose $\mu[f > c] > 0$.
+  Then we have
+  \[
+  \norm{f}_p &\ge \left(\int_{f > c} f^p\,d\mu\right)^{1/p} \ge c \mu[f > c]^{1/p} \\
+  \]
+  which is either equal to $\infty$ or approaches $c$ as $p \to \infty$;
+  either way we find $\liminf_{p \to \infty} \norm{f}_p \ge \norm{f}_\infty$.
+
+  In the other direction, for $p > q$ write
+  \[
+  \norm{f}_p &= \left(\int f^{p - q}f^q\,d\mu\right)^{1/p} \\
+  &\le \left(\int \norm{f}_\infty^{p - q} f^q\,d\mu\right)^{1/p} \\
+  &= \norm{f}_\infty^{1 - \frac{q}{p}} \norm{f}_q^{q/p} \\
+  & \to \norm{f}_\infty \\
+  \]
+  which completes the proof.
 \end{proof}
 
 \begin{theorem}\label{thm:limit positive}
   Let $f : S \to [0, \infty]$ be a measurable function
-  such that $\norm{f}_q < \infty$ for some $q > 0$.
+  such that $\norm{f}_q < \infty$ for some $q \in (0, \infty)$.
   Then $p \mapsto \norm{f}_p$ is continuous on $(0, q]$.
-  Similarly if $\norm{f}_q > 0$ for some $q < 0$ then $p \mapsto \norm{f}_p$ is continuous on $[q, 0)$.
+  Similarly if $\norm{f}_q > 0$ for some $q \in (-\infty, 0)$ then $p \mapsto \norm{f}_p$ is continuous on $[q, 0)$.
 \end{theorem}
 \begin{proof}
   By symmetry we only need to prove the first statement;
@@ -73,21 +92,6 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
   and apply monotone convergence separately for each part;
   the decreasing part requires the hypothesis $\norm{f}_q < \infty$.
 \end{proof}
-
-%% \begin{lemma}
-%%   Suppose $\mu(S) = 1$ and let $X : S \to [0, \infty]$ be a random variable
-%%   such that $\norm{X}_q < \infty$ for some $q > 0$.
-%%   Then $p \mapsto \E[X^p]$ is differentiable on $(0, q]$
-%%   with derivative $\E[X^p \ln X]$.
-%% \end{lemma}
-%% \begin{proof}
-%%   Fix $0 < r < p \le q$.
-%%   By \cref{lem:power mean positive} we know $\norm{X}_r \le \norm{X}_q < \infty$.
-%%   \[
-%%   \frac{d}{dp}\E[X^p]
-%%   \]
-%% \end{proof}
-
 
 \begin{theorem}\label{thm:limit zero}
   Let $f : S \to [0, \infty]$ be a measurable function. 
@@ -100,7 +104,7 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
     \exp \int_{f > 0} \log f\,d\mu & \mu[f > 0] = 1 \\
   \end{cases}
   \]
-  provided $\norm{f}_q < \infty$ for some $q > 0$.
+  provided $\norm{f}_q < \infty$ for some $q \in (0, \infty)$.
   Similarly
   \[
   \norm{f}_{0^-} &=
@@ -110,10 +114,10 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
     \exp \int_{f < \infty} \log f\,d\mu & \mu[f < \infty] = 1 \\    
   \end{cases}
   \]
-  provided $\norm{f}_q > 0$ for some $q < 0$.
+  provided $\norm{f}_q > 0$ for some $q \in (-\infty, 0)$.
 \end{theorem}
 \begin{proof}
-  It suffices to consider only $\norm{f}_{0^+}$, since the other statement follows via $\norm{f}_p = \norm{f^{-1}}_{-p}^{-1}$.
+  It suffices by symmetry to consider only $\norm{f}_{0^+}$.
 
   The provision implies $f < \infty$ almost everywhere.
   For the first two cases, we decompose $f$ into monotone parts $f^p[0 < f \le 1] + f^p[f > 1]$ as in \cref{thm:limit positive}
@@ -121,8 +125,8 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 
   For the last case, we observe that $\frac{x^p - 1}{p} \searrow \ln x$ as $p \to 0^+$ for $x \in [0, \infty]$;
   this follows from convexity of $p \mapsto x^p$ and L'H\^opital's rule.
-  We know by \cref{thm:power mean} applied to the probability space $[f < 0]$ that the limit exists.
-  Thus we can show the inequality:
+  We know by \cref{thm:power mean} applied to the probability space $[f > 0]$ that the limit exists.
+  Thus for one direction we can show the inequality:
   \[
   \lim_{p \to 0^+} \ln \norm{f}_p &\le \lim_{p \to 0^+} \frac{\norm{f}_p^p - 1}{p} \\
   &= \lim_{p \to 0^+} \int_{f > 0} \frac{f^p - 1}{p}\,d\mu &\mu[f > 0] = 1 \\
@@ -145,14 +149,15 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$ always exist.
 
 \begin{corollary}
-  If $\mu(S) = 1$, then $\norm{f}_{0^+} = \exp \int \log f\,d\mu$ provided $\norm{f}_q < \infty$ for some $q > 0$.
+  If $\mu(S) = 1$, then $\norm{f}_{0^+} = \exp \int \log f\,d\mu$ provided $\norm{f}_q < \infty$ for some $q > 0$;
+  similarly $\norm{f}_{0^-} = \exp \int \log f\,d\mu$ provided $\norm{f}_q > 0$ for some $q < 0$.
 \end{corollary}
 \begin{proof}
   If $\mu[f > 0] = 1$ then we have $\norm{f}_{0^+} = \exp \int_{f > 0} \log f\,d\mu = \exp \int \log f\,d\mu$.
   On the other hand, if $\mu[f > 0] < 1$ then we have $\norm{f}_{0^+} = 0 = \exp(-\infty) = \exp \int \log f\,d\mu$.
 \end{proof}
 
-\section*{H\"older's Inequality}
+\section*{More Inequalities}
 
 \begin{theorem}[H\"older's Inequality]
   Let $f, g$ be positive measurable functions,
@@ -162,7 +167,7 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   \item if $p, q \in [1, \infty]$ then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$
   \item if $p, q \in [-\infty, 1]$ then $\norm{fg}_1 \ge \norm{f}_p \norm{g}_q$
   \end{itemize}
-  provided that the integrals exist.
+      (xxx check conditions, relax to $[0, \infty]$-valued functions)
 \end{theorem}
 \begin{proof}
   The $\pm\infty$ cases are easily checked.
@@ -179,5 +184,17 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   where the sign of the inequality is flipped if $p, q < 1$.
 \end{proof}
 
+\begin{theorem}[Minkowski's Inequality]
+  todo
+\end{theorem}
+
+\begin{theorem}[lp inequality for $\mu f in s > c$]
+  (xxx check conditions)
+  If $S$ is $\N$ with the counting measure and $p \le q$ then $\norm{f}_p \ge \norm{f}_q$.
+\end{theorem}
+\begin{proof}
+  Without loss of generality assume $\norm{f}_p = 1$.
+  Then each $f(i) \le 1$, etc
+\end{proof}
 
 \end{document}
