@@ -148,7 +148,7 @@ For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the
 
 In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$ always exist.
 
-\begin{corollary}
+\begin{corollary}\label{cor:limit zero prob}
   If $\mu(S) = 1$, then $\norm{f}_{0^+} = \exp \int \log f\,d\mu$ provided $\norm{f}_q < \infty$ for some $q > 0$;
   similarly $\norm{f}_{0^-} = \exp \int \log f\,d\mu$ provided $\norm{f}_q > 0$ for some $q < 0$.
 \end{corollary}
@@ -160,28 +160,31 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
 \section*{More Inequalities}
 
 \begin{theorem}[H\"older's Inequality]
-  Let $f, g$ be positive measurable functions,
-  and let $p, q \in [-\infty, \infty]$ such that $\frac1p + \frac1q = 1$.
-  Then:
-  \begin{itemize}
-  \item if $p, q \in [1, \infty]$ then $\norm{fg}_1 \le \norm{f}_p \norm{g}_q$
-  \item if $p, q \in [-\infty, 1]$ then $\norm{fg}_1 \ge \norm{f}_p \norm{g}_q$
-  \end{itemize}
-      (xxx check conditions, relax to $[0, \infty]$-valued functions)
+  Let $f_1, \dots, f_n : S \to [0, \infty]$ be measurable functions
+  and let $p_1, \dots, p_n, r \in (0, \infty]$ such that $\sum_i \frac1{p_i} = \frac1r$.
+  Then
+  \[\norm*{\prod_i f_i}_r \le \prod_i \norm{f_i}_{p_i}\]
 \end{theorem}
 \begin{proof}
-  The $\pm\infty$ cases are easily checked.
-  Define $\nu$ to be a probability measure on $S$ via $d\nu = \frac{g^q}{\int g^q\,d\mu} d\mu$,
-  and let $X = fg^{1-q}$; we can assume $\int g^q\,d\mu \in (0, \infty)$ since otherwise the result is trivial.
-  Then we have
-  \[\norm{fg}_1 &= \left(\int g^q\,d\mu\right)\left(\int f g^{1-q} \frac{g^q}{\int g^q\,d\mu}\,d\mu\right) \\
-  &= \left(\int g^q\,d\mu\right)\E_\nu[X] \\
-  &\le \left(\int g^q\,d\mu\right)\E_\nu[X^p]^{1/p} &\text{Jensen's inequality}\\
-  &= \left(\int g^q\,d\mu\right)\left(\int f^p g^{p(1-q)}\frac{g^q}{\int g^q\,d\mu}\,d\mu \right)^{1/p} \\
-  &= \left(\int g^q\,d\mu\right)^{1 - 1/p}\left(\int f^p g^{p + q - pq}\,d\mu \right)^{1/p} \\
-  &= \norm{f}_p \norm{g}_q &\text{since $\frac1p + \frac1q = 1$} \\
+  Without loss of generality assume none of the $p_i$ or $r$ is $\infty$, and all $\norm{f_i}_{p_i} \in (0, \infty)$ (since if $\norm{f_i}_{p_i} = 0$ then $f_i = 0$ a.e.).
+  We can further assume $r = 1$ by applying $f_i \mapsto f_i^r$, $p_i \mapsto \frac{r}{p_i}$.
+
+  By \cref{thm:power mean,cor:limit zero prob}
+  applied to the discrete probability space $\left(\frac{1}{p_1}, \dots, \frac{1}{p_n}\right)$
+  we have for any $a_i \in [0, \infty]$:
+  \[
+  \sum_i \frac{1}{p_i} a_i^{p_i}
+  &\ge \exp \sum_i \frac{1}{p_i} \log a_i^{p_i} \\
+  &= \prod_i a_i
   \]
-  where the sign of the inequality is flipped if $p, q < 1$.
+  Letting $a_i = \frac{f_i}{\norm{f_i}_{p_i}}$ and integrating we find
+  \[
+  \int \prod_i \frac{f_i}{\norm{f_i}_{p_i}}\,d\mu
+  &\le \int \sum_i \frac{1}{p_i} \left(\frac{f_i}{\norm{f_i}_{p_i}}\right)^{p_i}\,d\mu \\
+  &= \sum_i \frac1{p_i} \cdot \frac{\int f_i^{p_i}\,d\mu}{\norm{f_i}_{p_i}^{p_i}} \\
+  &= \sum_i \frac1{p_i} = 1 \\
+  \int \prod_i f_i\,d\mu &\le \prod_i \norm{f_i}_{p_i} \\
+  \]
 \end{proof}
 
 \begin{theorem}[Minkowski's Inequality]
