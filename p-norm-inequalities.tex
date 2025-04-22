@@ -37,11 +37,23 @@ The following monotonicity result holds for probability spaces:
   Applying Jensen's inequality to the map $u \mapsto u^{q/p}$,
   which is convex if $q > 0$ and concave if $q < 0$,
   yields the inequality.
-  The $0^-, 0^+$ cases follow from these,
+  The $0^-, 0, 0^+$ cases follow from these,
   and the cases where $p$ or $q$ are infinite are trivial.
 \end{proof}
 
-For instance this generalizes the AM-GM inequality since $\norm{\cdot}_0$ is the geometric mean and $\norm{\cdot}_1$ is the arithmetic mean.
+A reverse version holds for the counting measure:
+
+\begin{theorem}\label{thm:counting}
+  If $S$ is $\N$ with the counting measure and $0 < p \le q$ or $p \le q < 0$ then $\norm{f}_p \ge \norm{f}_q$.
+\end{theorem}
+\begin{proof}
+  By symmetry we can consider just $0 < p \le q$.  The $q = \infty$ case is easy, as are the cases where $\norm{f}_p$ is 0 or $\infty$.
+  Without loss of generality assume $\norm{f}_p = 1$.
+  Then each $f(n) \le 1$, so we have
+  \[
+  \norm{f}_q^q = \sum_n f(n)^q \le \sum_n f(n)^p = 1
+  \]
+\end{proof}
 
 \section*{Limits}
 
@@ -159,6 +171,26 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
 
 \section*{More Inequalities}
 
+\begin{lemma}[Weighted AM-GM Inequality]\label{thm:weighted am-gm}
+  Let $w_1, \dots, w_n \in [0, \infty)$ be weights with sum $w = \sum_i w_i > 0$,
+  and let $a_1, \dots, a_n \in [0, \infty]$.
+  Then
+  \[\left(\prod_i a_i^{w_i}\right)^{1/w} \le \frac1w \sum_i w_i a_i\]
+\end{lemma}
+\begin{proof}
+  Apply \cref{thm:power mean,cor:limit zero prob} to the discrete probability space $\left(\frac{w_1}{w}, \dots, \frac{w_n}{w}\right)$.
+\end{proof}
+
+\begin{corollary}[Young's Product Inequality]\label{thm:young}
+  Let $p_1, \dots, p_n, r \in (0, \infty)$ such that $\sum_i \frac1{p_i} = \frac1r$,
+  and let $a_1, \dots, a_n \in [0, \infty]$.
+  Then
+  \[\frac{\prod_i a_i^r}{r} \le \sum_i \frac{a_i^{p_i}}{p_i}\]
+\end{corollary}
+\begin{proof}
+  Apply \cref{thm:weighted am-gm} to the vector $i \mapsto a_i^{p_i}$ with weights $\frac{1}{p_1}, \dots, \frac{1}{p_n}$.
+\end{proof}
+
 \begin{theorem}[H\"older's Inequality]\label{thm:holder}
   Let $f_1, \dots, f_n : S \to [0, \infty]$ be measurable functions
   and let $p_1, \dots, p_n, r \in (0, \infty]$ such that $\sum_i \frac1{p_i} = \frac1r$.
@@ -167,17 +199,17 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
 \end{theorem}
 \begin{proof}
   Without loss of generality assume none of the $p_i$ or $r$ is $\infty$, and all $\norm{f_i}_{p_i} \in (0, \infty)$ (since if $\norm{f_i}_{p_i} = 0$ then $f_i = 0$ a.e.).
-  We can further assume $r = 1$ by applying $f_i \mapsto f_i^r$, $p_i \mapsto \frac{r}{p_i}$.
+  We can further assume $r = 1$ by applying $f_i \mapsto f_i^r$, $p_i \mapsto \frac{p_i}{r}$.
 
-  By \cref{thm:power mean,cor:limit zero prob}
-  applied to the discrete probability space $\left(\frac{1}{p_1}, \dots, \frac{1}{p_n}\right)$
-  we have for any $a_i \in [0, \infty]$:
-  \[
-  \sum_i \frac{1}{p_i} a_i^{p_i}
-  &\ge \exp \sum_i \frac{1}{p_i} \log a_i^{p_i} \\
-  &= \prod_i a_i
-  \]
-  Letting $a_i = \frac{f_i}{\norm{f_i}_{p_i}}$ and integrating we find
+  %% By \cref{thm:power mean,cor:limit zero prob}
+  %% applied to the discrete probability space $\left(\frac{1}{p_1}, \dots, \frac{1}{p_n}\right)$
+  %% we have for any $a_i \in [0, \infty]$:
+  %% \[
+  %% \sum_i \frac{1}{p_i} a_i^{p_i}
+  %% &\ge \exp \sum_i \frac{1}{p_i} \log a_i^{p_i} \\
+  %% &= \prod_i a_i
+  %% \]
+  Letting $a_i = \frac{f_i}{\norm{f_i}_{p_i}}$ in \cref{thm:young} and integrating we find
   \[
   \int \prod_i \frac{f_i}{\norm{f_i}_{p_i}}\,d\mu
   &\le \int \sum_i \frac{1}{p_i} \left(\frac{f_i}{\norm{f_i}_{p_i}}\right)^{p_i}\,d\mu \\
@@ -188,7 +220,7 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
 \end{proof}
 
 \begin{theorem}[Minkowski's Inequality]
-  Let $f, g : S \to [0, \infty]$ be measurable functions and let $p \in [-\infty, \infty] \setminus \{0\}$.  Then $\norm{f + g}_p \le \norm{f}_p + \norm{g}_p$ when $p \ge 1$,
+  Let $f, g : S \to [0, \infty]$ be measurable functions and let $p \in [-\infty, \infty] - \{0\}$.  Then $\norm{f + g}_p \le \norm{f}_p + \norm{g}_p$ when $p \ge 1$,
   and $\norm{f + g}_p \ge \norm{f}_p + \norm{g}_p$ when $p \le 1$.
 \end{theorem}
 \begin{proof}
@@ -196,28 +228,15 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   We can also dispense with the cases where $\norm{f + g}_p$ is 0 or $\infty$ for $p \in \R - \{0\}$ as follows:
   \begin{itemize}
   \item If $\norm{f + g}_p = \infty$ and $p < 1$ then the inequality holds.
-  \item If $p \ge 1$ then $\left(\frac12 f + \frac12 g\right)^p \le \frac12 f^p + \frac12 g^p$ (using convexity of $x \mapsto x^p$) shows that $\norm{f + g}_p = \infty$ iff one of $\norm{f}_p, \norm{g}_p = \infty$.
-  \item The same inequality shows for $p < 0$ that $\norm{f + g}_p = 0$ iff one of $\norm{f}_p, \norm{g}_p = 0$.
-  \item If $\norm{f + g}_p = 0$ and $p > 0$ then $f, g$ are 0 a.e. and equality holds.
+  \item If $p \ge 1$ then the inequality $\left(\frac12 f + \frac12 g\right)^p \le \frac12 f^p + \frac12 g^p$ shows that $\norm{f + g}_p = \infty$ iff one of $\norm{f}_p, \norm{g}_p = \infty$.
+  \item If $\norm{f + g}_p = 0$ then $\norm{f}_p = \norm{g}_p = 0$ because $\norm{f}_p$ is increasing in $f$.
   \end{itemize}
   Now we can compute
   \[
-  \norm{f+g}_p^p &= \norm{f(f+g)^{p-1}}_1 + \norm{g(f+g)^{p-1}}_1 \\
-  &\le (\norm{f}_p + \norm{g}_p)\norm{(f + g)^{p-1}}_{\frac{p}{p-1}} &\text{\cref{thm:holder}} \\
-  &= (\norm{f}_p + \norm{g}_p) \norm{f+g}_p^{p-1} \\
+  \norm{f+g}_p^p &= \norm*{f(f+g)^{p-1}}_1 + \norm*{g(f+g)^{p-1}}_1 \\
+  &\le (\norm{f}_p + \norm{g}_p) \cdot \norm*{(f + g)^{p-1}}_{\frac{p}{p-1}} &\text{\cref{thm:holder}} \\
+  &= (\norm{f}_p + \norm{g}_p) \cdot \norm{f+g}_p^{p-1} \\
   \norm{f+g}_p &\le \norm{f}_p + \norm{g}_p \\
-  \]
-\end{proof}
-
-\begin{theorem}
-  If $S$ is $\N$ with the counting measure and $0 < p \le q$ or $p \le q < 0$ then $\norm{f}_p \ge \norm{f}_q$.
-\end{theorem}
-\begin{proof}
-  By symmetry we can consider just $0 < p \le q$.  The $q = \infty$ case is easy, as are the cases where $\norm{f}_p$ is 0 or $\infty$.
-  Without loss of generality assume $\norm{f}_p = 1$.
-  Then each $f(n) \le 1$, so we have
-  \[
-  \norm{f}_q^q = \sum_n f(n)^q \le \sum_n f(n)^p = 1
   \]
 \end{proof}
 
