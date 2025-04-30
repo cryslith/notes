@@ -201,14 +201,6 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   Without loss of generality assume none of the $p_i$ or $r$ is $\infty$, and all $\norm{f_i}_{p_i} \in (0, \infty)$ (since if $\norm{f_i}_{p_i} = 0$ then $f_i = 0$ a.e.).
   We can further assume $r = 1$ by applying $f_i \mapsto f_i^r$, $p_i \mapsto \frac{p_i}{r}$.
 
-  %% By \cref{thm:power mean,cor:limit zero prob}
-  %% applied to the discrete probability space $\left(\frac{1}{p_1}, \dots, \frac{1}{p_n}\right)$
-  %% we have for any $a_i \in [0, \infty]$:
-  %% \[
-  %% \sum_i \frac{1}{p_i} a_i^{p_i}
-  %% &\ge \exp \sum_i \frac{1}{p_i} \log a_i^{p_i} \\
-  %% &= \prod_i a_i
-  %% \]
   Letting $a_i = \frac{f_i}{\norm{f_i}_{p_i}}$ in \cref{thm:young} and integrating we find
   \[
   \int \prod_i \frac{f_i}{\norm{f_i}_{p_i}}\,d\mu
@@ -218,17 +210,30 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   \int \prod_i f_i\,d\mu &\le \prod_i \norm{f_i}_{p_i} \\
   \]
 \end{proof}
+\begin{corollary}[Reverse H\"older's Inequalities]\label{thm:reverse holder}
+  Let $f_1, \dots, f_n : S \to [0, \infty]$ be measurable functions
+  and let $p_1, \dots, p_n \in [-\infty, \infty] - \{0\}$ such that $\sum_i \frac1{p_i} = \frac1r$.
+  Then:
+  \begin{itemize}
+  \item If both $r$ and all of the $p_i$ are negative, then $\norm*{\prod_i f_i}_r \ge \prod_i \norm{f_i}_{p_i}$.
+  \item If both $r$ and exactly one of the $p_i$ is positive, then $\norm*{\prod_i f_i}_r \ge \prod_i \norm{f_i}_{p_i}$.
+  \item If both $r$ and exactly one of the $p_i$ is negative, then $\norm*{\prod_i f_i}_r \le \prod_i \norm{f_i}_{p_i}$.
+  \end{itemize}
+\end{corollary}
+\begin{proof}
+  Apply $\norm{f}_{-p} = \norm{f^{-1}}_p^{-1}$.
+\end{proof}
 
 \begin{theorem}[Minkowski's Inequality]
   Let $f, g : S \to [0, \infty]$ be measurable functions and let $p \in [-\infty, \infty] - \{0\}$.  Then $\norm{f + g}_p \le \norm{f}_p + \norm{g}_p$ when $p \ge 1$,
   and $\norm{f + g}_p \ge \norm{f}_p + \norm{g}_p$ when $p \le 1$.
 \end{theorem}
 \begin{proof}
-  The cases where $p$ is infinite are easy.
+  The cases where $p$ is infinite or equal to 1 are easy.
   We can also dispense with the cases where $\norm{f + g}_p$ is 0 or $\infty$ for $p \in \R - \{0\}$ as follows:
   \begin{itemize}
   \item If $\norm{f + g}_p = \infty$ and $p < 1$ then the inequality holds.
-  \item If $p \ge 1$ then the inequality $\left(\frac12 f + \frac12 g\right)^p \le \frac12 f^p + \frac12 g^p$ shows that $\norm{f + g}_p = \infty$ iff one of $\norm{f}_p, \norm{g}_p = \infty$.
+  \item If $p > 1$ then the inequality $\left(\frac12 f + \frac12 g\right)^p \le \frac12 f^p + \frac12 g^p$ shows that $\norm{f + g}_p = \infty$ iff one of $\norm{f}_p, \norm{g}_p = \infty$.
   \item If $\norm{f + g}_p = 0$ then $\norm{f}_p = \norm{g}_p = 0$ because $\norm{f}_p$ is increasing in $f$.
   \end{itemize}
   Now we can compute
@@ -238,6 +243,7 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   &= (\norm{f}_p + \norm{g}_p) \cdot \norm{f+g}_p^{p-1} \\
   \norm{f+g}_p &\le \norm{f}_p + \norm{g}_p \\
   \]
+  where the inequality is reversed when $p < 1$ according to \cref{thm:reverse holder}, since exactly one of $p$ and $\tfrac{p}{p-1}$ is positive.
 \end{proof}
 
 \end{document}
