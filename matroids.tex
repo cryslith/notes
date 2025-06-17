@@ -13,13 +13,19 @@
 \begin{document}
 \maketitle
 
+In the following I will sometimes write set union as $A + B$ when $A, B$ are disjoint, and set difference as $C - D$ when $D \subset C$.
+I also use $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
+
 \section*{Matroids}
 
-todo define matroids and show some lemmas
+todo define matroids, show some lemmas, give examples
+Notation: $E$: ground set, $\I$: independent sets, $\Cc$: circuits
 
-%% In the following $M$ is a matroid, $E$ is its ground set, $\I$ are the independent sets, $\Cc$ are the circuits.
-I sometimes write set union as $A + B$ when $A, B$ are disjoint, and I write set difference as $C - D$ when $D \subset C$.
-I also sometimes write $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
+\subsection*{Examples}
+
+\begin{example}
+  Let $G = (V, E)$ be a graph.  The \defn{matching matroid} on $G$ is a matching on $V$ is defined by \[\I \eqdef \{S : \text{there exists a matching in $G$ which matches every vertex in $S$}\}.\]
+\end{example}
 
 \section*{Matroid Partitioning}
 
@@ -90,11 +96,11 @@ The following lemma proves that this preserves the invariant:
   \item $x_i \not\gets \langle b \rangle$ in $U$ for $i < k$:
   
     Follows from $x_i \not\gets x_{k+1}$ in $S$.
-  \item $x_i \not\gets x_j$ in $U$ for $j > i+1$:
+  \item $x_i \not\gets x_j$ in $U$ for $j \in (i+1, k]$:
 
     Suppose for contradiction that $x_i \gets x_j$ in $U$.
-    We can assume that $x_j$ has color $b$
-    since otherwise this contradicts $x_i \not\gets x_j$ in $S$.
+    Then we know $x_j$ has color $b$
+    because $x_i \not\gets x_j$ in $S$.
 
     We know the following:
     \[
@@ -124,11 +130,11 @@ A set $Y$ with $|Y| > \sum_i r_i(Y)$ is a certificate proving that no proper col
 for any set $Y$.
 
 \begin{proof}[Proof of \cref{thm:matroid partitioning}.]
-  As described earlier, the algorithm starts by finding a proper partial coloring $S$ with no augmenting path; the correctness of this part follows from \label{lem:augmenting path}.
+  As described earlier, the algorithm starts by finding a proper partial coloring $S$ with no augmenting path; the correctness of this part follows from \cref{lem:augmenting path}.
   Having found such an $S$, if $S$ is a proper coloring of $E$, then the algorithm outputs $S$.
   Otherwise, there exists at least one uncolored element.
-  In this case the algorithm outputs $Y$,
-  where $Y$ is the set of elements which can reach an uncolored element via directed paths.
+  In this case the algorithm outputs
+  \[Y \eqdef \{y \in E : \text{there exists an uncolored element $x$ and a directed path $x \gets \dots \gets y$}\}.\]
   We must show that $|Y| > \sum_i r_i(Y)$.
 
   We claim that $r_i(Y) = |Y \cap S_i|$ for each $i$.
@@ -158,7 +164,7 @@ for any set $Y$.
 
 \begin{theorem}[Matroid Sum]
   Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$.
-  Let $\mathcal{J}$ be the set of all sets $S \subset E$ such that
+  Let $\mathcal{J}$ be the collection of all sets $S \subset E$ such that
   $S$ can be partitioned into subsets $S_1, \dots, S_n$ where each $S_i \in \I_i$.
   Then $\mathcal{J}$ is a matroid independence system.
 \end{theorem}
@@ -171,11 +177,11 @@ for any set $Y$.
 \section*{Shannon switching game}
 
 \begin{definition}
-  Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is a matroid on $A$ where $\I_{M|_A} = \{I \subset A \mid I \in \I_M\}$.
+  Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is the matroid on $A$ defined by $\I_{M|_A} = \{I \subset A \mid I \in \I_M\}$.
 \end{definition}
 
 \begin{definition}
-  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is a matroid on $E - B$ where $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$.  Equivalently $\Cc_{M/B} = \{C \cap (E - B) \mid C \in \Cc_M\}$.
+  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is the matroid on $E - B$ defined by $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$, or equivalently $\Cc_{M/B} = \{C \cap (E - B) \mid C \in \Cc_M\}$.
 \end{definition}
 
 For graphic matroids, the submatroid corresponds to deleting the edges of $A$, and the quotient corresponds to contracting the edges in $B$.  Submatroids and quotients commute with themselves and each other.
@@ -187,6 +193,6 @@ For graphic matroids, the submatroid corresponds to deleting the edges of $A$, a
   We say that Short wins if $B$ spans $F$; otherwise Cut wins.
 \end{definition}
 
-% todo: shannon switching game, duality, matroid packing/covering/intersection connections, TRVB application
+% todo: shannon switching game, duality, matroid packing/covering/intersection connections, matroid parity and application to low-degree TRVB
 
 \end{document}

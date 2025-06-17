@@ -5,7 +5,12 @@
 
 \newlist{thmenum}{enumerate}{1}
 \setlist[thmenum]{label=\alph*), ref=\thetheorem~(\alph*)}
-\crefalias{thmenumi}{theorem} 
+%% \crefalias{thmenumi}{theorem}
+\zcsetup{
+  countertype = {
+    thmenumi = theorem,
+  }
+}
 
 \title{Notes on Convexity Inequalities}
 \author{Lily Chung}

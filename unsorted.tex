@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\title{Unsorted notes}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{lemma}\label{thm:combi}
+  \[\binom{n}{k} \le n^k\]
+\end{lemma}
+\begin{proof}
+  Follows by combinatorial interpretation.
+\end{proof}
+
+The following is useful for combining multiplicative approximations.
+\begin{lemma}
+  If $x_i \in \left[1 - \frac{\epsilon}{n}, 1 + \frac{\epsilon \ln 2}{n}\right]$ where $\epsilon \in [0, 1]$ then
+  \[\prod_{i \in [n]} x_i \in [1 - \epsilon, 1 + \epsilon]\]
+\end{lemma}
+\begin{proof}
+  \[
+  \prod_{i \in [n]} x_i &\le \left(1 + \frac{\epsilon \ln 2}{n}\right)^n \\
+  &\le e^{\epsilon \ln 2} \\
+  &= 2^\epsilon \\
+  &\le 1 + \epsilon &\text{by Bernoulli's inequality} \\
+  \prod_{i \in [n]} x_i &\ge \left(1 - \frac{\epsilon}{n}\right)^n \\
+  &\ge 1 - \epsilon &\text{by Bernoulli's inequality}
+  \]
+\end{proof}
+
+\end{document}

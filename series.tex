@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\usepackage{tcolorbox}
+
+\title{Series expansion cheatsheet}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Real functions}
+
+In the following, uses of big-$O$ notation refer to the limit as $x \to a$.
+Also, interval notation like $[a, x]$ refers to the closed interval of points between $x$ and $a$, disregarding which of $x$ and $a$ is greater.
+
+\begin{tcolorbox}
+  \begin{definition}
+    Let $f : \R \to \R$ be $k$-times differentiable at $a$.  Then the $k$th \defn{Taylor polynomial} of $f$ at $a$ is
+    \[P_k(x) \eqdef \sum_{i=0}^k \frac{f^{(i)}(a)}{i!} (x - a)^i\]
+  \end{definition}
+\end{tcolorbox}
+
+\begin{tcolorbox}
+  \begin{theorem}[Taylor]
+    Let $f$ be $k$-times differentiable at $a$.
+    Then
+    \[f(x) = P_k(x) + o\left(|x - a|^k\right)\]
+  \end{theorem}
+\end{tcolorbox}
+
+\hidden{General mean value form}{
+  \begin{lemma}[Mean value form]
+    Suppose $f$ be continuous on $[a, x]$ and $(k+1)$-times differentiable on $(a, x)$.
+    Choose any function $G$ which is continuous on $[a, x]$ and differentiable on $(a, x)$ with nonzero derivative.
+    Then there exists $\xi \in (a, x)$ such that
+    \[f(x) = P_k(x) + \frac{f^{(k+1)}(\xi)}{k!} (x - \xi)^k \frac{G(x) - G(a)}{G'(\xi)}\]
+  \end{lemma}
+}
+
+\begin{theorem}[Lagrange mean value form]
+  Let $f$ be continuous on $[a, x]$ and $(k+1)$-times differentiable on $(a, x)$.
+  Then there exists $\xi \in (a, x)$ such that
+  \[f(x) = P_k(x) + \frac{f^{(k+1)}(\xi)}{k!} (x - a)^{k+1}\]
+\end{theorem}
+
+\begin{theorem}[Cauchy mean value form]
+  Let $f$ be continuous on $[a, x]$ and $(k+1)$-times differentiable on $(a, x)$.
+  Then there exists $\xi \in (a, x)$ such that
+  \[f(x) = P_k(x) + \frac{f^{(k+1)}(\xi)}{k!} (x - \xi)^k (x - a)\]
+\end{theorem}
+
+\begin{tcolorbox}
+  \begin{corollary}
+    Let $f$ be continuous on $[a, x]$ and suppose $|f^{(k+1)}|$ is bounded on $(a, x)$.
+    Then
+    \[f(x) = P_k(x) + O\left(|x - a|^{k+1}\right)\]
+  \end{corollary}
+\end{tcolorbox}
+\begin{theorem}[Integral form]
+  Let $f^{(k)}$ be absolutely continuous on $[a, x]$.
+  Then
+  \[f(x) = P_k(x) + \int_a^x \frac{f^{(k+1)}(t)}{k!} (x - t)^k\,dt\]  
+\end{theorem}
+
+For multivariate functions $\R^n \to \R$, a common strategy is to apply the univariate results above to $t \mapsto a + t(x - a)$
+where $a$ and $x$ are points in $\R^n$.
+
+% todo:
+% Laurent expansion, residue calculation, complex analysis (?)
+% relation to partial fractions (?)
+
+\end{document}

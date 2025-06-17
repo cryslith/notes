@@ -1,0 +1,98 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage[shortlabels]{enumitem}
+\usepackage{comment}
+
+\usepackage{libertine}
+\usepackage[libertine,vvarbb]{newtxmath}
+\usepackage[scaled=0.96]{zi4}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}{Question}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand*{\defn}[1]{\textbf{#1}}
+\newcommand*{\N}[0]{\mathbb{N}}
+\newcommand*{\R}[0]{\mathbb{R}}
+
+\def\[#1\]{\begin{align*}#1\end{align*}}
+\newcommand*{\pheq}{\mathrel{\phantom{=}}} % invisible = for align mode
+\newcommand*{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\renewcommand*{\iff}[0]{\leftrightarrow}
+
+\DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}}
+
+\title{Generating Function Cheatsheet}
+
+\author{
+  Lily Chung
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{comment}
+  \section*{Unlabeled Prefabs}
+
+  For this section write $A(x) = \sum_{n \ge 0} a_n x^n$.  There are $f_n$ possible prefabs of size $n$.
+
+  An $(A + B)$-prefab is either an $A$-prefab or a $B$-prefab.
+  \[cA(x) + dB(x) &= \sum_{n \ge 0} (ca_n + db_n)x^n\]
+
+  A $(\prod_{i \in [k]} A_i)$-prefab of size $n$ consists of an $A_i$-prefab for each $i$, with total size $n$.
+  The number $h_n$ of such prefabs satisfies
+  \[
+  h_n &= \sum_{\substack{v \in \N^k \\ \sum_i v_i = n}} \prod_{i \in [k]} a_{v_i} \\
+  \prod_{i \in [k]} A_i(x) &= \sum_{n \ge 0} h_n x^n
+  \]
+
+  Assume $B(0) = 0$.  An $(A \circ B)$-prefab of size $n$ consists of a $k$-part composition of $n$, an $A$-prefab of size $k$, and a $B$-prefab of each size in the composition.  The number $r_n$ of such prefabs satisfies
+  \[
+  r_n &= \sum_k \sum_{\substack{v \in \N_+^k \\ \sum_i v_i = n}} a_k \prod_{i \in [k]} b_{v_i}
+  \]
+\end{comment}
+
+\section*{Labeled Structures}
+
+For this section write $F(x) = \sum_{n \ge 0} \frac{f_n}{n!}$.
+There are $f_n$ possible $F$-structures on a set of size $n$.
+
+An $(F + G)$-structure is either an $F$-structure or a $G$-structure.
+\[
+cF(x) + dG(x) &= \sum_{n \ge 0} (cf_n + dg_n)\frac{x^n}{n!}
+\]
+
+A $(\prod_{i \in [k]} F_i)$-structure on $[n]$ is a map $p : [n] \to [k]$, together with an $F_i$-structure on $p^{-1}(i)$ for each $i \in [k]$.  The number $h_n$ of such structures satisfies
+\[h_n &= \sum_{\substack{v \in \N^k \\ \sum_i v_i = n}} \binom{n}{v} \prod_{i \in [k]} f_{v_i} \\
+\prod_{i \in [k]} F_i(x) &= \sum_{n \ge 0} h_n \frac{x^n}{n!}
+\]
+
+A $F'$-structure on $[n]$ is an $F$-structure on $[n+1]$.
+\[
+F'(x) &= \sum_{n \ge 0} f_{n+1} \frac{x^n}{n!}
+\]
+
+Assume $G(0) = 0$.  A $(F \circ G)$-structure on $[n]$ is a partition of $[n]$ into any number of nonempty parts, a $F$-structure on the set of parts, and a $G$-structure on each part.  The number $r_n$ of such structures satisfies
+
+\[
+r_n &= \sum_k \sum_{P \in \stirling{[n]}{k}} f_k \prod_{i \in [k]} g_{|P_i|} \\
+F(G(x)) &= \sum_{n \ge 0} r_n \frac{x^n}{n!}
+\]
+
+If we write $r_{n, k}$ for the number of such structures with exactly $k$ parts, so $r_n = \sum_k r_{n, k}$, then
+\[
+F(yG(x)) &= \sum_{\substack{n \ge 0 \\ k \ge 0}} r_{n, k} \frac{x^n}{n!}y^k
+\]
+
+\end{document}

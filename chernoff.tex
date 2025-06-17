@@ -35,7 +35,7 @@ and we are interested in their sum.  The following theorems are often used to un
 \end{theorem}
 
 How can we understand what these theorems are saying in practice?
-One way is to fix a small ``error'' probability $\delta$,
+One way is to fix a small ``error'' probability $\delta \le \frac12$,
 and ask how large the fluctuations of $X$ are while ignoring an exceptional event of probability $\le \delta$.
 If we invert \cref{thm:hoeffding} in this way, we find that with probability $1 - \delta$,
 \[X = \E X \pm \sqrt{\frac12 k \log(2\delta^{-1})} = \E X \pm O\left(\sqrt{k \log \delta^{-1}}\right)\]
@@ -70,7 +70,7 @@ The results of inverting these theorems and dropping constant factors are as fol
 
 \begin{tcolorbox}
   \begin{lemma}
-    Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).  Then the following hold with probability $1 - \delta$:
+    Let \(X = \sum_{i=1}^{k(n)} X_i\) where the \(X_i\) are independent and \(X \in [0, 1]\).  Then the following hold with probability $1 - \delta$ where $\delta < \frac12$ is a decreasing function of $n$:
     \begin{itemize}
     \item $X = \E X \pm O(\sqrt{k(n) \log \delta^{-1}})$.
     \item $X \in O(\E X + \log \delta^{-1})$.
