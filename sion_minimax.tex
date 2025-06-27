@@ -1,0 +1,163 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
+\newcommand*{\Prob}[1]{\mathcal{P}({#1})}
+\newcommand*{\Probstar}[1]{\mathcal{P}^*({#1})}
+\newcommand*{\Probfin}[1]{\Delta_{#1}}
+\DeclareMathOperator{\cvx}{cvx}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\im}{im}
+
+\title{Sion minimax notes}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+Notes accompanying Maurice Sion, ``On General Minimax Theorems'' \cite{Sion1958}.
+We consider a function $f : M \times N \to \R$ where $M$ and $N$ are arbitrary sets.
+We write ``$\sup\inf f$'' to mean $\sup_{m \in M} \inf_{n \in N} f(m, n)$ and similarly for ``$\inf\sup f$''.
+
+\section*{Semi-finite Von Neumann minimax}
+
+This material is based on \cite[Sections 2.3--2.4]{Blackwell1954} and \cite[Section 13.1]{Ferguson2020}
+
+In this section, we will be interested in mixed strategies for zero-sum games where one player has only finitely many options.\footnote{These are called ``S-games'' in \cite{Blackwell1954}.}
+Since the other player has infinitely many options,
+we will assume these live in a measure space so that we can
+represent their mixed strategies as probability distributions.
+
+Let $M = [m]$ be a finite set, $N$ be an arbitrary measurable space,
+and $f : M \times N \to \R$ be measurable.
+Together these define the game $(M, N, f)$.
+The maximizer will choose a mixed strategy from $\Probfin{M}$, the set of probability distributions on the finite set $M$.
+However, we will require the minimizer to choose their mixed strategy from $\Probstar{N}$, which we define as the set of probability distributions $P_Y$ on $N$ with the property that $\E[f(X, Y)]$ exists for all pairs of independent random variables $X, Y$ where $Y \sim P_Y$.\footnote{Equivalently, $\E[f(x, Y)]$ exists for all $x \in M$, and we do not have $\E[f(x_1, Y)] = \infty$ and $\E[f(x_2, Y)] = -\infty$ simultaneously for $x_1, x_2 \in M$.}
+Of course, this condition is satisfied if $f$ is bounded below or bounded above.
+
+We write the minimax inequality for mixed strategies on $(M, N, f)$ as
+\[\sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] \le \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)]\]
+with the understanding that $X$ and $Y$ are sampled independently from $P_X$ and $P_Y$.
+
+We can view $f$ in the equivalent form $\tilde f : N \to \R^m$.
+Then if $X$ and $Y$ are independent random variables on $M$ and $N$ such that $\E[f(x, Y)]$ is finite for every $x$, we have
+\[
+\E[f(X, Y)] &= \E[(x \mapsto \E[f(x, Y)])(X)] &\text{by independence} \\
+&= \E[(x \mapsto \E[\tilde f(Y)]_x)(X)] \\
+&= \E[\E[\tilde f(Y)]_X] \\
+\]
+
+So the outcome of the game depends only on $\E[\tilde f(Y)]$.
+
+Now we show that the minimax equality holds.
+
+\begin{theorem}[Semi-finite Von Neumann minimax, arbitrary distributions]\label{thm:semi-finite}
+  Let $S = \im \tilde f \subset \R^m$,
+  and define
+  \[c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\}.\]
+  Then
+  \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)].\]
+\end{theorem}
+\begin{proof}
+  It suffices to show the inequalities
+  \begin{align}
+    c^* &\le \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] \label{eqn:semi-finite:lb} \\
+    c^* &\ge \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)] \label{eqn:semi-finite:ub}
+  \end{align}
+
+  First we show (\ref{eqn:semi-finite:lb}).
+  Fix an arbitrary $c < c^*$, so that $(-\infty, c]^m \cap \cvx(S) = \emptyset$.
+  By the hyperplane separation theorem, there exist $\mu, \beta$ such that $\mu^T v \le \beta$ for all $v \in (-\infty, c]^m$
+  and $\mu^T v \ge \beta$ for all $v \in \cvx(S)$.
+  Without loss of generality we can assume each $\mu_i \ge 0$ and $\sum_i \mu_i = 1$, so $\mu \in \Probfin{M}$.
+  Then we can compute:
+  \[
+  \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)]
+  &\ge \inf_{P_Y \in \Probstar{N}} \E_{X \sim \mu, Y \sim P_Y}[f(X, Y)] \\
+  &= \inf_{P_Y \in \Probstar{N}} \E[\mu^\tp \tilde f(Y)] \\
+  &\ge \beta &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
+  &\ge \mu^\tp (c, c, \dots, c) \\
+  &= c
+  \]
+  which entails (\ref{eqn:semi-finite:lb}).
+
+  Now we show (\ref{eqn:semi-finite:ub}).
+  Fix an arbitrary $c > c^*$ so that $(-\infty, c]^m \cap \cvx(S) \ne \emptyset$, which is to say there exists $z \in \cvx(S)$ such that each $z_i \le c$.
+  Since $z \in \cvx(S)$ there exists a probability measure $\nu$ on $N$
+  such that $\E_{Y \sim \nu} \tilde f(Y) = z$.\footnote{To see this, write $z$ as a finite convex combination of distinct elements $\sum_i \lambda_i s_i$,
+  pick $y_i \in N$ such that $\tilde f(y_i) = s_i$,
+  and define $\nu$ by $\nu[A] = \sum_{i : y_i \in A} \lambda_i$.
+  It then follows that $\nu[\tilde f(Y) = s_i] = \lambda_i$ and thus $\E[\tilde f(Y)] = z$.}
+  We compute:
+  \[
+  \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)]
+  &\le \sup_{P_X \in \Probfin{M}} \E_{X \sim P_X, Y \sim \nu}[f(X, Y)] \\
+  &= \sup_{P_X \in \Probfin{M}} \E_{X \sim P_X}[\E_{Y \sim \nu}[\tilde f(Y)]_X] \\
+  &= \sup_{P_X \in \Probfin{M}} \E_{X \sim P_X}[z_X] \\
+  &\le c
+  \]
+  and so (\ref{eqn:semi-finite:ub}) holds, which concludes the proof.
+\end{proof}
+
+The proof of \cref{thm:semi-finite} shows that allowing arbitrary random variables $Y$ was unnecessary.
+The minimax value is unchanged if we restrict the minimizer's mixed strategy to simply be a discrete probability distribution taking values in a finite subset of $N$.
+This version is conceptually simpler since we don't need $N$ to be a measurable space.
+
+\begin{theorem}[Semi-finite Von Neumann minimax, finitely supported distributions]\label{thm:semi-finite delta}
+  Let $M$ be a finite set, $N$ be an arbitrary set,
+  and $f : M \times N \to \R$ be an arbitrary function.
+  Let $S = \im \tilde f \subset \R^m$,
+  and define
+  \[c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\}.\]
+  Then
+  \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)],\]
+  where $\Probfin{N}$ is the set of finitely supported probability distributions on $N$.
+\end{theorem}
+
+\section*{Concavelike-convexlike minimax}
+
+
+
+\begin{definition}[Concavelike and convexlike, Definitions 2.1--2.3 in \cite{Sion1958}]
+  Let $f : M \times N \to \R$.
+  We say $f$ is \defn{concavelike} in $M$ if
+  for all $\mu_0, \mu_1 \in M$ and $\lambda \in [0, 1]$,
+  there exists $\tilde\mu \in M$ such that
+  \[\overline{\lambda} f(\mu_0, y) + \lambda f(\mu_1, y) &\le f(\tilde\mu, y) &\forall y \in N.\]
+  Similarly, $f$ is \defn{convexlike} in $N$ if
+  for all $\nu_0, \nu_1 \in N$ and $\lambda \in [0, 1]$,
+  there exists $\tilde\nu \in N$ such that
+  \[\overline{\lambda} f(x, \nu_0) + \lambda f(x, \nu_1) &\ge f(x, \tilde\nu) &\forall x \in M.\]
+  Finally, $f$ is \defn{concave-convexlike} if it is concavelike in $M$ and convexlike in $N$.
+\end{definition}
+
+An equivalent definition of concavelike is that for any distribution $\mu \in \Probfin{M}$, there exists $\tilde\mu \in M$ such that $\E_{X \sim \mu}[f(X, y)] \le f(\tilde\mu, y)$.
+
+We will now prove the following theorem, whose proof Sion omits.
+\begin{theorem}[Theorem 4.1 in \cite{Sion1958}]
+  Let $f : M \times N \to R$ be concave-convexlike.
+  Suppose that for any $c < \inf \sup f$ there exists a finite subset $T \subset M$
+  such that $\inf_N \sup_T f > c$.
+  Then $\inf \sup f = \sup \inf f$.
+\end{theorem}
+\begin{proof}
+  Let $c < \inf\sup f$, so that $T$ exists as in the assumption.
+  Then we have
+  \[
+  c &< \inf_N \sup_T f \\
+  &= \inf_{P_Y \in \Probfin{N}} \sup_{x \in T} \E[f(x, Y)] &\text{since $f$ is convexlike} \\
+  &\le \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{T}} \E[f(X, Y)] \\
+  &= \sup_{P_X \in \Probfin{T}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] &\text{\cref{thm:semi-finite delta}} \\  
+  &\le \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] \\
+  &= \sup \inf f &\text{since $f$ is concave-convexlike} \\
+  \]
+\end{proof}
+
+\printbibliography
+
+\end{document}

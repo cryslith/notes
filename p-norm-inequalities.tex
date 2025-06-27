@@ -4,9 +4,9 @@
 \input{liatex/preamble}
 \usepackage{tcolorbox}
 \newtcolorbox{simplebox}[1][]{colback=white,colframe=black!75,arc=0mm,boxrule=0.5pt,#1}
-\tcolorboxenvironment{theorem}{}
-\tcolorboxenvironment{lemma}{}
-\tcolorboxenvironment{corollary}{}
+\tcolorboxenvironment{theorem}{colback=white}
+\tcolorboxenvironment{lemma}{colback=white}
+\tcolorboxenvironment{corollary}{colback=white}
 
 \title{$p$-norm inequalities}
 \author{Lily Chung}
@@ -233,6 +233,7 @@ In particular, \cref{thm:limit zero} means $\norm{f}_{0^+}$ and $\norm{f}_{0^-}$
   Let $f, g : S \to [0, \infty]$ be measurable functions and let $p \in [-\infty, \infty] - \{0\}$.  Then $\norm{f + g}_p \le \norm{f}_p + \norm{g}_p$ when $p \ge 1$,
   and $\norm{f + g}_p \ge \norm{f}_p + \norm{g}_p$ when $p \le 1$.
 \end{theorem}
+For $p \ge 1$ this is saying that $\norm{f}_p$ defines a seminorm, or equivalently it is convex in $f$.
 \begin{proof}
   The cases where $p$ is infinite or equal to 1 are easy.
   It can also be checked that the inequality holds when any of $\norm{f}_p, \norm{g}_p$, or $\norm{f + g}_p$ is zero or infinite,

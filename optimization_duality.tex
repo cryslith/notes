@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\DeclareMathOperator{\cvxcl}{\breve{cl}}
+\DeclareMathOperator{\ccvcl}{\hat{cl}}
+\DeclareMathOperator{\epi}{epi}
+
+\title{Convex optimization cheatsheet}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+Cheatsheet for Dimitri Bertsekas, ``Convex Optimization Theory''.
+Everything is over $\R^n$.
+
+\section*{Convex conjugate}
+
+Let $f : \R^n \to \R$.
+
+\[
+f^* &: \R^n \to \R &\text{convex, lower semicontinuous} \\
+f^*(y) &= \sup_x\{y^\tp x - f(x)\} \\
+\marginnote{weak duality} f^{**} &\le f \\
+(\cvxcl f)^* &= f^* \\
+(\cvxcl f) &= f^{**} &\text{if $\cvxcl f$ is proper} \\
+\]
+
+If $f$ is convex, then properness of any of $f, f^*, f^{**}$ implies properness of all of them.
+
+\[
+(x \mapsto f(ax))^*(y) &= f^*\left(\frac{y}{a}\right) & a \ne 0 \\
+(af)^*(y) &= a f^*\left(\frac{y}{a}\right) & a > 0 \\
+\sup_x\{f(x) + y^\tp x\} &= (-f)^*(y) \\
+\sup_x\{f(x) - y^\tp x\} &= (-f)^*(-y) \\
+\sup_x\{-f(x) - y^\tp x\} &= f^*(-y) \\
+\inf_x\{f(x) + y^\tp x\} &= -f^*(-y) \\
+\inf_x\{y^\tp x - f(x)\} &= -(-f)^*(-y) \\
+\inf_x\{f(x) - y^\tp x\} &= -f^*(y) \\
+\inf_x\{-f(x) - y^\tp x\} &= -(-f)^*(y) \\
+\]
+
+\section*{Min-common / Max-crossing}
+Let $M$ be a nonempty subset of $\R^{n+1}$.
+
+\[
+p(u) &\eqdef \inf\{w : (u, w) \in M\} \\
+q(\mu) &\eqdef \inf_{(u, w) \in M}\{\mu^\tp u + w\} &\text{concave, upper semicontinuous} \\
+&= \inf_u \{\mu^\tp u + p(u)\} \\
+&= -p^*(-\mu) \\
+\marginnote{min common} NC &\eqdef \inf\{w : (0, w) \in M\} \\
+&= p(0) \\
+\marginnote{max crossing} XC &\eqdef \sup\{b : \mu^\tp u + w \ge b \quad\forall (u, w) \in M\} \\
+&= \sup_\mu q(\mu) \\
+&= p^{**}(0) \\
+\marginnote{weak duality} XC &\le NC \\
+\]
+
+\section*{Optimization}
+
+Let $f$ be a function to be optimized, $F(x, u)$ chosen such that $f(x) = F(x, 0)$.
+
+\[
+p(u) &\eqdef \inf_x F(x, u) \\
+M &\eqdef \epi(p) \\
+NC &= \inf_x f(x) \\
+&= \inf_x F(x, 0) \\
+q(\mu) &= \inf_{x, u}\{F(x, u) + \mu^\tp u\} \\
+&= -F^*(0, -\mu) \\
+XC &= -\inf_\mu F^*(0, \mu) \\
+\]
+
+\section*{Minimax}
+
+Let $\phi : X \times Z \to \R$.
+
+\[
+p(u) &\eqdef \inf_x \sup_z \{\phi(x, z) - u^\tp z\} \\
+M &= \epi(p) \\
+\phi_x(z) &\eqdef \phi(x, z) \\
+\sup_z \inf_x \phi(x, z) \le MC \le NC &= \inf_x \sup_z \phi(x, z)\\
+&= \inf_x \sup_z \{ (\ccvcl \phi_x)(z) \} \\
+q(\mu) &= \inf_x \{-(-\phi_x)^{**}(\mu)\} \\
+&= \inf_x \{ (\ccvcl \phi_x)(\mu) \} &\text{if $\phi_x$ is proper for each $x$} \\
+MC &= \sup_z \inf_x \{ (\ccvcl \phi_x)(z) \} &\text{if $\phi_x$ is proper for each $x$} \\
+\]
+
+\end{document}
