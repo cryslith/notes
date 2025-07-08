@@ -3,47 +3,77 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\cvx}{cvx}
+\DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\relint}{ri}
 \DeclareMathOperator{\cvxcl}{\breve{cl}}
 \DeclareMathOperator{\ccvcl}{\hat{cl}}
 \DeclareMathOperator{\epi}{epi}
 
-\title{Convex optimization cheatsheet}
+\title{Convex optimization notes}
 \author{Lily Chung}
 \date{}
 
 \begin{document}
 \maketitle
 
-Cheatsheet for Dimitri Bertsekas, ``Convex Optimization Theory''.
+Notes accompanying \cite{Bertsekas2009}.
 Everything is over $\R^n$.
+
+Recall that the convex closure $\cvxcl f$ of a function $f$ is the convex l.s.c. function whose epigraph is $\cl(\cvx(\epi(f)))$, the convex closure of the epigraph of $f$.  The \defn{concave closure} $\ccvcl f$ is defined as $\ccvcl f = -(\cvxcl(-f))$.
 
 \section*{Convex conjugate}
 
-Let $f : \R^n \to \R$.
+Let $f : \R^n \to [-\infty, \infty]$.
 
 \[
-f^* &: \R^n \to \R &\text{convex, lower semicontinuous} \\
-f^*(y) &= \sup_x\{y^\tp x - f(x)\} \\
+f^* &: \R^n \to [-\infty, \infty] &\text{convex, lower semicontinuous} \\
+f^*(y) &\eqdef \sup_x\{y^\tp x - f(x)\} \\
 \marginnote{weak duality} f^{**} &\le f \\
 (\cvxcl f)^* &= f^* \\
-(\cvxcl f) &= f^{**} &\text{if $\cvxcl f$ is proper} \\
+\marginnote{strong duality} (\cvxcl f) &= f^{**} &\text{if $\cvxcl f$ is proper} \\
 \]
 
-If $f$ is convex, then properness of any of $f, f^*, f^{**}$ implies properness of all of them.
-
+\begin{itemize}
+\item If $f$ is convex, then properness of any of $f, f^*, f^{**}$ implies properness of all of them.
+\item If $\cvxcl f$ is improper because $\cvxcl f = \infty$, then $f = \infty$ also.  In this case $f^* = -\infty$ and strong duality holds.
+\item If $\cvxcl f$ is improper because some $(\cvxcl f)(x) = -\infty$, then $f^* = \infty$.  Thus strong duality only holds if $f = -\infty$.
+\item Suppose $f$ is convex improper and not identically $\infty$.  Then $f$ equals $-\infty$ on a nonempty convex set $S$, equals $\infty$ outside $\cl(S)$, and may take any value on the relative boundary of $S$.  We can phrase this as:
+  \begin{itemize}
+  \item Inside $S$, strong duality holds ($f = f^{**} = -\infty$).
+  \item Outside $\cl(S)$, strong duality fails ($f^{**} = -\infty < \infty = f^*$).
+  \item On $\cl(S) - S$, strong duality fails and $f$ is not l.s.c.
+  \end{itemize}
+\item Suppose $f$ is convex proper.  Then:
+  \begin{itemize}
+  \item Since $f$ is continuous over $\relint(\dom(f))$ [Proposition~1.3.11], it follows that $f$ agrees with $\cvxcl f$ and strong duality holds there.
+    Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization of $f^{**}$ is nonempty [Propositions~4.4.1], and decomposes\footnote{%
+    Here $(\aff(\dom(f)))^\bot$ is the space of vectors orthogonal to all vectors parallel to $\aff(\dom(f))$.
+    }
+    as $Q^* = (\aff(\dom(f)))^\bot + \tilde Q$ where $\tilde Q$ is nonempty, convex, and compact. [Proposition 4.4.2]
+  \item For points on the relative boundary, the above may not hold.  Strong duality can fail due to $f$ not being l.s.c; and the set of optimal solutions may be empty (e.g. $f(x) = -\sqrt{1 - x^2}$) or noncompact (e.g. $f$ is an indicator function).
+  \end{itemize}
+\end{itemize}
 \[
 (x \mapsto f(ax))^*(y) &= f^*\left(\frac{y}{a}\right) & a \ne 0 \\
 (af)^*(y) &= a f^*\left(\frac{y}{a}\right) & a > 0 \\
-\sup_x\{f(x) + y^\tp x\} &= (-f)^*(y) \\
-\sup_x\{f(x) - y^\tp x\} &= (-f)^*(-y) \\
-\sup_x\{-f(x) - y^\tp x\} &= f^*(-y) \\
-\inf_x\{f(x) + y^\tp x\} &= -f^*(-y) \\
+\sup_x\{y^\tp x + f(x)\} &= (-f)^*(y) \\
+\sup_x\{- y^\tp x + f(x)\} &= (-f)^*(-y) \\
+\sup_x\{- y^\tp x - f(x)\} &= f^*(-y) \\
+\inf_x\{y^\tp x + f(x)\} &= -f^*(-y) \\
 \inf_x\{y^\tp x - f(x)\} &= -(-f)^*(-y) \\
-\inf_x\{f(x) - y^\tp x\} &= -f^*(y) \\
-\inf_x\{-f(x) - y^\tp x\} &= -(-f)^*(y) \\
+\inf_x\{- y^\tp x + f(x)\} &= -f^*(y) \\
+\inf_x\{- y^\tp x - f(x)\} &= -(-f)^*(y) \\
 \]
 
-\section*{Min-common / Max-crossing}
+Geometrically the (concave, u.s.c.) dual function $g(y) = -f^*(-y)$ is the highest possible intersection between an underlying hyperplane of $\epi(f)$ with normal $(y, 1)$, and the vertical line through the origin.  The hyperplane itself is the graph of $x \mapsto -y^\tp x + g(y)$, and the double dual is $f^{**}(x) = (-g)^*(-x) = \sup_y\{-y^\tp x + g(y)\}$.
+
+\section*{Min-common / Max-crossing interpretation}
+
 Let $M$ be a nonempty subset of $\R^{n+1}$.
 
 \[
@@ -58,6 +88,16 @@ q(\mu) &\eqdef \inf_{(u, w) \in M}\{\mu^\tp u + w\} &\text{concave, upper semico
 &= p^{**}(0) \\
 \marginnote{weak duality} XC &\le NC \\
 \]
+
+\begin{itemize}
+\item Geometrically $q(\mu)$ is the highest possible intersection between an underlying hyperplane of $M$ with normal $(\mu, 1)$, and the vertical line through the origin.
+\item
+  $p, q, NC, XC$ are unchanged if we replace $M$ by its upward closure $\overline{M} = M + \{(0, w) : w \ge 0\}$ or by $\epi(p)$.
+\item $q$ and $XC$ are unchanged if we replace $M$ by $\cvx(M)$ or $\cl(M)$.
+\item Strong duality: Suppose $M$ is convex, and $p$ is l.s.c. at 0.  Then either $XC = NC$ or $XC = -\infty < \infty = NC$.
+\end{itemize}
+
+
 
 \section*{Optimization}
 
@@ -87,5 +127,7 @@ q(\mu) &= \inf_x \{-(-\phi_x)^{**}(\mu)\} \\
 &= \inf_x \{ (\ccvcl \phi_x)(\mu) \} &\text{if $\phi_x$ is proper for each $x$} \\
 MC &= \sup_z \inf_x \{ (\ccvcl \phi_x)(z) \} &\text{if $\phi_x$ is proper for each $x$} \\
 \]
+
+\printbibliography
 
 \end{document}

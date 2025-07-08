@@ -14,5 +14,6 @@
 *.snm
 *.vtc
 *.pdf
+*.run.xml
 
 *.zip
