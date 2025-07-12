@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
+\usepackage{tcolorbox}
 \input{liatex/preamble}
 
 \usepackage[style=alphabetic]{biblatex}
@@ -9,6 +10,7 @@
 \DeclareMathOperator{\cl}{cl}
 \DeclareMathOperator{\cvx}{cvx}
 \DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\interior}{int}
 \DeclareMathOperator{\relint}{ri}
 \DeclareMathOperator{\cvxcl}{\breve{cl}}
 \DeclareMathOperator{\ccvcl}{\hat{cl}}
@@ -38,6 +40,14 @@ f^*(y) &\eqdef \sup_x\{y^\tp x - f(x)\} \\
 \marginnote{strong duality} (\cvxcl f) &= f^{**} &\text{if $\cvxcl f$ is proper} \\
 \]
 
+\begin{tcolorbox}[title=Geometric intuition]
+  Define the function
+
+  \[q(y) &\eqdef \inf_x\{y^\tp x + f(x)\} = -f^*(-y) &\text{concave, upper semicontinuous}\]
+
+  Geometrically $q(y)$ is the highest possible intersection between an underlying hyperplane of $\epi(f)$ with normal $(y, 1)$, and the vertical line through the origin.  The hyperplane itself is the graph of $x \mapsto -y^\tp x + q(y)$, and the double dual is $f^{**}(x) = (-q)^*(-x) = \sup_y\{-y^\tp x + q(y)\}$.
+\end{tcolorbox}
+
 \begin{itemize}
 \item If $f$ is convex, then properness of any of $f, f^*, f^{**}$ implies properness of all of them.
 \item If $\cvxcl f$ is improper because $\cvxcl f = \infty$, then $f = \infty$ also.  In this case $f^* = -\infty$ and strong duality holds.
@@ -45,19 +55,23 @@ f^*(y) &\eqdef \sup_x\{y^\tp x - f(x)\} \\
 \item Suppose $f$ is convex improper and not identically $\infty$.  Then $f$ equals $-\infty$ on a nonempty convex set $S$, equals $\infty$ outside $\cl(S)$, and may take any value on the relative boundary of $S$.  We can phrase this as:
   \begin{itemize}
   \item Inside $S$, strong duality holds ($f = f^{**} = -\infty$).
-  \item Outside $\cl(S)$, strong duality fails ($f^{**} = -\infty < \infty = f^*$).
+  \item Outside $\cl(S)$, strong duality fails ($f^{**} = -\infty < \infty = f$).
   \item On $\cl(S) - S$, strong duality fails and $f$ is not l.s.c.
   \end{itemize}
-\item Suppose $f$ is convex proper.  Then:
-  \begin{itemize}
-  \item Since $f$ is continuous over $\relint(\dom(f))$ [Proposition~1.3.11], it follows that $f$ agrees with $\cvxcl f$ and strong duality holds there.
-    Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization of $f^{**}$ is nonempty [Propositions~4.4.1], and decomposes\footnote{%
-    Here $(\aff(\dom(f)))^\bot$ is the space of vectors orthogonal to all vectors parallel to $\aff(\dom(f))$.
-    }
-    as $Q^* = (\aff(\dom(f)))^\bot + \tilde Q$ where $\tilde Q$ is nonempty, convex, and compact. [Proposition 4.4.2]
-  \item For points on the relative boundary, the above may not hold.  Strong duality can fail due to $f$ not being l.s.c; and the set of optimal solutions may be empty (e.g. $f(x) = -\sqrt{1 - x^2}$) or noncompact (e.g. $f$ is an indicator function).
-  \end{itemize}
 \end{itemize}
+
+Now suppose that $f$ is convex proper.  We can say the following:
+\begin{itemize}
+\item If $y \in \dom(f^*)$ then $y^\tp d \le r_{\cl f}(d)$ holds for all directions $d$
+  [c.f. Exercise 1.64], though the converse is only true if $\dom(f^*)$ is closed (consider for instance $f(x) = -\ln(x), f^*(y) = \ln(-y) - 1$).
+  In particular, $\dom(f^*) \subset R_{\cl f}^*$ [Proposition~4.5.1].
+\item Since $f$ is continuous over $\relint(\dom(f))$ [Proposition~1.3.11], it follows that $f$ agrees with $\cvxcl f$ and strong duality holds there.
+  Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization $f^{**}(x) = \sup_y\{-y^\tp x + q(y)\}$ is nonempty [Proposition~4.4.1], and decomposes [Proposition~4.4.2] as\footnote{%
+  Here $(\aff(\dom(f)))^\bot$ is the space of vectors orthogonal to all vectors parallel to $\aff(\dom(f))$.
+  } $Q^* = (\aff(\dom(f)))^\bot + \tilde Q$ where $\tilde Q$ is nonempty, convex, and compact.
+\item For points on the relative boundary, the above may not hold.  Strong duality can fail due to $f$ not being l.s.c; and the set of optimal solutions may be empty (e.g. $f(x) = -\sqrt{1 - x^2}$) or noncompact (e.g. $f$ is an indicator function).
+\end{itemize}
+
 \[
 (x \mapsto f(ax))^*(y) &= f^*\left(\frac{y}{a}\right) & a \ne 0 \\
 (af)^*(y) &= a f^*\left(\frac{y}{a}\right) & a > 0 \\
@@ -70,63 +84,69 @@ f^*(y) &\eqdef \sup_x\{y^\tp x - f(x)\} \\
 \inf_x\{- y^\tp x - f(x)\} &= -(-f)^*(y) \\
 \]
 
-Geometrically the (concave, u.s.c.) dual function $g(y) = -f^*(-y)$ is the highest possible intersection between an underlying hyperplane of $\epi(f)$ with normal $(y, 1)$, and the vertical line through the origin.  The hyperplane itself is the graph of $x \mapsto -y^\tp x + g(y)$, and the double dual is $f^{**}(x) = (-g)^*(-x) = \sup_y\{-y^\tp x + g(y)\}$.
+\begin{tcolorbox}[title=Min-common / Max-crossing interpretation]
+  Let $M$ be a nonempty subset of $\R^{n+1}$.
 
-\section*{Min-common / Max-crossing interpretation}
-
-Let $M$ be a nonempty subset of $\R^{n+1}$.
-
-\[
-p(u) &\eqdef \inf\{w : (u, w) \in M\} \\
-q(\mu) &\eqdef \inf_{(u, w) \in M}\{\mu^\tp u + w\} &\text{concave, upper semicontinuous} \\
-&= \inf_u \{\mu^\tp u + p(u)\} \\
-&= -p^*(-\mu) \\
-\marginnote{min common} NC &\eqdef \inf\{w : (0, w) \in M\} \\
-&= p(0) \\
-\marginnote{max crossing} XC &\eqdef \sup\{b : \mu^\tp u + w \ge b \quad\forall (u, w) \in M\} \\
-&= \sup_\mu q(\mu) \\
-&= p^{**}(0) \\
-\marginnote{weak duality} XC &\le NC \\
-\]
-
-\begin{itemize}
-\item Geometrically $q(\mu)$ is the highest possible intersection between an underlying hyperplane of $M$ with normal $(\mu, 1)$, and the vertical line through the origin.
-\item
-  $p, q, NC, XC$ are unchanged if we replace $M$ by its upward closure $\overline{M} = M + \{(0, w) : w \ge 0\}$ or by $\epi(p)$.
-\item $q$ and $XC$ are unchanged if we replace $M$ by $\cvx(M)$ or $\cl(M)$.
-\item Strong duality: Suppose $M$ is convex, and $p$ is l.s.c. at 0.  Then either $XC = NC$ or $XC = -\infty < \infty = NC$.
-\end{itemize}
+  \[
+  p(u) &\eqdef \inf\{w : (u, w) \in M\} \\
+  q(\mu) &\eqdef \inf_{(u, w) \in M}\{\mu^\tp u + w\} &\text{concave, upper semicontinuous} \\
+  &= \inf_u \{\mu^\tp u + p(u)\} \\
+  &= -p^*(-\mu) \\
+  \marginnote{min common} NC &\eqdef \inf\{w : (0, w) \in M\} \\
+  &= p(0) \\
+  \marginnote{max crossing} XC &\eqdef \sup\{b : \mu^\tp u + w \ge b \quad\forall (u, w) \in M\} \\
+  &= \sup_\mu q(\mu) \\
+  &= p^{**}(0) \\
+  \marginnote{weak duality} XC &\le NC \\
+  \]
+  \begin{itemize}
+  \item
+    $p, q, NC, XC$ are unchanged if we replace $M$ by its upward closure $\overline{M} = M + \{(0, w) : w \ge 0\}$ or by $\epi(p)$.
+  \item $q$ and $XC$ are unchanged if we replace $M$ by $\cvx(M)$ or $\cl(M)$.
+  \end{itemize}
+\end{tcolorbox}
 
 
 
 \section*{Optimization}
 
-Let $f$ be a function to be optimized, $F(x, u)$ chosen such that $f(x) = F(x, 0)$.
+Let $f$ be a function to be minimized, $F(x, u)$ chosen such that $f(x) = F(x, 0)$.
 
 \[
 p(u) &\eqdef \inf_x F(x, u) \\
-M &\eqdef \epi(p) \\
-NC &= \inf_x f(x) \\
-&= \inf_x F(x, 0) \\
-q(\mu) &= \inf_{x, u}\{F(x, u) + \mu^\tp u\} \\
+p(0) &= \inf_x F(x, 0) \\
+&= \inf_x f(x) \\
+q(\mu) &\eqdef -p^*(-\mu) \\
+&= \inf_{x, u}\{F(x, u) + \mu^\tp u\} \\
 &= -F^*(0, -\mu) \\
-XC &= -\inf_\mu F^*(0, \mu) \\
+p^{**}(0) &= \sup_\mu q(\mu) \\
+&= -\inf_\mu F^*(0, \mu) \\
 \]
 
 \section*{Minimax}
 
-Let $\phi : X \times Z \to \R$.
+Let $\phi : X \times Z \to \R$ where $X \subset \R^n, Z \subset \R^n$.
 
 \[
-p(u) &\eqdef \inf_x \sup_z \{\phi(x, z) - u^\tp z\} \\
-M &= \epi(p) \\
 \phi_x(z) &\eqdef \phi(x, z) \\
-\sup_z \inf_x \phi(x, z) \le MC \le NC &= \inf_x \sup_z \phi(x, z)\\
+p(u) &\eqdef \inf_x \sup_z \{\phi(x, z) - u^\tp z\} \\
+&= \inf_x (-\phi_x)^*(-u) \\
+q(\mu) &\eqdef -p^*(-\mu) \\
+&= \inf_u \inf_x \sup_z \{\phi(x, z) - u^\tp z + u^\tp \mu\} \\
+&= \inf_x \{-(-\phi_x)^{**}(\mu)\} \\
+\sup_z \inf_x \phi(x, z)
+\le \sup_\mu \inf_x \{-(-\phi_x)^{**}(\mu)\}
+= p^{**}(0)
+&\le p(0)
+= \inf_x \sup_z \phi(x, z) \\
 &= \inf_x \sup_z \{ (\ccvcl \phi_x)(z) \} \\
-q(\mu) &= \inf_x \{-(-\phi_x)^{**}(\mu)\} \\
-&= \inf_x \{ (\ccvcl \phi_x)(\mu) \} &\text{if $\phi_x$ is proper for each $x$} \\
-MC &= \sup_z \inf_x \{ (\ccvcl \phi_x)(z) \} &\text{if $\phi_x$ is proper for each $x$} \\
 \]
+
+\begin{itemize}
+\item If $-\ccvcl \phi_x$ is proper for each $x$, then we have $-(-\phi_x)^{**} = \ccvcl \phi_x$.
+\item If additionally $\phi_x = \ccvcl \phi_x$ for each $x$, then
+  the minimax equality $\inf_x \sup_z \phi(x, z) = \sup_z \inf_x \phi(x, z)$ becomes equivalent to the strong duality inequality $p^{**}(0) \le p(0)$.
+\end{itemize}
 
 \printbibliography
 
