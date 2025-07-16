@@ -64,11 +64,12 @@ Now suppose that $f$ is convex proper.  We can say the following:
 \begin{itemize}
 \item If $y \in \dom(f^*)$ then $y^\tp d \le r_{\cl f}(d)$ holds for all directions $d$
   [c.f. Exercise 1.64], though the converse is only true if $\dom(f^*)$ is closed (consider for instance $f(x) = -\ln(x), f^*(y) = \ln(-y) - 1$).
-  In particular, $\dom(f^*) \subset R_{\cl f}^*$ [Proposition~4.5.1].
+  In particular, $\dom(f^*) \subset (R_{\cl f})^*$ [Proposition~4.5.1].
 \item Since $f$ is continuous over $\relint(\dom(f))$ [Proposition~1.3.11], it follows that $f$ agrees with $\cvxcl f$ and strong duality holds there.
-  Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization $f^{**}(x) = \sup_y\{-y^\tp x + q(y)\}$ is nonempty [Proposition~4.4.1], and decomposes [Proposition~4.4.2] as\footnote{%
-  Here $(\aff(\dom(f)))^\bot$ is the space of vectors orthogonal to all vectors parallel to $\aff(\dom(f))$.
-  } $Q^* = (\aff(\dom(f)))^\bot + \tilde Q$ where $\tilde Q$ is nonempty, convex, and compact.
+  Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization $f^{**}(x) = \sup_y\{-y^\tp x + q(y)\}$ is nonempty [Proposition~4.4.1],
+  and decomposes [Proposition~4.4.2] as $Q^* = V^\bot + \tilde Q$
+  where $V$ is the subspace parallel to $\aff(\dom(f))$,
+  and $\tilde Q$ is nonempty, convex, and compact.
 \item For points on the relative boundary, the above may not hold.  Strong duality can fail due to $f$ not being l.s.c; and the set of optimal solutions may be empty (e.g. $f(x) = -\sqrt{1 - x^2}$) or noncompact (e.g. $f$ is an indicator function).
 \end{itemize}
 
@@ -133,12 +134,15 @@ p(u) &\eqdef \inf_x \sup_z \{\phi(x, z) - u^\tp z\} \\
 &= \inf_x (-\phi_x)^*(-u) \\
 q(\mu) &\eqdef -p^*(-\mu) \\
 &= \inf_u \inf_x \sup_z \{\phi(x, z) - u^\tp z + u^\tp \mu\} \\
-&= \inf_x \{-(-\phi_x)^{**}(\mu)\} \\
+&= \inf_x \{-(-\phi_x)^{**}(\mu)\}
+\]
+\[
+\marginnote{minimax inequality}
 \sup_z \inf_x \phi(x, z)
-\le \sup_\mu \inf_x \{-(-\phi_x)^{**}(\mu)\}
+\le \sup_z \inf_x \{-(-\phi_x)^{**}(z)\}
 = p^{**}(0)
-&\le p(0)
-= \inf_x \sup_z \phi(x, z) \\
+\le p(0)
+&= \inf_x \sup_z \phi(x, z) \\
 &= \inf_x \sup_z \{ (\ccvcl \phi_x)(z) \} \\
 \]
 

@@ -52,14 +52,19 @@ Then if $X$ and $Y$ are independent random variables on $M$ and $N$ such that $\
 &= \E[\E[\tilde f(Y)]_X] \\
 \]
 
-So the outcome of the game depends only on $\E[\tilde f(Y)]$.
+So the outcome of the game depends only on $\E[\tilde f(Y)]$.\footnote{%
+Incidentally, it can be shown that if $Z$ is a random variable supported on $A \subset \R^n$ with finite expectation, then $\E Z \in \cvx(A)$.
+See \url{https://math.stackexchange.com/questions/284153/mathematical-expectation-is-inside-convex-hull-of-support}.}
 
 Now we show that the minimax equality holds.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, arbitrary distributions]\label{thm:semi-finite}
-  Let $S = \im \tilde f \subset \R^m$,
-  and define
-  \[c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\}.\]
+  Let $M$ be a finite set, $N$ be an arbitrary set,
+  and $f : M \times N \to \R$ be an arbitrary function.
+  Define
+  \[
+  c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\},\]
+  where $S = \im \tilde f \subset \R^m$.
   Then
   \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)].\]
 \end{theorem}
@@ -72,16 +77,15 @@ Now we show that the minimax equality holds.
 
   First we show (\ref{eqn:semi-finite:lb}).
   Fix an arbitrary $c < c^*$, so that $(-\infty, c]^m \cap \cvx(S) = \emptyset$.
-  By the hyperplane separation theorem, there exist $\mu, \beta$ such that $\mu^T v \le \beta$ for all $v \in (-\infty, c]^m$
-  and $\mu^T v \ge \beta$ for all $v \in \cvx(S)$.
-  Without loss of generality we can assume each $\mu_i \ge 0$ and $\sum_i \mu_i = 1$, so $\mu \in \Probfin{M}$.
+  By the hyperplane separation theorem, there exist $\mu \in \R^m - \{0\}$ and $\beta \in \R$ such that $\mu^T w \le \beta \le \mu^T v$ for all $w \in (-\infty, c]^m$ and $v \in \cvx(S)$.
+  Each $\mu_i$ must be nonnegative, and by rescaling we can assume $\mu \in \Probfin{M}$.
   Then we can compute:
   \[
   \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)]
   &\ge \inf_{P_Y \in \Probstar{N}} \E_{X \sim \mu, Y \sim P_Y}[f(X, Y)] \\
   &= \inf_{P_Y \in \Probstar{N}} \E[\mu^\tp \tilde f(Y)] \\
-  &\ge \beta &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
-  &\ge \mu^\tp (c, c, \dots, c) \\
+%  &\ge \beta &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
+  &\ge \mu^\tp (c, c, \dots, c) &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
   &= c
   \]
   which entails (\ref{eqn:semi-finite:lb}).
@@ -89,11 +93,12 @@ Now we show that the minimax equality holds.
   Now we show (\ref{eqn:semi-finite:ub}).
   Fix an arbitrary $c > c^*$ so that $(-\infty, c]^m \cap \cvx(S) \ne \emptyset$, which is to say there exists $z \in \cvx(S)$ such that each $z_i \le c$.
   Since $z \in \cvx(S)$ there exists a probability measure $\nu$ on $N$
-  such that $\E_{Y \sim \nu} \tilde f(Y) = z$.\footnote{To see this, write $z$ as a finite convex combination of distinct elements $\sum_i \lambda_i s_i$,
-  pick $y_i \in N$ such that $\tilde f(y_i) = s_i$,
-  and define $\nu$ by $\nu[A] = \sum_{i : y_i \in A} \lambda_i$.
-  It then follows that $\nu[\tilde f(Y) = s_i] = \lambda_i$ and thus $\E[\tilde f(Y)] = z$.}
-  We compute:
+  such that $\E_{Y \sim \nu}[\tilde f(Y)] = z$.
+  To see this, write $z$ as a convex combination $\sum_i \lambda_i \tilde f(y_i)$,
+  where each $y_i$ is in $N$ and the $\tilde f(y_i)$ are distinct.
+  Then define the probability distribution $\nu$ on $N$ by $\nu[A] \eqdef \sum_{i : y_i \in A} \lambda_i$.
+
+  Now we compute:
   \[
   \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)]
   &\le \sup_{P_X \in \Probfin{M}} \E_{X \sim P_X, Y \sim \nu}[f(X, Y)] \\
@@ -109,19 +114,18 @@ The minimax value is unchanged if we restrict the minimizer's mixed strategy to 
 This version is conceptually simpler since we don't need $N$ to be a measurable space.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, finitely supported distributions]\label{thm:semi-finite delta}
-  Let $M$ be a finite set, $N$ be an arbitrary set,
-  and $f : M \times N \to \R$ be an arbitrary function.
-  Let $S = \im \tilde f \subset \R^m$,
-  and define
-  \[c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\}.\]
+  Let $M, N, f, S, c^*$ as in \cref{thm:semi-finite}.
   Then
   \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)],\]
   where $\Probfin{N}$ is the set of finitely supported probability distributions on $N$.
 \end{theorem}
 
+In fact, it suffices to consider probability distributions supported on at most $m$ elements of $N$.
+This is because from Caratheodory's theorem, any element $z \in \cvx(S)$ can be written as a convex combination of $m+1$ elements $s_1, \dots, s_{m+1} \in S$.
+Observing that $c^* = \inf_{v \in \cvx(S)} g(v)$
+where $g(v) = \max_{i \in [m]} v_i$ is continuous, convex, and has a nontrivial recession cone, we find that $g$ attains a minimum at some point $z^*$ on the boundary of $\cvx(\{s_1, \dots, s_{m+1}\})$.  This point $z^*$ can be written as a convex combination of $m$ points out of $s_1, \dots, s_{m+1}$, so we can use $z^*$ in place of $z$ in the proof of (\ref{eqn:semi-finite:ub}).
+
 \section*{Concavelike-convexlike minimax}
-
-
 
 \begin{definition}[Concavelike and convexlike, Definitions 2.1--2.3 in \cite{Sion1958}]
   Let $f : M \times N \to \R$.
@@ -138,16 +142,16 @@ This version is conceptually simpler since we don't need $N$ to be a measurable 
 
 An equivalent definition of concavelike is that for any distribution $\mu \in \Probfin{M}$, there exists $\tilde\mu \in M$ such that $\E_{X \sim \mu}[f(X, y)] \le f(\tilde\mu, y)$.
 
-We will now prove the following theorem, whose proof Sion omits.
+We now prove the following theorem, whose proof Sion omits.
 \begin{theorem}[Theorem 4.1 in \cite{Sion1958}]
-  Let $f : M \times N \to R$ be concave-convexlike.
+  Let $f : M \times N \to \R$ be concave-convexlike.
   Suppose that for any $c < \inf \sup f$ there exists a finite subset $T \subset M$
   such that $\inf_N \sup_T f > c$.
   Then $\inf \sup f = \sup \inf f$.
 \end{theorem}
 \begin{proof}
   Let $c < \inf\sup f$, so that $T$ exists as in the assumption.
-  Then we have
+  Then
   \[
   c &< \inf_N \sup_T f \\
   &= \inf_{P_Y \in \Probfin{N}} \sup_{x \in T} \E[f(x, Y)] &\text{since $f$ is convexlike} \\
