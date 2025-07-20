@@ -111,7 +111,7 @@ Now suppose that $f$ is convex proper.  We can say the following:
 
 \section*{Optimization}
 
-Let $f$ be a function to be minimized, $F(x, u)$ chosen such that $f(x) = F(x, 0)$.
+Let $f : \R^n \to [-\infty, \infty]$ be a function to be minimized, $F(x, u)$ chosen such that $f(x) = F(x, 0)$.
 
 \[
 p(u) &\eqdef \inf_x F(x, u) \\
@@ -123,6 +123,26 @@ q(\mu) &\eqdef -p^*(-\mu) \\
 p^{**}(0) &= \sup_\mu q(\mu) \\
 &= -\inf_\mu F^*(0, \mu) \\
 \]
+
+\subsection*{Lagrangian}
+
+Minimizing $f : X \to \R$ over $\{x \in X : g(x) \le 0\}$.
+
+\[
+p(u) &\eqdef \inf_{x \in X : g(x) \le u} f(x) \\
+q(\mu) &= \inf_u\{p(u) + \mu^\tp u\} \\
+&=
+\begin{cases}
+  \inf_{x \in X} \{f(x) + \mu^\tp g(x)\} & \mu \ge 0 \\
+  -\infty & \text{otherwise}
+\end{cases} \\
+\marginnote{Lagrangian} L(x, \mu) &\eqdef f(x) + \mu^\tp g(x) \\
+\]
+
+\begin{itemize}
+\item Proposition~5.3.1 states conditions under which
+  the set $Q^*$ of optimal solutions $\mu$ in the maximization $p^{**}(0) = \sup_{\mu \ge 0} q(\mu)$ is nonempty and compact.
+\end{itemize}
 
 \section*{Minimax}
 

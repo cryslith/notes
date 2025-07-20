@@ -21,8 +21,6 @@
 \maketitle
 
 Notes accompanying Maurice Sion, ``On General Minimax Theorems'' \cite{Sion1958}.
-We consider a function $f : M \times N \to \R$ where $M$ and $N$ are arbitrary sets.
-We write ``$\sup\inf f$'' to mean $\sup_{m \in M} \inf_{n \in N} f(m, n)$ and similarly for ``$\inf\sup f$''.
 
 \section*{Semi-finite Von Neumann minimax}
 
@@ -59,8 +57,8 @@ See \url{https://math.stackexchange.com/questions/284153/mathematical-expectatio
 Now we show that the minimax equality holds.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, arbitrary distributions]\label{thm:semi-finite}
-  Let $M$ be a finite set, $N$ be an arbitrary set,
-  and $f : M \times N \to \R$ be an arbitrary function.
+  Let $M = [m]$ be a finite set, $N$ be a measurable space,
+  and $f : M \times N \to \R$ be measurable.
   Define
   \[
   c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\},\]
@@ -114,16 +112,18 @@ The minimax value is unchanged if we restrict the minimizer's mixed strategy to 
 This version is conceptually simpler since we don't need $N$ to be a measurable space.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, finitely supported distributions]\label{thm:semi-finite delta}
-  Let $M, N, f, S, c^*$ as in \cref{thm:semi-finite}.
+  Let $M$ be a finite set, $N$ be an arbitrary set, and $f : M \times N \to \R$.
+  Define $S$ and $c^*$ as in \cref{thm:semi-finite}.
   Then
   \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)],\]
   where $\Probfin{N}$ is the set of finitely supported probability distributions on $N$.
 \end{theorem}
 
 In fact, it suffices to consider probability distributions supported on at most $m$ elements of $N$.
-This is because from Caratheodory's theorem, any element $z \in \cvx(S)$ can be written as a convex combination of $m+1$ elements $s_1, \dots, s_{m+1} \in S$.
-Observing that $c^* = \inf_{v \in \cvx(S)} g(v)$
-where $g(v) = \max_{i \in [m]} v_i$ is continuous, convex, and has a nontrivial recession cone, we find that $g$ attains a minimum at some point $z^*$ on the boundary of $\cvx(\{s_1, \dots, s_{m+1}\})$.  This point $z^*$ can be written as a convex combination of $m$ points out of $s_1, \dots, s_{m+1}$, so we can use $z^*$ in place of $z$ in the proof of (\ref{eqn:semi-finite:ub}).
+This is because by Caratheodory's theorem, any element $z \in \cvx(S)$ can be written as a convex combination of $m+1$ elements $s_1, \dots, s_{m+1} \in S$.
+Since the function $g(v) = \max_{i \in [m]} v_i$ is continuous, convex, and unbounded,
+it follows that $g$ attains a minimum at some point on the boundary of $\cvx(\{s_1, \dots, s_{m+1}\})$.
+Such a boundary point can be written as a convex combination of at most $m$ of the elements $s_1, \dots, s_{m+1}$, and it can be used in place of $z$ in the proof of (\ref{eqn:semi-finite:ub}).
 
 \section*{Concavelike-convexlike minimax}
 
@@ -145,12 +145,12 @@ An equivalent definition of concavelike is that for any distribution $\mu \in \P
 We now prove the following theorem, whose proof Sion omits.
 \begin{theorem}[Theorem 4.1 in \cite{Sion1958}]
   Let $f : M \times N \to \R$ be concave-convexlike.
-  Suppose that for any $c < \inf \sup f$ there exists a finite subset $T \subset M$
+  Suppose that for any $c < \inf_N \sup_M f$ there exists a finite subset $T \subset M$
   such that $\inf_N \sup_T f > c$.
-  Then $\inf \sup f = \sup \inf f$.
+  Then $\inf_N \sup_M f = \sup_M \inf_N f$.
 \end{theorem}
 \begin{proof}
-  Let $c < \inf\sup f$, so that $T$ exists as in the assumption.
+  Let $c < \inf_N \sup_M f$, so that $T$ exists as in the assumption.
   Then
   \[
   c &< \inf_N \sup_T f \\
@@ -158,7 +158,7 @@ We now prove the following theorem, whose proof Sion omits.
   &\le \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{T}} \E[f(X, Y)] \\
   &= \sup_{P_X \in \Probfin{T}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] &\text{\cref{thm:semi-finite delta}} \\  
   &\le \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] \\
-  &= \sup \inf f &\text{since $f$ is concave-convexlike} \\
+  &= \sup_M \inf_N f &\text{since $f$ is concave-convexlike} \\
   \]
 \end{proof}
 
