@@ -66,12 +66,27 @@ Now suppose that $f$ is convex proper.  We can say the following:
   [c.f. Exercise 1.64], though the converse is only true if $\dom(f^*)$ is closed (consider for instance $f(x) = -\ln(x), f^*(y) = \ln(-y) - 1$).
   In particular, $\dom(f^*) \subset (R_{\cl f})^*$ [Proposition~4.5.1].
 \item Since $f$ is continuous over $\relint(\dom(f))$ [Proposition~1.3.11], it follows that $f$ agrees with $\cvxcl f$ and strong duality holds there.
-  Furthermore, in this case the set $Q^*$ of optimal solutions $y$ in the maximization $f^{**}(x) = \sup_y\{-y^\tp x + q(y)\}$ is nonempty [Proposition~4.4.1],
+  Furthermore, in this case the set $Q^*$ of dual optimal solutions (i.e. optimal $y$ in the maximization $f^{**}(x) = \sup_y\{-y^\tp x + q(y)\}$) is nonempty [Proposition~4.4.1],
   and decomposes [Proposition~4.4.2] as $Q^* = V^\bot + \tilde Q$
   where $V$ is the subspace parallel to $\aff(\dom(f))$,
   and $\tilde Q$ is nonempty, convex, and compact.
 \item For points on the relative boundary, the above may not hold.  Strong duality can fail due to $f$ not being l.s.c; and the set of optimal solutions may be empty (e.g. $f(x) = -\sqrt{1 - x^2}$) or noncompact (e.g. $f$ is an indicator function).
 \end{itemize}
+
+\begin{tcolorbox}[title=Summary for convex $f$]
+  \begin{itemize}
+  \item Duality gap ($f^{**}(x) < f(x)$) can arise when:
+    \begin{itemize}
+    \item $f$ attains the value $-\infty$ somewhere, and $f(x) = \infty$;
+    \item or $f$ is not l.s.c. at $x$.
+    \end{itemize}
+  \item Dual optimal solutions fail to exist when:
+    \begin{itemize}
+    \item $f(x) = \infty$;
+    \item or there is no nonvertical supporting hyperplane at $x$.
+    \end{itemize}
+  \end{itemize}
+\end{tcolorbox}
 
 \[
 (x \mapsto f(ax))^*(y) &= f^*\left(\frac{y}{a}\right) & a \ne 0 \\
@@ -140,8 +155,10 @@ q(\mu) &= \inf_u\{p(u) + \mu^\tp u\} \\
 \]
 
 \begin{itemize}
-\item Proposition~5.3.1 states conditions under which
-  the set $Q^*$ of optimal solutions $\mu$ in the maximization $p^{**}(0) = \sup_{\mu \ge 0} q(\mu)$ is nonempty and compact.
+\item Proposition~5.3.6: Relaxed Slater's condition guarantees strong duality and that the set $Q^*$ of dual optimal solutions is nonempty and compact.
+\item Proposition~5.3.7: An l.s.c. and compactness condition guarantees strong duality and that the set of primal optimal solutions is nonempty and compact.
+\item Note that strong duality may not hold even if $f, g$ are convex proper continuous and $X$ is closed.
+  For instance, consider $X = \{(x, y) \in \R^2 : x \ge 1\}, f(x, y) = 1 - y, g(x, y) = \frac{y^2}{x}$.
 \end{itemize}
 
 \section*{Minimax}

@@ -15,7 +15,7 @@
 \begin{tcolorbox}
   \[
   \begin{gathered}
-    \max\mat{c_1 \\ c_2 \\ c_3}^T \mat{x_1 \\ x_2 \\ x_3} \\
+    \max\mat{c_1 \\ c_2 \\ c_3}^\tp \mat{x_1 \\ x_2 \\ x_3} \\
     \begin{aligned}
       x_1 &\ge 0 \\
       x_2 &\le 0 \\
@@ -25,13 +25,13 @@
   \end{gathered}
   \qquad\text{is dual to}\qquad
   \begin{gathered}
-    \min\mat{b_\alpha \\ b_\beta \\ b_\gamma}^T \mat{y_\alpha \\ y_\beta \\ y_\gamma} \\
+    \min\mat{b_\alpha \\ b_\beta \\ b_\gamma}^\tp \mat{y_\alpha \\ y_\beta \\ y_\gamma} \\
     \begin{aligned}
       y_\alpha \ge 0 \\
       y_\beta \le 0 \\
       y_\gamma \in \R \\
     \end{aligned}\quad
-    A^Ty \in \mat{\ge c_1 \\ \le c_2 \\ = c_3} \\
+    A^\tp y \in \mat{\ge c_1 \\ \le c_2 \\ = c_3} \\
   \end{gathered}
   \]
 \end{tcolorbox}

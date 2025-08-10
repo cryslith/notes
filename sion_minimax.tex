@@ -12,6 +12,7 @@
 \DeclareMathOperator{\cvx}{cvx}
 \DeclareMathOperator{\cl}{cl}
 \DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\ri}{ri}
 
 \title{Sion minimax notes}
 \author{Lily Chung}
@@ -26,56 +27,46 @@ Notes accompanying Maurice Sion, ``On General Minimax Theorems'' \cite{Sion1958}
 
 This material is based on \cite[Sections 2.3--2.4]{Blackwell1954} and \cite[Section 13.1]{Ferguson2020}
 
-In this section, we will be interested in mixed strategies for zero-sum games where one player has only finitely many options.\footnote{These are called ``S-games'' in \cite{Blackwell1954}.}
+In this section, we will prove minimax equalities for zero-sum games where one player has only finitely many options.\footnote{These are called ``S-games'' in \cite{Blackwell1954}.}
 Since the other player has infinitely many options,
 we will assume these live in a measure space so that we can
 represent their mixed strategies as probability distributions.
 
-Let $M = [m]$ be a finite set, $N$ be an arbitrary measurable space,
-and $f : M \times N \to \R$ be measurable.
-Together these define the game $(M, N, f)$.
+Consider a finite set $M = [m]$, a measurable space $N$, and a measurable function $f : M \times N \to \R$.
+Together these define a game $(M, N, f)$ between two players, the ``maximizer'' and the ``minimizer''.
 The maximizer will choose a mixed strategy from $\Probfin{M}$, the set of probability distributions on the finite set $M$.
-However, we will require the minimizer to choose their mixed strategy from $\Probstar{N}$, which we define as the set of probability distributions $P_Y$ on $N$ with the property that $\E[f(X, Y)]$ exists for all pairs of independent random variables $X, Y$ where $Y \sim P_Y$.\footnote{Equivalently, $\E[f(x, Y)]$ exists for all $x \in M$, and we do not have $\E[f(x_1, Y)] = \infty$ and $\E[f(x_2, Y)] = -\infty$ simultaneously for $x_1, x_2 \in M$.}
-Of course, this condition is satisfied if $f$ is bounded below or bounded above.
+However, we will require the minimizer to choose their mixed strategy to be a probability distribution $P_Y$ on $N$ with the property that $\E[f(X, Y)]$ exists for all pairs of independent random variables $X, Y$ where $Y \sim P_Y$.\footnote{Equivalently, $\E[f(x, Y)]$ exists for all $x \in M$, and we do not have $\E[f(x_1, Y)] = \infty$ and $\E[f(x_2, Y)] = -\infty$ simultaneously for $x_1, x_2 \in M$.}
+Of course, this condition is trivially satisfied if $f$ is bounded below or bounded above.
+We use $\Probstar{N}$ to denote the set of probability distributions on $N$ with this property.
 
-We write the minimax inequality for mixed strategies on $(M, N, f)$ as
+The minimax inequality for mixed strategies on $(M, N, f)$ is
 \[\sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] \le \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)]\]
 with the understanding that $X$ and $Y$ are sampled independently from $P_X$ and $P_Y$.
+Our aim is to show that this inequality is in fact an equality.
 
-We can view $f$ in the equivalent form $\tilde f : N \to \R^m$.
-Then if $X$ and $Y$ are independent random variables on $M$ and $N$ such that $\E[f(x, Y)]$ is finite for every $x$, we have
-\[
-\E[f(X, Y)] &= \E[(x \mapsto \E[f(x, Y)])(X)] &\text{by independence} \\
-&= \E[(x \mapsto \E[\tilde f(Y)]_x)(X)] \\
-&= \E[\E[\tilde f(Y)]_X] \\
-\]
-
-So the outcome of the game depends only on $\E[\tilde f(Y)]$.\footnote{%
-Incidentally, it can be shown that if $Z$ is a random variable supported on $A \subset \R^n$ with finite expectation, then $\E Z \in \cvx(A)$.
-See \url{https://math.stackexchange.com/questions/284153/mathematical-expectation-is-inside-convex-hull-of-support}.}
-
-Now we show that the minimax equality holds.
+It will be useful to define $\tilde f : N \to \R^m$ by $\tilde f(y)_x \eqdef f(x, y)$.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, arbitrary distributions]\label{thm:semi-finite}
   Let $M = [m]$ be a finite set, $N$ be a measurable space,
   and $f : M \times N \to \R$ be measurable.
+  Then
+  \[\sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)].\]
+\end{theorem}
+\begin{proof}
   Define
   \[
   c^* \eqdef \inf\{c \in \R : (-\infty, c]^m \cap \cvx(S) \ne \emptyset\},\]
-  where $S = \im \tilde f \subset \R^m$.
-  Then
-  \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)].\]
-\end{theorem}
-\begin{proof}
-  It suffices to show the inequalities
+  where $S = \im \tilde f \subset \R^m$.  We will show that $c^*$ is the value of the game.
+
+  To prove this it suffices to show the inequalities
   \begin{align}
     c^* &\le \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probstar{N}} \E[f(X, Y)] \label{eqn:semi-finite:lb} \\
     c^* &\ge \inf_{P_Y \in \Probstar{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)] \label{eqn:semi-finite:ub}
   \end{align}
 
   First we show (\ref{eqn:semi-finite:lb}).
-  Fix an arbitrary $c < c^*$, so that $(-\infty, c]^m \cap \cvx(S) = \emptyset$.
-  By the hyperplane separation theorem, there exist $\mu \in \R^m - \{0\}$ and $\beta \in \R$ such that $\mu^T w \le \beta \le \mu^T v$ for all $w \in (-\infty, c]^m$ and $v \in \cvx(S)$.
+  Observe that the relative interior of $(-\infty, c^*]^m$ is $(-\infty, c^*)^m$ which is disjoint from $\cvx(S)$.
+  By the hyperplane separation theorem, there exist $\mu \in \R^m - \{0\}$ and $\beta \in \R$ such that $\mu^T w \le \beta \le \mu^T v$ for all $w \in (-\infty, c^*]^m$ and $v \in \cvx(S)$.
   Each $\mu_i$ must be nonnegative, and by rescaling we can assume $\mu \in \Probfin{M}$.
   Then we can compute:
   \[
@@ -83,15 +74,20 @@ Now we show that the minimax equality holds.
   &\ge \inf_{P_Y \in \Probstar{N}} \E_{X \sim \mu, Y \sim P_Y}[f(X, Y)] \\
   &= \inf_{P_Y \in \Probstar{N}} \E[\mu^\tp \tilde f(Y)] \\
 %  &\ge \beta &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
-  &\ge \mu^\tp (c, c, \dots, c) &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
-  &= c
+  &\ge \mu^\tp (c^*, c^*, \dots, c^*) &\text{since $\tilde f(Y) \in \cvx(S)$.} \\
+  &= c^*
   \]
-  which entails (\ref{eqn:semi-finite:lb}).
+  which verifies (\ref{eqn:semi-finite:lb}).
 
   Now we show (\ref{eqn:semi-finite:ub}).
-  Fix an arbitrary $c > c^*$ so that $(-\infty, c]^m \cap \cvx(S) \ne \emptyset$, which is to say there exists $z \in \cvx(S)$ such that each $z_i \le c$.
+  Fix an arbitrary value $c > c^*$ so that $(-\infty, c]^m$ and $\cvx(S)$ intersect, which is to say there exists $z \in \cvx(S)$ such that each $z_i \le c$.
   Since $z \in \cvx(S)$ there exists a probability measure $\nu$ on $N$
-  such that $\E_{Y \sim \nu}[\tilde f(Y)] = z$.
+  such that $\E_{Y \sim \nu}[\tilde f(Y)] = z$.%
+  \footnote{%
+  Incidentally, the converse holds: if $Z$ is a random variable supported on a set $A \subset \R^n$ such that $Z$ has finite expectation, then $\E Z \in \cvx(A)$.
+  See \url{https://math.stackexchange.com/questions/284153/mathematical-expectation-is-inside-convex-hull-of-support}.
+  We didn't use this when showing (\ref{eqn:semi-finite:lb}) because $\tilde f(Y)$ didn't necessarily have finite expectation.
+  }
   To see this, write $z$ as a convex combination $\sum_i \lambda_i \tilde f(y_i)$,
   where each $y_i$ is in $N$ and the $\tilde f(y_i)$ are distinct.
   Then define the probability distribution $\nu$ on $N$ by $\nu[A] \eqdef \sum_{i : y_i \in A} \lambda_i$.
@@ -107,23 +103,24 @@ Now we show that the minimax equality holds.
   and so (\ref{eqn:semi-finite:ub}) holds, which concludes the proof.
 \end{proof}
 
-The proof of \cref{thm:semi-finite} shows that allowing arbitrary random variables $Y$ was unnecessary.
+The proof of \cref{thm:semi-finite} shows that the maximizer has an optimal strategy $\mu$.
+It also reveals that allowing arbitrary distributions $P_Y \in \Probstar{N}$ was unnecessary.
 The minimax value is unchanged if we restrict the minimizer's mixed strategy to simply be a discrete probability distribution taking values in a finite subset of $N$.
 This version is conceptually simpler since we don't need $N$ to be a measurable space.
 
 \begin{theorem}[Semi-finite Von Neumann minimax, finitely supported distributions]\label{thm:semi-finite delta}
-  Let $M$ be a finite set, $N$ be an arbitrary set, and $f : M \times N \to \R$.
-  Define $S$ and $c^*$ as in \cref{thm:semi-finite}.
+  Let $M$ be a finite set, $N$ be an arbitrary set, and $f : M \times N \to \R$ be an arbitrary function.
   Then
-  \[c^* = \sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)],\]
+  \[\sup_{P_X \in \Probfin{M}} \inf_{P_Y \in \Probfin{N}} \E[f(X, Y)] = \inf_{P_Y \in \Probfin{N}} \sup_{P_X \in \Probfin{M}} \E[f(X, Y)],\]
   where $\Probfin{N}$ is the set of finitely supported probability distributions on $N$.
 \end{theorem}
 
 In fact, it suffices to consider probability distributions supported on at most $m$ elements of $N$.
 This is because by Caratheodory's theorem, any element $z \in \cvx(S)$ can be written as a convex combination of $m+1$ elements $s_1, \dots, s_{m+1} \in S$.
-Since the function $g(v) = \max_{i \in [m]} v_i$ is continuous, convex, and unbounded,
+Since the function $g(v) = \max_{i \in [m]} v_i$ is continuous, convex, and unbounded below,
 it follows that $g$ attains a minimum at some point on the boundary of $\cvx(\{s_1, \dots, s_{m+1}\})$.
 Such a boundary point can be written as a convex combination of at most $m$ of the elements $s_1, \dots, s_{m+1}$, and it can be used in place of $z$ in the proof of (\ref{eqn:semi-finite:ub}).
+
 
 \section*{Concavelike-convexlike minimax}
 
