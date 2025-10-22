@@ -148,14 +148,88 @@ p(u) &\eqdef \inf_{x \in X : g(x) \le u} f(x) \\
 q(\mu) &= \inf_u\{p(u) + \mu^\tp u\} \\
 &=
 \begin{cases}
-  \inf_{x \in X} \{f(x) + \mu^\tp g(x)\} & \mu \ge 0 \\
+  \inf_{x \in X} L(x, \mu) & \mu \ge 0 \\
   -\infty & \text{otherwise}
 \end{cases} \\
 \marginnote{Lagrangian} L(x, \mu) &\eqdef f(x) + \mu^\tp g(x) \\
 \]
 
+\begin{tcolorbox}[title=Optimality conditions (Proposition~5.3.2)]
+  Consider the nonlinear program
+  \[
+  z = \inf\{f(x) : x \in X, g(x) \le 0\}
+  \]
+  where $X \subset \R^n$ is any set and $f, g_i : X \to \R$ are any functions.
+
+  The Lagrangian is
+  \[
+  L(x, \mu) &= f(x) + \mu^\tp g(x).
+  \]
+
+  The following are equivalent:
+  \begin{itemize}
+  \item $x^*$ is primal optimal, $\mu^*$ is dual optimal,
+    and strong duality holds, meaning $z = \sup_{\mu \ge 0} \inf_{x \in X} L(x, \mu)$.
+  \item The following conditions all hold:
+    \[
+    \marginnote{primal feasibility} x^* &\in \{x \in X : g(x) \le 0\} \\
+    \marginnote{dual feasibility} \mu^* &\ge 0 \\
+    L(x^*, \mu^*) &= \min_{x \in X} L(x, \mu^*) \\
+    \marginnote{complementary slackness} {\mu^*}^\tp g(x^*) &= 0.
+    \]
+  \end{itemize}
+\end{tcolorbox}
+
+Note that complementary slackness is equivalent to saying that either $\mu^*_i = 0$ or $g_i(x^*) = 0$ for all $i$.
+
+\begin{tcolorbox}[title=Slater's condition (Proposition~5.3.1)]
+  Consider the convex program
+  \[
+  z = \inf\{f(x) : x \in X, g(x) \le 0\}
+  \]
+  where $X \subset \R^n$ is a convex set and $f, g_i : X \to \R$ are convex functions.
+
+  The Lagrangian is
+  \[
+  L(x, \mu) &= f(x) + \mu^\tp g(x).
+  \]
+
+  Assume that $z$ is finite and that Slater's condition holds, meaning the set $\{x \in X : g(x) < 0\}$ is nonempty.
+  Then strong duality holds, meaning
+  \[z &= \sup_{\mu \ge 0} \inf_{x \in X} L(x, \mu).\]
+  Furthermore the set of dual optimal solutions $\mu$ is nonempty and compact.
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Relaxed Slater's condition (Proposition~5.3.6)]
+  Consider the convex program
+  \[
+  z = \inf\{f(x) : x \in P \cap C, g(x) \le 0, \tilde g(x) \le 0\}
+  \]
+  where:
+  \begin{itemize}
+  \item $P$ is polyhedral and $C$ is convex
+  \item $f, g_i : C \to \R$ are convex
+  \item Each $\tilde g_i : X \to \R$ is polyhedral (a maximum of a finite number of affine functions).
+  \end{itemize}
+
+  The Lagrangian is
+  \[
+  L(x, \mu, \tilde\mu) &= f(x) + \mu^\tp g(x) + \tilde\mu^\tp \tilde g(x).
+  \]
+
+  Assume that $z$ is finite and that the Relaxed Slater's condition holds, meaning the sets
+  \[
+  &P \cap \relint(C) \cap \{x : \tilde g(x) \le 0\} \\
+  &P \cap C \cap \{x : g(x) < 0, \tilde g(x) \le 0\}
+  \]
+  are both nonempty.
+  Then strong duality holds, meaning
+  \[z &= \sup_{\mu, \tilde\mu \ge 0} \inf_{x \in P \cap C} L(x, \mu, \tilde\mu).\]
+  Furthermore there exists a dual optimal solution $\mu, \tilde\mu$.
+\end{tcolorbox}
+\xxx{Can we say that the set of optimal $\mu$ is compact?}
+
 \begin{itemize}
-\item Proposition~5.3.6: Relaxed Slater's condition guarantees strong duality and that the set $Q^*$ of dual optimal solutions is nonempty and compact.
 \item Proposition~5.3.7: An l.s.c. and compactness condition guarantees strong duality and that the set of primal optimal solutions is nonempty and compact.
 \item Note that strong duality may not hold even if $f, g$ are convex proper continuous and $X$ is closed.
   For instance, consider $X = \{(x, y) \in \R^2 : x \ge 1\}, f(x, y) = 1 - y, g(x, y) = \frac{y^2}{x}$.
