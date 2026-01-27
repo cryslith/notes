@@ -1,0 +1,311 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\newcommand*{\Normal}[0]{\mathcal{N}}
+\newcommand*{\Subgauss}[0]{\mathcal{G}}
+\newcommand*{\Ber}[0]{\text{Ber}}
+\newcommand*{\Bin}[0]{\text{Bin}}
+\newcommand*{\Poi}[0]{\text{Poi}}
+\newcommand*{\Exp}[0]{\text{Exp}}
+\newcommand*{\Fl}[0]{\mathcal{F}}
+
+\allowdisplaybreaks
+
+\title{Probability Cheatsheet}
+
+\author{
+  Lily Chung
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Todo}
+
+\begin{itemize}
+\item Martingale things
+\item Couplings, Markov chains
+\end{itemize}
+
+\section*{Probability}
+
+\begin{lemma}[Borel-Cantelli 1]
+  Let $A$ be a sequence of events.  If $\sum_n \Pr[A_n] < \infty$ then $\Pr[\limsup_n A_n] = 0$.
+\end{lemma}
+
+\begin{lemma}[Borel-Cantelli 2]
+  Let $A$ be a sequence of independent events.  If $\sum_n \Pr[A_n] = \infty$ then $\Pr[\limsup_n A_n] = 1$.
+\end{lemma}
+
+\begin{lemma}[Kolmogorov zero-one law]
+  Let $X$ be a sequence of independent random variables,
+  and let $S_\infty = \bigcap_n \sigma\{X_{> n}\}$ be the tail sigma-algebra.
+  Then every event in $S_\infty$ has probability 0 or 1.
+\end{lemma}
+
+\section*{Integrals and Expectation}
+
+\[
+\marginnote{monotone convergence} \int \lim_n f_n\,d\mu &= \lim_n \int f_n\,d\mu & \text{$f_n$ increasing in $n$ and $\int f_0\,d\mu > -\infty$} \\
+\marginnote{dominated convergence} \int \lim_n f_n\,d\mu &= \lim_n \int f_n\,d\mu & \text{$|f_n| \le g$ and $\int g\,d\mu < \infty$} \\
+\marginnote{Fatou's lemma} \int \liminf_n f_n\,d\mu &\le \liminf_n \int f_n\,d\mu & \text{$f_n \ge 0$} \\
+\int_{S\times S'} f\,d(\mu \times \mu') &= \int_S \int_{S'} f\,d\mu'\,d\mu & \text{provided left integral exists} \\
+\E[X] &= \int_0^\infty \Pr[X > t]\,dt & X \ge 0 \\
+&= \sum_{t=0}^\infty \Pr[X > t] & X \in \N \\
+\E[U \E[X \mid G]] &= \E[UX] & \sigma(U) \subset G, \E[|UX|] < \infty \\
+\E[\E[X \mid H] \mid G] &= \E[\E[X \mid G] \mid H] = \E[X \mid H] & H \subset G \\
+\]
+
+\section*{Inequalities}
+
+\[
+(1 - x)^{1/x} &< e^{-1} & x \in (0, 1] \\
+\left(1 + \frac{x}{a}\right)^a &\le e^x & a > 0, x \ge -a \\
+|\E[XY]|^2 &\le \E[X^2]\E[Y^2] \\
+\Cov(X, Y)^2 &\le (\Var X)(\Var Y) \\
+\marginnote{Jensen} \varphi(\E[X \mid G]) &\le \E[\varphi(X) \mid G] & \text{$\varphi$ convex} \\
+\marginnote{Markov} \Pr[X \ge t] &\le \frac{\E X}{t} & X \ge 0, t \ge 0 \\
+\marginnote{Chebyshev} \Pr[|X - \E X| \ge t] &\le \frac{\Var X}{t^2} & t \ge 0 \\
+\marginnote{Cantelli} \Pr[X - \E X \ge t] &\le \frac{\Var X}{\Var X + t^2} & t \ge 0 \\
+|\E X - M| &\le \sqrt{\Var X} &\text{where $M$ is a median of $X$} \\
+\marginnote{Paley-Zygmund} \Pr[X > \theta \cdot \E X] &\ge \frac{(1 - \theta)^2(\E X)^2}{\Var X + (1 - \theta)^2(\E X)^2} \ge (1 - \theta)^2 \frac{(\E X)^2}{\E[X^2]} & \theta \in [0, 1]; \E X \ge 0 \\
+\]
+
+\hidden{Proof of Paley-Zygmund}{%
+  \begin{proof}[Proof of Paley-Zygmund]
+    \[
+    (1 - \theta) \E X
+    &= \E[X - \theta \E X] \\
+    &\le \E[(X - \theta \E X)[X > \theta \E X]] \\
+    &\le \sqrt{\E[(X - \theta \E X)^2]\Pr[X > \theta \E X]} &\text{Cauchy-Schwarz} \\
+    \Pr[X > \theta \E X]
+    &\ge \frac{(1 - \theta)^2(\E X)^2}{\E[(X - \theta \E X)^2]} \\
+    &= \frac{(1 - \theta)^2(\E X)^2}{\Var X + (1 - \theta)^2 (\E X)^2}
+    \]
+  \end{proof}%
+}
+
+\section*{Chernoff Bounds}
+
+\[
+\psi_X(\lambda) &= \ln \E[e^{\lambda X}] \\
+\psi_X^*(t) &= \sup_\lambda (\lambda t - \psi_X(\lambda)) \\
+{\psi_X^*}^{-1}(y) &= \inf\{t \ge \E X : \psi^*(t) > y\} = \inf_{\lambda > 0} \frac{y + \psi(\lambda)}{\lambda} \\
+\Pr[X \ge t] &\le e^{-\psi_X^*(t)} & t \ge \E X \\
+\psi_{aX}(\lambda) &= \psi_X(a\lambda) \\
+\psi_{X_1 + X_2}(\lambda) &= \psi_{X_1}(\lambda) + \psi_{X_2}(\lambda) & X_1 \Perp X_2 \\
+\]
+
+\section*{Binomial Distribution}
+
+\[
+X &\sim \Bin(n, p) & n \in \N, p \in [0, 1] \\
+\Pr[X = k] &= \binom{n}{k}p^k\overline{p}^{n-k} & k \in [0, n] \\
+\E X &= np \\
+\Var X &= np\overline{p} \\
+M_X(\lambda) &= (\overline{p} + pe^\lambda)^n \\
+\psi_{X - \E X}(\lambda) &= n (\ln (\overline{p} + pe^\lambda) - \lambda p) \le \psi_{\Poi(np\overline{p}) - np\overline{p}}(\lambda) \\
+\psi_{X - \E X}^*(t) &= \frac{n}{\log e} d\left(\frac{t}{n} + p \mathrel{}\middle\|\mathrel{} p\right) & d(a \mathrel{\|} p) = (1 - a)\log\frac{1 - a}{1 - p} + a \log \frac{a}{p} \\
+\]
+
+\section*{Normal Distribution}
+
+\[
+X &\sim \Normal(\mu, \sigma^2) & \text{location $\mu$, scale $\sigma$} \\
+\frac{X - \mu}{\sigma} &\sim \Normal(0, 1) \\
+\E X &= \mu \\
+\Var X &= \sigma^2 \\
+f_X(x) &= \frac{1}{\sigma\sqrt{2\pi}} \exp_e\left(-\frac12 \left(\frac{x - \mu}{\sigma}\right)^2\right) \\
+F_X(x) &= \Phi\left(\frac{x - \mu}{\sigma}\right) \\
+M_X(\lambda) &= \exp_e\left(\lambda \mu + \frac12 \lambda^2 \sigma^2\right) \\
+X_1 + X_2 &\sim \Normal(\mu_1 + \mu_2, \sigma_1^2 + \sigma_2^2) & X_1 \Perp X_2 \\
+(t^{-1} - t^{-3})\frac{1}{\sqrt{2\pi}}e^{-t^2/2} &\le 1 - \Phi(t) \le t^{-1}\frac{1}{\sqrt{2\pi}}e^{-t^2/2} \\
+\]
+
+\begin{theorem}[Berry-Esseen CLT]
+  Let $X_1, \dots, X_n$ be iid with $\E X_i = \mu, \Var(X_i) = \sigma^2, \frac{\E[|X_i - \mu|^3]}{\sigma^3} = \rho$.
+  Write
+  \[
+  S &= \sum_i X_i \\
+  Z &= \frac{S - \E S}{\sqrt{\Var S}} = \frac{1}{\sigma\sqrt{n}} \sum_i(X_i - \mu) \\
+  \]
+  Then
+  \[|\Pr[Z \le t] - \Phi(t)| \le \frac{\rho}{\sqrt{n}}\]
+\end{theorem}
+
+\subsection*{Subgaussian Distributions}
+
+\[
+X \in \Subgauss(v) &\iff \psi_X(\lambda) \le \psi_{\Normal(0, v)}(\lambda) = \frac{\lambda^2 v}{2} \\
+aX &\in \Subgauss(a^2 v) \\
+X_1 + X_2 &\in \Subgauss(v_1 + v_2) & X_1 \Perp X_2 \\
+\psi_{\Normal(0, v)}^*(t) &= \frac{t^2}{2v} \\
+X^2 - \E[X^2] &\in \Gamma_\pm(16v^2, 2v) \\
+\marginnote{Hoeffding's lemma} Y - \E Y &\in \Subgauss\left(\frac{(b - a)^2}{4}\right) & Y \in [a, b] \\
+\]
+
+\hidden{Proof of $X^2 - \E[X^2] \in \Gamma_\pm(16v^2, 2v)$}{%
+  \begin{proof}[Proof of $X^2 - \E[X^2{]} \in \Gamma_\pm(16v^2, 2v)$]
+    This follows the proof of Theorem~2.10 in ``Concentration Inequalities'' \xxx{cite}.
+
+    Suppose $X \in \Subgauss(v)$, and let $Z = X^2$.  We have $\E[Z^q] = \E[X^{2q}] \le 2q!(2v)^q$ by Theorem~2.1.
+    From the inequality $\ln u \le u - 1$ for $u \ge 0$ we compute:
+    \[
+    \psi_{Z - \E Z}(\lambda) &= \ln \E[e^{\lambda Z}] - \lambda \E Z \\
+    &\le \E[e^{\lambda Z} - \lambda Z - 1] \\
+    &= \sum_{q=2}^\infty \frac{\lambda^q \E[Z^q]}{q!} &\text{monotone convergence} \\
+    &\le \sum_{q=2}^\infty \frac{\lambda^q \cdot 2q!(2v)^q}{q!} \\
+    &= 2 \frac{(2v\lambda)^2}{1 - 2v\lambda} &\text{for $|\lambda| < (2v)^{-1}$} \\
+    &= \frac{16v^2\lambda^2}{2(1 - 2v\lambda)} \\
+    &= \psi_{\Gamma_\pm(16v^2, 2v)}(\lambda) \\
+    \]
+  \end{proof}%
+}
+
+\section*{Exponential Distribution}
+
+Time between consecutive events in Poisson process with rate $r$.
+
+\[
+X &\sim \Exp(r) = \text{Gamma}(1, r) & \text{rate $r > 0$, scale $r^{-1}$} \\
+f_X(x) &= re^{-rx} & x \ge 0 \\
+F_X(x) &= 1 - e^{-rx} \\
+\Pr[X > t + s \mid X > s] &= \Pr[X > t] & s, t \ge 0 \\
+\]
+
+\section*{Poisson Distribution}
+
+Number of events at times $(0, t)$ in Poisson process with rate $r$,
+where $a = rt$.
+
+\[
+X &\sim \Poi(a) & a > 0 \\
+\Pr[X = n] &= e^{-a}\frac{a^n}{n!} & n \in \N \\
+\E X &= a \\
+\Var X &= a \\
+M_X(\lambda) &= \exp_e(a(e^\lambda - 1)) \\
+X_1 + X_2 &\sim \text{Poi}(a_1 + a_2) & X_1 \Perp X_2 \\
+\psi_{X - \E X}(\lambda) &= a(e^\lambda - \lambda - 1) \\
+\psi_{X - \E X}^*(t) &= ah\left(\frac{t}{a} + 1\right) & h(u) = u \ln u + 1 - u \\
+\]
+
+\section*{Gamma Distribution}
+
+Time of $k$th event in Poisson process with rate $r$.
+
+\[
+\Gamma(z) &= \int_0^\infty t^{z - 1}e^{-t}\,dt & z > 0 \\
+\Gamma(z+1) &= z\Gamma(z) \\
+\Gamma(n+1) &= n! & n \in \N \\
+\Gamma(1/2) &= \sqrt{\pi} \\
+\Gamma(x+1) &\sim \sqrt{2 \pi x}\left(\frac{x}{e}\right)^x \\
+X &\sim \text{Gamma}(k, r) & \text{shape $k > 0$, rate $r > 0$, scale $r^{-1}$} \\
+rX &\sim \text{Gamma}(k, 1) \\
+f_X(x) &= \frac{r^k}{\Gamma(k)}x^{k-1} e^{-rx} & x > 0 \\
+\E X &= kr^{-1} \\
+\Var X &= kr^{-2} \\
+\E[X^a] &= r^{-a} \frac{\Gamma(k + a)}{\Gamma(k)} & a > -k \\
+M_X(\lambda) &= \left(1 - \frac{\lambda}{r}\right)^{-k} & \lambda < r \\
+X - \E X &\in \Gamma_+(kr^{-2}, r^{-1}) \cap \Subgauss_-(kr^{-2}) \\
+\]
+
+\subsection*{Subgamma Distributions}
+
+\[
+X \in \Gamma_+(v, c) &\iff \psi_X(\lambda) \le \psi_{\Gamma_+(v, c)}(\lambda) = \frac{v \lambda^2}{2(1 - c\lambda)} & 0 \le \lambda < c^{-1} \\
+aX &\in \Gamma_+(a^2v, ac) & a \ge 0 \\
+X_1 + X_2 &\in \Gamma_+(v_1 + v_2, \max\{c_1, c_2\}) \\
+\psi_{\Gamma_+(v, c)}^*(t) &= \frac{v}{c^2}h_1\left(\frac{ct}{v}\right) & h_1(u) = 1 + u - \sqrt{1 + 2u} \\
+{\psi_{\Gamma_+(v, c)}^*}^{-1}(y) &= \sqrt{2vy} + cy \\
+\]
+
+\section*{Multivariate Distributions}
+
+\[
+(\E T)_{ij} &= \E[T_{ij}] & T : \Omega \to \R^{a \times b} \\
+\Cov(X_1, X_2) &= \E[(X_1 - \E X_1)(X_2 - \E X_2)^\tp] = \E[X_1X_2^\tp] - \E X_1 \cdot \E X_2^\tp & X_i : \Omega \to \R^{n_i} \\
+M_X(\lambda) &= \E[e^{\lambda^\tp X}] & \text{if finite in neighborhood of 0} \\
+\E[ATB] &= A\E[T]B & \text{$A, B$ constant matrices} \\
+\Cov(X_2, X_1) &= \Cov(X_1, X_2)^\tp \\
+\Cov(X_1 + X_2, Y) &= \Cov(X_1, Y) + \Cov(X_2, Y) \\
+\Cov(AX, BY) &= A\Cov(X, Y)B^\tp \\
+M_{AX}(\lambda) &= M_X(A^\tp \lambda) \\
+M_{X + Y}(\lambda) &= M_X(\lambda)M_Y(\lambda) & X \Perp Y \\
+X \Perp Y &\iff M_{\tiny\mat{X \\ Y}}\left(\mat{\lambda \\ \tau}\right) = M_X(\lambda)M_Y(\tau) \\
+\]
+
+\section*{Multivariate Normal}
+
+\[
+\mu &: \R^{n \times 1} \\
+A &: \R^{n \times n} \\
+\Sigma &= AA^T \succeq 0 \\
+X &\sim \Normal(\mu, \Sigma) = A\Normal(0, I_n) + \mu \\
+\E X &= \mu \\
+\Var X &= \Sigma \\
+M_X(\lambda) &= \exp_e\left(\lambda^\tp \mu + \frac12 \lambda^\tp \Sigma \lambda\right) \\
+BX &\sim \Normal(B\mu, B \Sigma B^\tp) & \forall B : \R^{m \times n} \\
+X_1 + X_2 &\sim \Normal(\mu_1 + \mu_2, \Sigma_1 + \Sigma_2) & X_1 \Perp X_2 \\
+\norm{X}_2^2 &\sim \text{Gamma}\left(\frac{n}{2}, \frac{1}{2\sigma^2}\right) & X \sim \Normal(0, \sigma^2 I_n) \\
+Y \sim \Normal(\mu, \Sigma) &\iff \forall t : \R^{n \times 1}, t^\tp Y \sim \Normal(t^\tp \mu, t^\tp \Sigma t) \\
+\Cov(X_1, X_2) = 0 &\iff X_1 \Perp X_2 & \text{$X_1, X_2$ jointly Gaussian} \\
+\]
+
+\section*{Martingales}
+
+\begin{definition}
+  If $\Fl$ is a filtration and $X$ is a sequence of random variables, then $X$ is a \defn{submartingale} on $\Fl$ if:
+  \begin{itemize}
+  \item $\E|X_n| < \infty$
+  \item $X_n$ is measurable by $\Fl_n$
+  \item $\E[X_{n+1} \mid \Fl_n] \ge X_n$
+  \end{itemize}
+\end{definition}
+
+\begin{lemma}
+  Suppose either $X$ is a martingale and $\phi$ is a convex function,
+  or $X$ is a submartingale and $\phi$ is an increasing convex function.
+  Then $\phi(X)$ is a submartingale provided $\E[|\phi(X_n)|] < \infty$.
+\end{lemma}
+
+\begin{definition}
+  Let $H$ be a sequence of random variables.
+  Then $H$ is \defn{predictable} by $\Fl$
+  if $H_{n+1}$ is measurable by $\Fl_n$.
+\end{definition}
+
+\begin{lemma}
+  Suppose $H$ is predictable and each $H_n$ is bounded.
+  If $X$ is a martingale then $HX$ is a martingale.
+  If $X$ is a submartingale and $H \ge 0$ then $HX$ is a submartingale.
+\end{lemma}
+
+\begin{theorem}[Martingale convergence]
+  If $X$ is a submartingale and $\sup_n \E[X_n^+] < \infty$ then there is a random variable $X_\infty$ so that $\lim_n X_n = X_\infty$ almost surely and $\E[|X_\infty|] < \infty$.
+\end{theorem}
+
+\begin{definition}
+  $T$ is a \defn{stopping time} if $[T \le k]$ is measurable by $\Fl_k$.
+\end{definition}
+
+\begin{theorem}[Optional Stopping]
+  Let $M$ be a submartingale and $T$ be a stopping time.
+  Then $\E[M_T] \ge \E[M_0]$ provided one of the following holds:
+  \begin{itemize}
+  \item There is a constant $k$ with $T \le k$ almost surely.
+  \item There is a random variable $B$ with $\E B < \infty$ and for all $n$ we have $|M_{n \wedge T}| \le B$ almost surely.
+  \item $\E T < \infty$ and there exists a constant $b$ such that $\E[|M_{n+1} - M_n| \mid \Fl_n] \le b$ for $n < T$.
+  \end{itemize}
+\end{theorem}
+
+\begin{example}\hfill
+  \begin{itemize}
+  \item If $S_n$ is a fair random walk on $\Z$ then $S_n^2 - n$ and $S_n^4 - 6nS_n^2 + 3n^2 + 2n$ are martingales.
+  \item If $S_n$ is a biased random walk on $\Z$ with probability $p$ of moving right and $q$ of moving left, then $(q/p)^{S_n}$ is a martingale.
+  \end{itemize}
+\end{example}
+
+\end{document}
