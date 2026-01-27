@@ -1,0 +1,272 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+\usepackage{xfrac}
+
+\newcommand*{\eqdist}{\stackrel{d}{=}}
+\DeclareMathOperator{\Ber}{Ber}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Unif}{Unif}
+\DeclareMathOperator{\Geo}{Geo}
+\DeclareMathOperator{\Leb}{Leb}
+\newcommand*{\Normal}[0]{\mathcal{N}}
+\newcommand*{\dtv}[0]{d_{\mathrm{TV}}}
+\newcommand*{\XX}{\mathcal{X}}
+\newcommand*{\YY}{\mathcal{Y}}
+\newcommand*{\tprod}{{\textstyle\prod}}
+\newcommand*{\ol}[1]{\overline{#1}}
+
+\title{Information Theory Cheatsheet}
+
+\author{
+  Lily Chung
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\[
+\varphi(x) &\eqdef x \log x \\
+\]
+
+\section*{Entropy}
+
+\[
+H(X) &\eqdef \E\left[\log \frac{1}{P_X(X)}\right] & \text{$X$ discrete} \\
+&= - D(P_X \| \#) \\
+H(Y \mid X) &\eqdef \E_{x \sim P_X}[H(P_{Y \mid X=x})] \\
+H(X) &\ge 0 & \text{equality iff $X$ constant} \\
+H(Y \mid X) &\le H(Y) & \text{equality iff $X \Perp Y$} \\
+\marginnote{chain rule} H(X, Y) &= H(Y \mid X) + H(X) \\
+H(X) &\ge H(f(X)) & \text{equality iff $f$ injective on support of $X$}
+\]
+
+For fixed $P_{Y \mid X}$, $P_X \mapsto H(X \mid Y)$ is concave; and if $\XX$ is finite then it is continuous.
+
+\subsection*{Differential Entropy}
+
+\[
+h(X) &\eqdef -D(P_X \| \Leb) & \text{$X$ continuous} \\
+h(Y \mid X) &\eqdef \E_{x \sim P_X}[h(P_{Y \mid X=x})] \\
+h(AX + b) &= h(X) + \log|\!\det A| &\text{$A$ invertible} \\
+\marginnote{chain rule} h(X, Y) &= h(Y \mid X) + h(X) \\
+\]
+
+\subsection*{Combinatorics}
+
+Let $a \in \N^k$ with $\sum_i a_i = n$.  Then
+\[
+\marginnote{method of types} nH(P) - (k-1)\log(n+1) \le \log\binom{n}{a_1, \dots, a_k} &\le nH(P)
+\]
+where $P$ is the empirical distribution of $a$.
+
+\subsection*{Examples}
+
+\[
+h_2(p) \eqdef H(\Ber(p)) &= p \log \frac1p + \overline{p} \log \frac{1}{\,\overline{p}\,} \\
+H(X) &= \log |\XX| - D(P_X \| \Unif(\XX)) & |\XX| < \infty \\
+H(X) &= \mu h_2(\mu^{-1}) - D(P_X \| \Geo(\mu^{-1})) &\XX = \N_+, \E X = \mu \\
+h(X) &= \log\Leb(\XX) - D(P_X \| \Unif(\XX)) &\Leb(\XX) < \infty \\
+h(\Normal(\mu, \Sigma)) &= \frac{\log e}{2} (\ln\det\Sigma + n \ln (2\pi) + n) & \text{dimension $n$} \\
+\]
+
+\section*{$f$-divergence}
+
+\[
+f : [0, \infty) \to \R \cup \{\infty\} &\text{ continuous convex}, f(1) = 0 \\
+D_f(P \| Q) &\eqdef \E_Q\left[f\left(\frac{p}{q}\right)\right] + f'(\infty)P[q = 0] & p = \frac{dP}{d\mu}, q = \frac{dQ}{d\mu} \\
+D_f(P_{Y \mid X} \| Q_{Y \mid X} | P_X) &\eqdef \E_{x \sim P_X}[D_f(P_{Y \mid X = x} \| Q_{Y \mid X = x})] \\
+&= D_f(P_X P_{Y\mid X} \| P_X Q_{Y \mid X}) \\
+f \mapsto D_f &\text{ linear} \\
+D_f = 0 &\iff f\text{ affine} \\
+\marginnote{convex inversion} D_f(Q \| P) &= D_{x \mapsto xf(x^{-1})}(P \| Q) \\
+D_f(P \| Q) &\ge 0 & \text{equality iff $P = Q$ when $f$ strictly convex at 1} \\
+\marginnote{data-processing inequality} D_f(P_{Y \mid X} \circ P_X \| P_{Y \mid X} \circ Q_X) &\le D_f(P_X \| Q_X) \\
+\lim_{\lambda \to 0} \frac{D_f(\lambda P + \overline{\lambda} Q \| Q)}{\lambda} &= f'(\infty) P[q=0] & D_f(P \| Q) < \infty, \text{$f'(1)$ exists} \\
+\marginnote{variational characterization} D_f(P \| Q) &= \sup_h \E_P[h] - \E_Q[f^* \circ h] &\text{over $h : \R \to \dom f^*$ s.t. $\E_Q[f^* \circ h] < \infty$} \\
+\]
+
+$P, Q \mapsto D_f(P \| Q)$ is convex.
+
+\section*{KL divergence}
+
+\[
+D(P \| Q) &\eqdef D_\varphi(P \| Q) \\
+&= \E_Q\left[\varphi\left(\frac{dP}{dQ}\right)\right] & \text{$\infty$ if $P \not\ll Q$} \\
+&= \E_P\left[\log \frac{dP}{dQ}\right] \\
+\E_P\left[\log \frac{dR}{dQ}\right] &= D(P \| Q) - D(P \| R) & \text{unless $D(P \| Q) = D(P \| R) = \infty$} \\
+D(P \| Q) &\ge 0 & \text{equality iff $P=Q$} \\
+\marginnote{chain rule} D(P_{X,Y} \| Q_{X,Y}) &= D(P_{Y \mid X} \| Q_{Y \mid X} | P_X) + D(P_X \| Q_X) \\
+\marginnote{lower semicontinuity} D(\lim_n P_n \| \lim_n Q_n) &\le \liminf_n D(P_n \| Q_n) & \text{weak limit} \\
+\lim_{\lambda \to 0} \frac{D(P \| \lambda Q + \overline{\lambda} P)}{\lambda} = 0 &\iff P \ll Q \\
+\marginnote{Donsker-Varadhan} D(P \| Q) &= \sup_f \E_P[f] - \log \E_Q [\exp f] & \text{over $f$ s.t. $0 < \E_Q[\exp f] < \infty$} \\
+\]
+
+$P \mapsto D(P \| Q)$ is continuous on finite alphabets if $Q > 0$ everywhere.
+
+\subsection*{Examples}
+
+\[
+d(p \| q) \eqdef D(\Ber(p) \| \Ber(q)) &= p \log \frac{p}{q} + \overline{p} \log \frac{\,\overline{p}\,}{\overline{q}} \\
+D(\Bin(n, p) \| \Bin(n, q)) &= nd(p \| q) \\
+D(\Normal(m_1, \Sigma_1) \| \Normal(m_0, \Sigma_0))
+&= \frac{\log e}{2}\left((m_1 - m_0)^\tp \Sigma_0^{-1} (m_1 - m_0) + \ln\frac{\det \Sigma_0}{\det \Sigma_1} + \tr(\Sigma_0^{-1}\Sigma_1 - I)\right)
+\]
+
+\section*{Mutual information}
+
+\[
+I(X; Y) &\eqdef D(P_{X, Y} \| P_X P_Y) \\
+&= D(P_{Y \mid X} \| P_Y | P_X) \\
+I(X; Y \mid Z) &\eqdef \E_{z \sim P_Z}[I(P_{X, Y \mid Z = z})] \\
+&= D(P_{X, Y, Z} \| P_{X \mid Z} P_{Y \mid Z} P_Z) \\
+I(X; Y) &\ge 0 &\text{equality iff $X \Perp Y$} \\
+\marginnote{chain rule} I(X, Y; Z) &= I(Y; Z \mid X) + I(X; Z) \\
+\marginnote{golden rule} I(X; Y) &= D(P_{Y|X} \| Q_Y | P_X) - D(P_Y \| Q_Y) \\
+\marginnote{data-processing inequality} I(X; W) &\le I(Y; Z) & X \to Y \to Z \to W \\
+\E_{P_{X, Y}}\left[\log\frac{dQ_{X \mid Y}}{dP_X}\right] &= I(X; Y) - D(P_{X \mid Y} \| Q_{X \mid Y} | P_Y) & Q_{X \mid Y=y} \ll P_X\text{ ($P_Y$-a.e.)} \\
+\marginnote{tensorization} I(X; Y^n) &= \sum_i I(X; Y_i) + D(P_{Y^n \mid X} \| \tprod_i P_{Y_i \mid X} | P_X) - D(P_{Y^n} \| \tprod_i P_{Y_i}) \\
+\]
+
+For fixed $P_{Y \mid X}$, $P_X \mapsto I(P_X, P_{Y \mid X})$ is concave.
+For fixed $P_X$, $P_{Y \mid X} \mapsto I(P_X, P_{Y \mid X})$ is convex.
+
+$P_{X, Y} \mapsto I(X; Y)$ is continuous on finite alphabets.
+
+Fix a channel $P_{Y \mid X}$;
+if $P_X$ ranges over the finite-dimensional convex hull $M = \mathrm{cvx}(P_1, \dots, P_n)$,
+and each $I(P_j, P_{Y \mid X}) < \infty$,
+then $P_X \mapsto I(P_X, P_{X \mid Y})$ is continuous on $M$.
+
+\subsection*{Mutual information and entropy}
+
+\[
+I(X; X) &= H(X) & \text{$X$ discrete, else $\infty$} \\
+I(X; Y) + H(Y \mid X) &= H(Y) & \text{$Y$ discrete} \\
+I(X; Y) + H(X, Y) &= H(X) + H(Y) & \text{$X, Y$ discrete} \\
+I(X; Y) &\le \min(H(X), H(Y)) & \text{$X$ or $Y$ discrete} \\
+I(X; Y) + h(X, Y) &= h(X) + h(Y) & \text{$X, Y$ jointly continuous} \\
+\]
+
+\subsection*{Examples}
+
+\[
+I(X; Y) &= \frac12 \log \frac{\det\Sigma_X \det\Sigma_Y}{\det\Sigma_{X,Y}} &\text{$X, Y$ jointly Gaussian} \\
+I(X; X + N) &= \frac12 \log\frac{\det(\Sigma_X + \Sigma_N)}{\det\Sigma_N} &\text{$X \Perp N$ jointly Gaussian} \\
+\]
+
+\section*{Total variation and Hellinger distance}
+
+\[
+\dtv(P, Q) &\eqdef \sup_A |P(A) - Q(A)| \\
+&= D_{x \mapsto \frac12|x - 1|}(P \| Q) \\
+&= \inf_{\substack{X \sim P \\ Y \sim Q}} \Pr[X \ne Y] \\
+&= \frac12 \int |dP - dQ| \\
+\dtv &\text{ metric} \\
+H^2(P, Q) &\eqdef D_{x \mapsto (1 - \sqrt{x})^2}(P \| Q) \\
+&= \int \left(\sqrt{dP} - \sqrt{dQ}\right)^2 \\
+&= 2 - 2\int \sqrt{dPdQ} \\
+\sqrt{H^2} &\text{ metric} \\
+\]
+
+\section*{$\chi^2$ divergence}
+
+\[
+\chi^2(P \| Q) &\eqdef D_{x \mapsto (x-1)^2}(P \| Q) \\
+&= D_{x \mapsto x^2-1}(P \| Q) \\
+&= \E_Q\left[\left(\frac{dP}{dQ} - 1\right)^2\right] &\text{$\infty$ if $P \not\ll Q$} \\
+&= \E_P\left[\frac{dP}{dQ}\right] - 1 \\
+&= \int \frac{(dP - dQ)^2}{dQ} \\
+\marginnote{variational characterization} &= \sup_h \frac{(\E_P[h] - \E_Q[h])^2}{\Var_Q(h)} \\
+\]
+
+Suppose $f$ is twice continuously differentiable with $\limsup_{x\to\infty} f''(x) < \infty$.
+If $\chi^2(P \| Q) < \infty$, then $D_f(\lambda P + \overline{\lambda} Q \| Q) < \infty$ for all $0 \le \lambda < 1$,
+and \[\lim_{\lambda \to 0} \frac{D_f(\lambda P + \overline{\lambda} Q \| Q)}{\lambda^2} = \frac{f''(1)}{2}\chi^2(P \| Q)\]
+while if $\chi^2(P \| Q) = \infty$ then $D_f(\lambda P + \overline{\lambda} Q \| Q)$ is $\omega(\lambda^2)$.
+
+\section*{Fisher information}
+
+See Section 7.11 for precise regularity conditions.  Briefly, $\theta \mapsto p^\theta$ must be differentiable and the Fisher information integral must be finite even if we take the supremum of the integrand in a small neighborhood.
+
+\[
+J_F(\theta) &\eqdef \int \frac{(\dot p^\theta)^2}{p^\theta}\,d\mu \\
+\chi^2(P^{\theta+\epsilon} \| P^\theta) &= J_F(\theta)\epsilon^2 + o(\epsilon^2) \\
+D(P^{\theta+\epsilon} \| P^\theta) &= \frac{\log e}{2}J_F(\theta)\epsilon^2 + o(\epsilon^2) \\
+\marginnote{tensorization} J_F^{X, Y}(\theta) &= J_F^X(\theta) + J_F^Y(\theta) & X \Perp Y \\
+\marginnote{data-processing inequality} J_F^Y(\theta) &\le J_F^X(\theta) & \theta \to X \to Y \\
+\]
+
+\section*{Fano's inequality}
+
+$X$ and $\hat X$ are random variables in $\XX$.  Think of $\hat X$ as a guess for $X$.
+
+\[
+\marginnote{correct guess} p_c &\eqdef \Pr[X = \hat X] \\
+p_{\max} &\eqdef \max_{x \in \XX} \Pr[X = x] \\
+H(X | \hat X) &\le h_2(p_c) + \ol{p_c} \log (|\XX| - 1) & |\XX| < \infty \\
+I(X; \hat X) &\ge p_c \log p_{\max}^{-1} - h_2(p_c) & p_{\max} > 0 \\
+I(X; \hat X) &\ge d(p_c \| p_{\max}) & p_c \ge p_{\max} > 0 \\
+&= \log p_{\max}^{-1} - \ol{p_c}\log(p_{\max}^{-1} - 1) - h_2(p_c)
+\]
+
+\hidden{Proof}{
+  \begin{proof}
+    First statement:
+    \[
+    \log|\XX| - H(X|\hat X)
+    &= D(P_{X|\hat X} \| \Unif(\XX) | P_{\hat X}) \\
+    &= D(P_{X, \hat X} \| \Unif(\XX) P_{\hat X}) &\text{chain rule} \\
+    &\ge d\left(p_c \| \tfrac1{|\XX|}\right) &\text{DPI} \\
+    &= p_c \log \frac{p_c}{\sfrac1{|\XX|}} + \ol{p_c} \log \frac{\ol{p_c}}{1 - \tfrac1{|\XX|}} \\
+    &= -h_2(p_c) + \log|\XX| - \ol{p_c} \log(|\XX| - 1)
+    \]
+    Second and third: Let $Q_{X,\hat X} = P_X P_{\hat X}$ and $q = Q[X = \hat X] \le p_{\max}$.
+    Then $I(X; \hat X) \ge d(p_c \| q)$ from DPI.
+    In the case $q \le p_{\max} \le p_c$ we have $d(p_c \| q) \ge d(p_c \| p_{\max})$ by convexity;
+    otherwise:
+    \[
+    d(p_c \| q)
+    &= -h(p_c) + p_c \log\frac1{q_c} + \ol{p_c}\log\frac1{\,\ol{q_c}\,} \\
+    &\ge -h(p_c) + p_c \log\frac1{p_{\max}}
+    \]
+  \end{proof}
+}
+
+\section*{Capacity saddle point}
+
+Let $M$ be a convex set of distributions, $P_{Y \mid X}$ a channel.
+\[
+C &\eqdef \sup_{P_X \in M} I(P_X, P_{Y \mid X}) \\
+\]
+
+Assuming $C < \infty$, the capacity-achieving output distribution exists and is unique:
+\[
+C &= \sup_{P_X \in M} \min_{Q_Y} D(P_{Y \mid X} \| Q_Y | P_X) \\
+&= \min_{Q_Y} \sup_{P_X \in M} D(P_{Y \mid X} \| Q_Y | P_X) \\
+&= \min_{Q_Y} \sup_x D(P_{Y \mid X=x} \| Q_Y) &\text{if $M$ = all distributions} \\
+\]
+
+If the supremum in $C$ is attained by some $P_X^*$ then there is a saddle-point:
+
+\[
+P_Y^* &= P_{Y \mid X} \circ P_X^* \\
+D(P_{Y \mid X} \| P_Y^* | P_X) &\le C = D(P_{Y \mid X} \| P_Y^* | P_X^*) \le D(P_{Y \mid X} \| Q_Y | P_X^*) \\
+\]
+
+If $M$ is the set of all distributions, $C < \infty$, and the supremum is attained by $P_X^*$,
+then $C = D(P_{Y \mid X=x} \| P_Y^*)$ for $P_X^*$-a.e. $x$.
+
+\subsection*{Gaussian saddle point}
+
+todo
+
+\section*{$f$-divergence comparison inequalities}
+
+todo convex hull thing
+
+\[\frac14 (H^2)^2 \le \dtv^2 \le H^2 \le \frac{1}{\log e} D \le \frac{1}{\log e}\log(1 + \chi^2) \le \chi^2\]
+
+\end{document}
