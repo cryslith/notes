@@ -3,6 +3,9 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
 \newcommand*{\Normal}[0]{\mathcal{N}}
 \newcommand*{\Subgauss}[0]{\mathcal{G}}
 \newcommand*{\Ber}[0]{\text{Ber}}
@@ -10,6 +13,7 @@
 \newcommand*{\Poi}[0]{\text{Poi}}
 \newcommand*{\Exp}[0]{\text{Exp}}
 \newcommand*{\Fl}[0]{\mathcal{F}}
+\newcommand*{\ol}[1]{\overline{#1}}
 
 \allowdisplaybreaks
 
@@ -90,11 +94,14 @@
 
 \section*{Chernoff Bounds}
 
+See: \cite{BouLugMas2013}.
+
 \[
 \psi_X(\lambda) &= \ln \E[e^{\lambda X}] \\
 \psi_X^*(t) &= \sup_\lambda (\lambda t - \psi_X(\lambda)) \\
 {\psi_X^*}^{-1}(y) &= \inf\{t \ge \E X : \psi^*(t) > y\} = \inf_{\lambda > 0} \frac{y + \psi(\lambda)}{\lambda} \\
 \Pr[X \ge t] &\le e^{-\psi_X^*(t)} & t \ge \E X \\
+X &\le {\psi_X^*}^{-1}(\ln \delta^{-1}) &\text{w.p. $\ol{\delta}$} \\
 \psi_{aX}(\lambda) &= \psi_X(a\lambda) \\
 \psi_{X_1 + X_2}(\lambda) &= \psi_{X_1}(\lambda) + \psi_{X_2}(\lambda) & X_1 \Perp X_2 \\
 \]
@@ -106,9 +113,11 @@ X &\sim \Bin(n, p) & n \in \N, p \in [0, 1] \\
 \Pr[X = k] &= \binom{n}{k}p^k\overline{p}^{n-k} & k \in [0, n] \\
 \E X &= np \\
 \Var X &= np\overline{p} \\
-M_X(\lambda) &= (\overline{p} + pe^\lambda)^n \\
-\psi_{X - \E X}(\lambda) &= n (\ln (\overline{p} + pe^\lambda) - \lambda p) \le \psi_{\Poi(np\overline{p}) - np\overline{p}}(\lambda) \\
-\psi_{X - \E X}^*(t) &= \frac{n}{\log e} d\left(\frac{t}{n} + p \mathrel{}\middle\|\mathrel{} p\right) & d(a \mathrel{\|} p) = (1 - a)\log\frac{1 - a}{1 - p} + a \log \frac{a}{p} \\
+\psi_X(\lambda) &= n \ln (\overline{p} + pe^\lambda) \\
+\psi_{X - \E X}(\lambda) &= n (\ln (\overline{p} + pe^\lambda) - \lambda p) \\
+&\le \psi_{\Poi(np\overline{p}) - np\overline{p}}(\lambda) \marginnote{\cite[Thm~2.9]{BouLugMas2013}} \\
+&\le \psi_{\Poi(np) - np}(\lambda) \\
+\psi_{X}^*(t) &= \frac{n}{\log e} d\left(\frac{t}{n} \mathrel{}\middle\|\mathrel{} p\right) & d(a \mathrel{\|} p) = a \log \frac{a}{p} + \ol{a}\log\frac{\,\ol{a}\,}{\,\ol{p}\,} \\
 \]
 
 \section*{Normal Distribution}
@@ -186,10 +195,9 @@ X &\sim \Poi(a) & a > 0 \\
 \Pr[X = n] &= e^{-a}\frac{a^n}{n!} & n \in \N \\
 \E X &= a \\
 \Var X &= a \\
-M_X(\lambda) &= \exp_e(a(e^\lambda - 1)) \\
 X_1 + X_2 &\sim \text{Poi}(a_1 + a_2) & X_1 \Perp X_2 \\
-\psi_{X - \E X}(\lambda) &= a(e^\lambda - \lambda - 1) \\
-\psi_{X - \E X}^*(t) &= ah\left(\frac{t}{a} + 1\right) & h(u) = u \ln u + 1 - u \\
+\psi_X(\lambda) &= a(e^\lambda - 1) \\
+\psi_X^*(t) &= ah\left(\frac{t}{a}\right) & h(u) = u \ln u + 1 - u \\
 \]
 
 \section*{Gamma Distribution}
@@ -307,5 +315,7 @@ Y \sim \Normal(\mu, \Sigma) &\iff \forall t : \R^{n \times 1}, t^\tp Y \sim \Nor
   \item If $S_n$ is a biased random walk on $\Z$ with probability $p$ of moving right and $q$ of moving left, then $(q/p)^{S_n}$ is a martingale.
   \end{itemize}
 \end{example}
+
+\printbibliography
 
 \end{document}

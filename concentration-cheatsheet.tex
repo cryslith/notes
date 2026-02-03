@@ -1,0 +1,122 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\usepackage{tcolorbox}
+\newtcolorbox[use counter=theorem]{thmbox}[2][]{label type=theorem,title=Theorem~\thetcbcounter: #2,#1}
+\newtcolorbox[use counter=theorem]{corbox}[2][]{label type=corollary,title=Corollary~\thetcbcounter: #2,#1}
+
+\usepackage{tcolorbox}
+
+\title{Concentration Inequalities Cheatsheet}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+\defn{Concentration inequalities} are inequalities which state that a random variable $X$ is unlikely to be ``too far'' from its expected value $\E X$.
+
+We will typically think of events like $X \ge \E X + t$ or $X \le \E X - t$ (where $t > 0$) as ``bad events'', where the variable $X$ deviates far from its mean.  We would like to ensure that such bad events don't happen by writing down an inequality like
+\[\Pr[X \ge \E X + t] \le \delta\]
+for some ``small'' probability $\delta$.
+
+Concentration inequalities give us the means to do this.
+This note is a reference for useful concentration inequalities which appear often in the analysis of randomized algorithms.
+We won't give proofs for these inequalities.
+
+\section*{What is $\delta$?}
+
+Two regimes for $\delta$ to keep in mind are (1) when $\delta$ is a small constant (e.g. $\delta = 1\%$) and (2) when $\delta$ is a function of $n$ which goes to zero (e.g. $\delta = \Theta(n^{-2})$ or $\delta = \Theta(e^{-n})$).
+
+A very common reason we might need to pick, say, $\delta = \Theta(n^{-2})$
+is if we actually have $n^2$ random variables $X_1, \dots, X_{n^2}$, and we want to be sure that \emph{none} of the bad events $X_i \ge \E X_i + t$ occur.
+A straightforward way to do so is to first show that the inequality
+\[\Pr[X_i \ge \E X_i + t] \le \delta\]
+holds for each $i$ with $\delta = 1\% \cdot n^{-2}$, and then apply the union bound:
+\[\Pr[\text{any of the $X_i \ge \E X_i + t$ occur}] \le \sum_i \Pr[X_i \ge \E X_i + t] \le n^2 \delta = 1\%.\]
+
+\section*{Markov}
+
+\begin{thmbox}{Markov's inequality}
+  Let $X \ge 0$ be a \emph{nonnegative} random variable with finite mean.
+  Then
+  \[\Pr[X \ge t] \le \frac{\E X}{t}\]
+  for any $t > 0$.
+\end{thmbox}
+
+\begin{itemize}
+\item Rephrased: For any $\delta \in (0, 1)$, the inequality $X < \E X \cdot \delta^{-1}$ holds with probability at least $1 - \delta$.
+\item Simple and applies to any nonnegative random variable.
+\item Disadvantage: Only a linear relationship between $t$ and $\delta$.
+\end{itemize}
+
+\section*{Chebyshev}
+
+\begin{thmbox}{Chebyshev's inequality}
+  Let $X$ be a random variable with finite variance.
+  Then
+  \[\Pr[|X - \E X| \ge t] \le \frac{\Var X}{t^2}\]
+  for any $t > 0$.
+\end{thmbox}
+
+\begin{itemize}
+\item Rephrased: $X$ lies in the interval $\E X \pm \sqrt{\Var X \cdot \delta^{-1}}$ with probability $1 - \delta$.
+\item Useful when $X = \sum_i X_i$ is a sum of pairwise independent $X_i$ since then $\Var X = \sum_i \Var X_i$.
+\item Disadvantage: Still only a quadratic relationship between $t$ and $\delta$.
+\end{itemize}
+
+\section*{Hoeffding}
+
+\begin{thmbox}[label=thm:hoeffding]{Hoeffding's inequality}
+  Let $X = \sum_i X_i$ where $X_1, \dots, X_k$ are \emph{independent} random variables such that $X_i \in [a_i, b_i]$ for all $i$.
+  Then
+  \[\Pr[X \ge \E X + t] \le \exp\left(-\frac{2t^2}{R}\right)\]
+  for any $t \ge 0$, where $R = \sum_i (b_i - a_i)^2$.
+\end{thmbox}
+\begin{itemize}
+\item Rephrased: $X \le \E X + \sqrt{\frac12 R \ln \delta^{-1}}$ with probability $1 - \delta$.
+\item The inequality $\Pr[X \le \E X - t] \le \exp\left(-\frac{2t^2}{R}\right)$ is obtained by applying \cref{thm:hoeffding} to $-X$.
+\item The inequality $\Pr[|X - \E X| \ge t] \le 2\exp\left(-\frac{2t^2}{R}\right)$ is obtained by union bounding \cref{thm:hoeffding} and the previous inequality together.
+\item Exponential relationship between $t$ and $\delta$.
+\item Disadvantage: The $X_i$ must be fully independent.
+\end{itemize}
+
+\section*{Chernoff}
+
+\begin{thmbox}[label=thm:chernoff]{Chernoff bound}
+  Let $X = \sum_i X_i$ where $X_1, \dots, X_k$ are \emph{independent} random variables such that $X_i \in [0, 1]$ for all $i$.
+  Then
+  \[
+  \Pr[X \ge \E X \cdot t] &\le e^{-\E X \cdot h(t)} & \text{for $t \ge 1$} \\
+  \Pr[X \le \E X \cdot s] &\le e^{-\E X \cdot h(s)} & \text{for $s \in (0, 1)$}
+  \]
+  where $h(t) = t \ln t - t + 1$.
+\end{thmbox}
+
+\begin{itemize}
+\item If the exact value of $\E X$ is unknown but we have the bounds $L \le \E X \le U$, then the inequalities
+  \[
+  \Pr[X \ge U \cdot t] &\le \exp(- U \cdot h(t)) & \text{for $t \ge 1$} \\
+  \Pr[X \le L \cdot s] &\le \exp(- L \cdot h(s)) & \text{for $s \in (0, 1)$}
+  \]
+  still hold.\footnote{The second one is easy but the first is trickier; it can be shown by applying \cref{thm:chernoff} to $Y = X + U - \E X$, considering $U - \E X$ as a sum of $\lceil U - \E X \rceil$ trivial random variables.}
+\item Exponential relationship between $\E X \cdot t$ and $\delta$.
+\item Disadvantage: The $X_i$ must be fully independent.
+\end{itemize}
+
+To apply \cref{thm:chernoff}, we often want to lower-bound $h(t)$.  The following looser bounds are obtained by this method.  I recommend graphing $h(t)$ to get a sense of which lower bound is appropriate for the particular regime of $t$ appearing in your application.
+
+\begin{corbox}{Chernoff bounds (looser versions)}
+  Let $X = \sum_i X_i$ where $X_1, \dots, X_k$ are \emph{independent} random variables such that $X_i \in [0, 1]$ for all $i$.
+  Then:
+  \[
+  \Pr[X \ge \E X \cdot t] &\le \exp\left(-\E X \cdot \frac{(t-1)^2}{t + 1}\right) &\text{for $t \ge 1$} \\
+  \Pr[X \ge \E X \cdot t] &\le \exp(-\E X \cdot t) & \text{for $t \ge 6.4$} \\
+  \Pr[X \ge \E X \cdot t] &\le \exp(-\E X \cdot 2t) & \text{for $t \ge 19.1$} \\
+  \Pr[X \le \E X \cdot s] &\le \exp\left(-\E X \cdot \frac{(t-1)^2}{2}\right) & \text{for $s \in (0, 1)$}
+  \]
+\end{corbox}
+
+\end{document}
