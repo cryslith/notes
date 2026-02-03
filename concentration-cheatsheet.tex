@@ -3,9 +3,25 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
+\usepackage[dvipsnames]{xcolor}
+
 \usepackage{tcolorbox}
-\newtcolorbox[use counter=theorem]{thmbox}[2][]{label type=theorem,title=Theorem~\thetcbcounter: #2,#1}
-\newtcolorbox[use counter=theorem]{corbox}[2][]{label type=corollary,title=Corollary~\thetcbcounter: #2,#1}
+\newtcolorbox[use counter=theorem]{thmbox}[2][]{
+  label type=theorem,
+  title=\textbf{Theorem~\thetcbcounter} ({#2})\textbf{.},
+  colback=WildStrawberry!5,
+  colframe=WildStrawberry!30,
+  coltitle=black,
+  #1
+}
+\newtcolorbox[use counter=theorem]{corbox}[2][]{
+  label type=corollary,
+  title=\textbf{Corollary~\thetcbcounter} ({#2})\textbf{.},
+  colback=WildStrawberry!5,
+  colframe=WildStrawberry!30,
+  coltitle=black,
+  #1
+}
 
 \usepackage{tcolorbox}
 
