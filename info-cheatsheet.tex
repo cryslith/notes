@@ -162,8 +162,8 @@ I(X; X + N) &= \frac12 \log\frac{\det(\Sigma_X + \Sigma_N)}{\det\Sigma_N} &\text
 \[
 \dtv(P, Q) &\eqdef \sup_A |P(A) - Q(A)| \\
 &= D_{x \mapsto \frac12|x - 1|}(P \| Q) \\
-&= \inf_{\substack{X \sim P \\ Y \sim Q}} \Pr[X \ne Y] \\
-&= \frac12 \int |dP - dQ| \\
+&= \min_{\substack{X \sim P \\ Y \sim Q}} \Pr[X \ne Y] \\
+&= \frac12 \|P - Q\|_1 = \int |dP - dQ| \\
 \dtv &\text{ metric} \\
 H^2(P, Q) &\eqdef D_{x \mapsto (1 - \sqrt{x})^2}(P \| Q) \\
 &= \int \left(\sqrt{dP} - \sqrt{dQ}\right)^2 \\

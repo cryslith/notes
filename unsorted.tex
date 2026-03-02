@@ -3,6 +3,9 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
 \title{Unsorted notes}
 \author{Lily Chung}
 \date{}
@@ -10,27 +13,53 @@
 \begin{document}
 \maketitle
 
-\begin{lemma}\label{thm:combi}
-  \[\binom{n}{k} \le n^k\]
-\end{lemma}
-\begin{proof}
-  Follows by combinatorial interpretation.
-\end{proof}
+\section*{Approximating binomial coefficients}
 
-The following is useful for combining multiplicative approximations.
-\begin{lemma}
-  If $x_i \in \left[1 - \frac{\epsilon}{n}, 1 + \frac{\epsilon \ln 2}{n}\right]$ where $\epsilon \in [0, 1]$ then
-  \[\prod_{i \in [n]} x_i \in [1 - \epsilon, 1 + \epsilon]\]
+\begin{lemma}[Stirling's approximation, \cite{Robbins1955}]\label{lem:stirling approx}
+  \[n! &\in \sqrt{2\pi n} \left(\frac{n}{e}\right)^n \cdot \left[e^{\frac{1}{12n + 1}}, e^\frac{1}{12n}\right] & n > 0\]
+\end{lemma}
+
+\begin{lemma}\label{lem:binom bounds}
+  \[\left(\frac{n}{k}\right)^k &\le \binom{n}{k} \le \frac{n^k}{k!} \le \left(\frac{en}{k}\right)^k & k > 0\]
 \end{lemma}
 \begin{proof}
   \[
-  \prod_{i \in [n]} x_i &\le \left(1 + \frac{\epsilon \ln 2}{n}\right)^n \\
-  &\le e^{\epsilon \ln 2} \\
-  &= 2^\epsilon \\
-  &\le 1 + \epsilon &\text{by Bernoulli's inequality} \\
-  \prod_{i \in [n]} x_i &\ge \left(1 - \frac{\epsilon}{n}\right)^n \\
-  &\ge 1 - \epsilon &\text{by Bernoulli's inequality}
+  \prod_{i=0}^{k-1} \frac{n}{k}
+  &\le \prod_{i=0}^{k-1} \frac{n - i}{k - i} \le \prod_{i=0}^{k-1} \frac{n}{k - i}
+  \]
+  together with \cref{lem:stirling approx}.
+\end{proof}
+
+\section*{Combining multiplicative approximations}
+
+\begin{lemma}[Bernoulli's inequality]\label{lem:bernoulli}
+  \[
+    (1 + x)^r &\le 1 + rx & x > -1, r \in [0, 1] \\
+    (1 + x)^r &\ge 1 + rx & x > -1, r \in \R \setminus (0, 1) \\
+    (1 + x)^r &\ge 1 + rx & x \ge -2, r \in \N \\
+    (1 + x)^r &\ge 1 + rx & x \in \R, \text{$r \in \N$ even} \\
+    \]
+\end{lemma}
+
+\begin{lemma}
+  Suppose $x_i \in [1 - \epsilon_i, 1 + \eta_i]$ for each $i \in [n]$, where $\epsilon_i \in [0, 1]$ and $\eta_i \ge 0$.
+  Then
+  \[\prod_i x_i \in \left[1 - \sum_i \epsilon_i, 1 + \frac{1}{\ln 2} \sum_i \eta_i\right]\]
+\end{lemma}
+\begin{proof}
+  \[
+  \prod_i x_i &\ge \prod_i (1 - \epsilon_i) \\
+  &\ge 1 - \sum_i \epsilon_i &\text{by induction} \\
+  \prod_i x_i
+  &\le \exp \sum_i \log (1 + \eta_i) \\
+  &\le \exp\left[n \log \left(\frac1n \sum_i (1 + \eta_i)\right)\right] &\text{by concavity} \\
+  &= \left(1 + \frac1n \sum_i \eta_i\right)^n \\
+  &\le e^{\sum_i \eta_i} \\
+  &= 2^{\frac{1}{\ln 2} \sum_i \eta_i} \\
+  &\le 1 + \frac{1}{\ln 2} \sum_i \eta_i &\text{\cref{lem:bernoulli}}
   \]
 \end{proof}
+
+\printbibliography
 
 \end{document}

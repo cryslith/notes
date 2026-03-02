@@ -1,0 +1,100 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\input{liatex/preamble}
+
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
+\DeclareMathOperator*{\law}{Law}
+
+\title{Markov chain notes}
+\author{Lily Chung}
+\date{}
+
+\begin{document}
+\maketitle
+
+Notes on discrete-time, discrete-space, time-homogenous Markov chains.
+
+\section*{Definitions}
+
+Let $S$ be a countable state space.
+A discrete-time stochastic process on $S$ is a sequence of random variables $\{X_t : t \in \N\}$ taking values in $S$.
+Such a process is a \defn{Markov chain} if it satisfies the Markov property, which is that $X_{>t}$ is independent of $X_{<t}$ conditional on $X_t$.
+It is \defn{time-homogenous} if there is a Markov kernel $P : S \to S$ such that $\law(X_{t+1}) = P \circ \law(X_t)$ for all $t$.\footnote{Note that $P$ is not necessarily unique if there are states $s$ such that $\Pr[X_t = s] = 0$ for all $t$.}  From now on we consider only time-homogenous Markov chains.  Uses of conditional probability notation should be understood in the context of $P$, so for instance $\Pr[X_1 = y \mid X_0 = x]$ is a synonym for $P[y | x]$ regardless of whether $\Pr[X_0 = x]$ is nonzero.
+We will write $\Pr_\pi$ and $\E_\pi$ for probabilities and expectations starting from $X_0 \sim \pi$.
+
+We represent the Markov kernel as a (possibly infinite) row-stochastic matrix $P_{xy} = P[y | x]$,
+and we represent distributions on $S$ as row vectors, so that $\pi P$ represents $P \circ \pi$.
+Note that functions on $S$ are represented as column vectors, so for instance $\pi P^k f = \E_{\pi}[f(X_k)]$.
+
+For the following definitions, it will be helpful to consider $P$ as a digraph on the vertices $S$, where an edge from $x$ to $y$ exists if $P_{xy} > 0$.
+
+\[
+\marginnote{hitting time} \tau_A &= \inf\{t : X_t \in A\} \\
+\marginnote{return time} \tau_A^+ &= \inf\{t > 0 : X_t \in A\} \\
+\marginnote{number of visits before return} v_{AB} &= \sum_{t = 0}^{\tau_B^+ - 1} [X_t \in A] \\
+\]
+
+\begin{itemize}
+\item A Markov chain is \defn{irreducible} if its digraph is strongly connected.
+\item A state $x$ is \defn{transient} if $\Pr_x[\tau_x^+ = \infty] > 0$; else \defn{recurrent}.
+\item A recurrent state $x$ is \defn{positive recurrent} if $\E_x \tau_x^+ < \infty$; else \defn{null recurrent}.  For finite $S$, all recurrent states are positive recurrent.
+\item The \defn{period} of a state $x$ is $\gcd\{n > 0 : \Pr_x[X_n = x] \ne 0\}$.  A state with period 1 is \defn{aperiodic}
+\item A state $i$ is \defn{ergodic} if it is aperiodic and positive recurrent.
+\end{itemize}
+
+Transience, positive/null recurrence, period, and ergodicity are constant within an SCC.
+For finite $S$ transience is equivalent to existence of an outgoing edge from $i$'s SCC, and null recurrence is impossible.\footnote{Not true for infinite $S$, e.g. a random walk on a 3-dimensional lattice has only a ${\sim}34\%$ chance of ever returning to the origin.}
+
+\section*{Stationary measures and distributions}
+
+A $\sigma$-finite measure $\mu$ is \defn{stationary} if $\mu P = \mu$.
+
+\begin{itemize}
+\item If $z$ is a recurrent state, then $\mu_y = \E_z v_{yz}$ is a stationary measure.
+\item An irreducible, recurrent Markov chain has unique stationary measure (up to scaling) given by $\mu_y = \E_z v_{yz}$. \cite[\nopp 21.15]{LevinPeres}
+\end{itemize}
+
+For stationary distributions:
+
+\begin{itemize}
+\item A transient or null recurrent state must have zero stationary probability.
+\item An irreducible Markov chain has a stationary distribution if and only if it is positive recurrent, in which case the unique stationary distribution is given by $\pi_i = \frac{1}{\E_i \tau_i^+}$. \cite[\nopp 21.12,21.13]{LevinPeres}
+\item In general a distribution over the positive recurrent states is stationary iff each positive recurrent SCC is assigned some multiple of its stationary distribution.
+  For finite $S$, the SCCs form a finite DAG,
+  the positive recurrent SCCs are the sinks,
+  and the stationary distributions are convex combinations of the stationary distributions of each sink.
+\item The law of an irreducible ergodic chain converges in TV distance to the unique stationary distribution.  The law of an irreducible null-recurrent or transient chain converges pointwise to the zero measure. \cite[\nopp 21.16, 21.19]{LevinPeres}
+\end{itemize}
+
+\subsection*{Time reversal}
+
+\begin{itemize}
+\item
+  A \defn{time reversal} of $P$ with respect to a measure $\mu$ is a Markov kernel $\hat P$ such that
+  \[(\mu P)_x \hat P_{xy} &= \mu_y P_{yx} &\forall x, y.\]
+\item $\mu$ \defn{reverses} $P$ (and $P$ is \defn{reversible}) if
+  \[\mu_x P_{xy} &= \mu_y P_{yx} &\forall x, y.\]
+  This implies $\mu$ is a stationary measure for $P$ and $P$ is its own time reversal with respect to $\mu$.
+\end{itemize}
+\section*{Mixing time}
+
+\xxx{todo}
+
+\section*{Cover time}
+
+Assume $S$ is finite.
+The \defn{cover time} is the first time when all states in $S$ have been visited.
+We are interested in the quantity $C = \max_\pi \E_\pi[\text{cover time}] = \max_v \E_v[\text{cover time}]$.
+
+\begin{itemize}
+\item An undirected graph of min-degree $\delta$ has cover time at most $O\left(\frac{nm}{\delta}\right)$ \cite{KLNS1989}.
+  Thus for regular graphs it is $O(n^2)$ but it can be $\Theta(n^3)$ for general graphs.
+\item An $\Omega(n^3)$ lower bound is the lollipop graph, which is a path of length $\frac{n}{3}$ attached to a clique on $\frac{2n}{3}$ vertices \cite{Feige1995}.
+\end{itemize}
+
+\printbibliography
+
+\end{document}

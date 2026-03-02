@@ -1,4 +1,4 @@
- \documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
@@ -13,8 +13,8 @@
 \maketitle
 
 We discuss some common concentration inequalities with a view towards easily conceptualizing and applying them.
-For most applications in computer science we don't need to be concerned about the exact numerical constants,
-so we will ignore constant factors.  Instances of asymptotic notation ($O, \Theta$, etc.) are with respect to the inverse error probability $\delta^{-1}$.
+For many applications in computer science we don't need to be concerned about the exact numerical constants,
+so we will often ignore constant factors.  Instances of asymptotic notation ($O, \Theta$, etc.) are with respect to the inverse error probability $\delta^{-1}$.
 
 One common scenario is that we have a sequence of independent $[0, 1]$ random variables,
 and we are interested in their sum.  The following theorems are often used to understand the deviations of this sum from its mean.
@@ -29,10 +29,30 @@ and we are interested in their sum.  The following theorems are often used to un
   \label{thm:chernoff}
   Let \(X = \sum_i X_i\) where the \(X_i\) are independent and $X_i \in [0, 1]$, and let \(\mu = \E X\).
   Then \[
-  \Pr[X \ge (1 + b)\mu] &\le \exp\left(-\frac{b^2}{2+b}\mu\right) & b \ge 0 \\
-  \Pr[X \le (1 - b)\mu] &\le \exp\left(-\frac{b^2}{2}\mu\right) & b \in (0, 1) \\
+  \Pr[X \ge t] &\le \exp\left(-n d\left(\tfrac{t}{n} \middle\| \tfrac{\mu}{n}\right)\right) & t \in [\mu, n] \\
+  \Pr[X \le t] &\le \exp\left(-n d\left(\tfrac{t}{n} \middle\| \tfrac{\mu}{n}\right)\right) & t \in [0, \mu] \\
   \]
 \end{theorem}
+
+To apply the above we often use the inequality:
+
+\[
+n d\left(\tfrac{t}{n} \middle\| \tfrac{\mu}{n}\right) &\ge \mu h\left(\frac{t}{\mu}\right) & h(x) = x \ln x - x + 1
+\]
+
+which can be refined by a bound like
+
+\[
+h(x) &\ge 
+\begin{cases}
+  \frac{(x-1)^2}{2} & x \in [0, 1] \\
+  \frac{(x-1)^2}{x+1} & x \ge 1 \\
+  x & x \ge 6.4 \\
+  2x & x \ge 19.1
+\end{cases}
+\]
+
+depending on the value of $x$.
 
 How can we understand what these theorems are saying in practice?
 One way is to fix a small ``error'' probability $\delta \le \frac12$,
