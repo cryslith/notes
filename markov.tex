@@ -7,6 +7,12 @@
 \addbibresource{notes.bib}
 
 \DeclareMathOperator*{\law}{Law}
+\newcommand*{\XX}{\mathcal{X}}
+\newcommand*{\RR}{\mathcal{R}}
+\newcommand*{\CC}{\mathcal{C}}
+\newcommand*{\EE}{\mathcal{E}}
+\newcommand*{\lra}{\leftrightarrow}
+\DeclareMathOperator*{\Div}{div}
 
 \title{Markov chain notes}
 \author{Lily Chung}
@@ -15,12 +21,12 @@
 \begin{document}
 \maketitle
 
-Notes on discrete-time, discrete-space, time-homogenous Markov chains.
+Notes on discrete-time, discrete-space, time-homogenous Markov chains, using \cite{LevinPeres} as a reference.
 
 \section*{Definitions}
 
-Let $S$ be a countable state space.
-A discrete-time stochastic process on $S$ is a sequence of random variables $\{X_t : t \in \N\}$ taking values in $S$.
+Let $\XX$ be a countable state space.
+A discrete-time stochastic process on $\XX$ is a sequence of random variables $\{X_t : t \in \N\}$ taking values in $\XX$.
 Such a process is a \defn{Markov chain} if it satisfies the Markov property, which is that $X_{>t}$ is independent of $X_{<t}$ conditional on $X_t$.
 It is \defn{time-homogenous} if there is a Markov kernel $P : S \to S$ such that $\law(X_{t+1}) = P \circ \law(X_t)$ for all $t$.\footnote{Note that $P$ is not necessarily unique if there are states $s$ such that $\Pr[X_t = s] = 0$ for all $t$.}  From now on we consider only time-homogenous Markov chains.  Uses of conditional probability notation should be understood in the context of $P$, so for instance $\Pr[X_1 = y \mid X_0 = x]$ is a synonym for $P[y | x]$ regardless of whether $\Pr[X_0 = x]$ is nonzero.
 We will write $\Pr_\pi$ and $\E_\pi$ for probabilities and expectations starting from $X_0 \sim \pi$.
@@ -32,21 +38,39 @@ Note that functions on $S$ are represented as column vectors, so for instance $\
 For the following definitions, it will be helpful to consider $P$ as a digraph on the vertices $S$, where an edge from $x$ to $y$ exists if $P_{xy} > 0$.
 
 \[
-\marginnote{hitting time} \tau_A &= \inf\{t : X_t \in A\} \\
-\marginnote{return time} \tau_A^+ &= \inf\{t > 0 : X_t \in A\} \\
-\marginnote{number of visits before return} v_{AB} &= \sum_{t = 0}^{\tau_B^+ - 1} [X_t \in A] \\
+\marginnote{hitting time} \tau_A &\eqdef \inf\{t : X_t \in A\} \\
+\marginnote{return time} \tau_A^+ &\eqdef \inf\{t > 0 : X_t \in A\} \\
+\marginnote{commute time} \tau_{A,B} &\eqdef \inf\{t > \tau_A : X_t \in B\} \\
+t_{x\lra y} &= \E_x \tau_{y,x} = \E_x \tau_y + \E_y \tau_x \\
+\marginnote{number of visits before return} v_{AB} &\eqdef \sum_{t = 0}^{\tau_B^+ - 1} [X_t \in A]
 \]
 
 \begin{itemize}
 \item A Markov chain is \defn{irreducible} if its digraph is strongly connected.
 \item A state $x$ is \defn{transient} if $\Pr_x[\tau_x^+ = \infty] > 0$; else \defn{recurrent}.
 \item A recurrent state $x$ is \defn{positive recurrent} if $\E_x \tau_x^+ < \infty$; else \defn{null recurrent}.  For finite $S$, all recurrent states are positive recurrent.
-\item The \defn{period} of a state $x$ is $\gcd\{n > 0 : \Pr_x[X_n = x] \ne 0\}$.  A state with period 1 is \defn{aperiodic}
+\item The \defn{period} of a state $x$ is $\gcd\{n > 0 : \Pr_x[X_n = x] \ne 0\}$.  A state with period 1 is \defn{aperiodic}.
 \item A state $i$ is \defn{ergodic} if it is aperiodic and positive recurrent.
 \end{itemize}
 
 Transience, positive/null recurrence, period, and ergodicity are constant within an SCC.
 For finite $S$ transience is equivalent to existence of an outgoing edge from $i$'s SCC, and null recurrence is impossible.\footnote{Not true for infinite $S$, e.g. a random walk on a 3-dimensional lattice has only a ${\sim}34\%$ chance of ever returning to the origin.}
+
+\section*{Harmonic functions}
+
+A function $f : \XX \to \R$ is \defn{harmonic at $x$} if $(Pf)_x = 0$, and \defn{harmonic} if $Pf = 0$; or equivalently $f(X_t)$ is a martingale.
+
+\begin{itemize}
+\item A harmonic, non-negative function on an irreducible recurrent chain must be constant \cite[\nopp 21.4]{LevinPeres}.  
+\item Let $B \subset \XX$ be a set of states such that $\tau_B < \infty$ a.s. for all starting states, and let $h_B : B \to \R$ be a bounded function; then $h_B$ extends uniquely to a \emph{bounded} function $h$ which is harmonic at $\XX \setminus B$.  The extension is given by $h(x) = \E_x[h_B(X_{\tau_B})]$.  (Follows from the optional stopping theorem \cite[\nopp 9.1]{LevinPeres}.)
+\item Some counterexamples:
+  \begin{itemize}
+  \item The identity function on $\Z$ is harmonic and non-constant since it takes negative values.
+  \item $x \mapsto \E_x[f(X_{\tau_A})]$ on a random walk with absorbing states $A$ is harmonic and non-constant because the chain isn't irreducible.
+  \item $x \mapsto \Pr_x[\tau_z^+ < \infty]$ is harmonic, bounded, and non-constant on a transient irreducible chain.
+  \item $x, y, z \mapsto (c^z)(-1)^x[x=y]$ where $c + c^{-1} = 6$ is harmonic on $\Z^3$ but vanishes outside the hyperplane $x=y$ \cite[Remark~1.3]{BLMS2017}.
+  \end{itemize}
+\end{itemize}
 
 \section*{Stationary measures and distributions}
 
@@ -54,19 +78,19 @@ A $\sigma$-finite measure $\mu$ is \defn{stationary} if $\mu P = \mu$.
 
 \begin{itemize}
 \item If $z$ is a recurrent state, then $\mu_y = \E_z v_{yz}$ is a stationary measure.
-\item An irreducible, recurrent Markov chain has unique stationary measure (up to scaling) given by $\mu_y = \E_z v_{yz}$. \cite[\nopp 21.15]{LevinPeres}
+\item An irreducible, recurrent Markov chain has unique stationary measure (up to scaling) given by $\mu_y = \E_z v_{yz}$ \cite[\nopp 21.15]{LevinPeres}.
 \end{itemize}
 
 For stationary distributions:
 
 \begin{itemize}
 \item A transient or null recurrent state must have zero stationary probability.
-\item An irreducible Markov chain has a stationary distribution if and only if it is positive recurrent, in which case the unique stationary distribution is given by $\pi_i = \frac{1}{\E_i \tau_i^+}$. \cite[\nopp 21.12,21.13]{LevinPeres}
+\item An irreducible Markov chain has a stationary distribution if and only if it is positive recurrent, in which case the unique stationary distribution is given by $\pi_i = \frac{1}{\E_i \tau_i^+}$ \cite[\nopp 21.12,21.13]{LevinPeres}.
 \item In general a distribution over the positive recurrent states is stationary iff each positive recurrent SCC is assigned some multiple of its stationary distribution.
   For finite $S$, the SCCs form a finite DAG,
   the positive recurrent SCCs are the sinks,
   and the stationary distributions are convex combinations of the stationary distributions of each sink.
-\item The law of an irreducible ergodic chain converges in TV distance to the unique stationary distribution.  The law of an irreducible null-recurrent or transient chain converges pointwise to the zero measure. \cite[\nopp 21.16, 21.19]{LevinPeres}
+\item The law of an irreducible ergodic chain converges in TV distance to the unique stationary distribution.  The law of an irreducible null-recurrent or transient chain converges pointwise to the zero measure \cite[\nopp 21.16, 21.19]{LevinPeres}.
 \end{itemize}
 
 \subsection*{Time reversal}
@@ -79,6 +103,47 @@ For stationary distributions:
   \[\mu_x P_{xy} &= \mu_y P_{yx} &\forall x, y.\]
   This implies $\mu$ is a stationary measure for $P$ and $P$ is its own time reversal with respect to $\mu$.
 \end{itemize}
+
+\section*{Electrical networks}
+
+An electrical network is a (possibly-infinite) undirected graph $G$ where each edge $e$ has a \defn{conductance} $c(e) \in [0, \infty)$ such that $c_v < \infty$ for each $v$.
+
+\[
+c_v &\eqdef \sum_{u \sim v} c(u, v) \\
+c_G &\eqdef \sum_v c_v \\
+\marginnote{resistance} r(e) &\eqdef \frac{1}{c(e)} \\
+\]
+
+The weighted random walk on an electrical network is a reversible Markov chain: it's reversed by the measure $v \mapsto c_v$, or by the distribution $v \mapsto \frac{c_v}{c_G}$ if $c_G < \infty$.
+Conversely a reversible Markov chain is a weighted random walk on the electrical network $c(x, y) = \mu_x P_{xy} = \mu_y P_{yx}$ where $\mu$ is the reversing measure.
+
+Given a set $T \subset \XX$ and a bounded function $V_T : T \to \XX$, the \defn{voltage} is
+\[\marginnote{voltage} V(x) &\eqdef \E_x\left[
+  \begin{cases}
+    V_T(X_{\tau_T}) & \tau_T < \infty \\
+    0 & \tau_T = \infty
+  \end{cases}
+  \right].
+\]
+By the optional stopping theorem, the voltage is the unique bounded harmonic function which decays to zero at $\infty$.
+
+\subsection*{Current and flows}
+
+For this section only finite networks are considered. \xxx{add a section on $x \lra \infty$ for infinite networks, and generalize the $x \lra y$ section to recurrent infinite networks.}
+
+A \defn{flow} is an antisymmetric real function $\theta$ over the oriented edges, such that $\Div \theta(x) \eqdef \sum_{y \sim x} \theta(x, y) = 0$ for all $x \notin T$.
+For a flow $\theta$ from $x$ to $y$ (i.e. $T = \{x, y\}$) define $\norm{\theta} \eqdef \Div \theta(x) = -\Div \theta(y)$.
+
+\[
+\marginnote{energy} \EE(\theta) &= \sum_e \theta(e)^2 r(e) \\
+\marginnote{current flow} I(x, y) &\eqdef \frac{V(x) - V(y)}{r(x, y)} \\
+\marginnote{effective resistance} \RR(x \lra y) &\eqdef \frac{V}{\norm{I}} &\text{on voltage $x \mapsto V, y \mapsto 0$} \\
+\marginnote{Thomson's Principle} &= \inf\{\EE(\theta) : \text{$\theta$ a unit flow from $x$ to $y$}\} &\text{uniquely minimized by $\frac{I}{\norm{I}}$} \\
+\marginnote{effective conductance} \CC(x \lra y) &\eqdef \frac{1}{\RR(x \lra y)} \\
+\marginnote{\cite[\nopp 9.5, 9.6]{LevinPeres}} \Pr_x[\tau_y < \tau_x^+] &= \frac{1}{\E_x v_{yx}} = \frac{1}{c(x) \RR(x \lra y)} & x \ne y \\
+\marginnote{\cite[\nopp 10.7]{LevinPeres}} t_{x\lra y} &= c_G \RR(x \lra y)
+\]
+
 \section*{Mixing time}
 
 \xxx{todo}
