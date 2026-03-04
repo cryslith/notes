@@ -112,6 +112,18 @@ holds for each $i$ with $\delta = 1\% \cdot n^{-2}$, and then apply the union bo
 \item Disadvantage: The $X_i$ must be fully independent.
 \end{itemize}
 
+\begin{thmbox}[label=thm:azuma]{Azuma-Hoeffding inequality}
+  Let $M_0, \dots, M_n$ be a supermartingale with respect to the filtration $\mathcal F$,
+  and let $A_i, B_i$ be $\mathcal F$-predictable processes such that $A_i \le |M_i - M_{i-1}| \le B_i$ and $B_i - A_i \le c_i$ a.s. for all $i$.
+  Then
+  \[\Pr[M_n \ge M_0 + t] \le \exp\left(-\frac{2t^2}{R}\right)\]
+  for any $t \ge 0$, where $R = \sum_i c_i^2$.
+\end{thmbox}
+\begin{itemize}
+\item Generalization of Hoeffding to martingale increments.
+\item Can be used to bound partial sums like $\max_j \sum_{i=1}^j X_i$ by considering a stopped martingale.
+\end{itemize}
+
 \section*{Chernoff}
 
 \begin{thmbox}[label=thm:chernoff]{Chernoff bound}
