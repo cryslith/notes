@@ -66,25 +66,24 @@
 
 \subsection*{Inclusion-exclusion}
 
-$A_1, A_2, \dots$ are measurable sets with finite measure.
-Let $\#A$ be the number of $A_i$ which occur.
+$A_1, \dots, A_n$ are measurable sets with finite measure.
 
 \[
-\mu[\#A \ge 1] &= \lim_{n \to \infty} \sum_{\substack{I \subset n \\ 1 \le |I|}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) \\
+\#A &\eqdef \text{number of $A_i$ which occur} \\
+\mu[\#A \ge 1] &= \sum_{\substack{I \subset [n] \\ 1 \le |I|}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) \\
 \marginnote{Bonferroni inequalities}
-\mu[\#A \ge 1] &\le \sum_{\substack{I \subset \N \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ odd} \\
-\mu[\#A \ge 1] \ge \mu[1 \le \#A \le k] &\ge \sum_{\substack{I \subset \N \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ even}
+\mu[\#A \ge 1] &\le \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ odd} \\
+\mu[\#A \ge 1] \ge \mu[1 \le \#A \le k] &\ge \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ even}
 \]
 
+\hidden{Proof}{
 \begin{proof}
-  For $k \in \N$ define the measurable function
-  \[f \eqdef \sum_{\substack{I \subset \N \\ 1 \le |I| \le k}} (-1)^{|I|+1} \left[\cap_{i \in I} A_i\right].\]
-  Note that there are a countable number of terms in the sum,
-  and at each point only finitely many of them are nonzero.
+  Define the measurable function
+  \[f \eqdef \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \left[\cap_{i \in I} A_i\right].\]
 
   We observe:
   \[
-  f &= \sum_{i=1}^{k} (-1)^{i+1} \binom{\#A}{i} \\
+  f &= \sum_{j=1}^{k} (-1)^{j+1} \binom{\#A}{j} \\
   &= \binom{\#A - 1}{0} + (-1)^{k+1}\binom{\#A - 1}{k}.
   \]
   We find:
@@ -96,14 +95,13 @@ Let $\#A$ be the number of $A_i$ which occur.
   \end{itemize}
   Consequently:
   \begin{itemize}
-  \item If there are at most $k$ events then $f = [\#A \ge 1]$.
+  \item If $k = n$ then $f = [\#A \ge 1]$.
   \item If $k$ is odd then $f \ge [\#A \ge 1]$.
   \item If $k$ is even then $f \le [1 \le \#A \le k]$.
   \end{itemize}
-  Integrating yields the inequalities
-  and the equality with finitely many events.
-  Applying monotone convergence completes the proof.
+  Integrating completes the proof.
 \end{proof}
+}
 
 \section*{Inequalities}
 
