@@ -42,21 +42,28 @@
 \end{lemma}
 
 \begin{lemma}
-  Suppose $x_i \in [1 - \epsilon_i, 1 + \eta_i]$ for each $i \in [n]$, where $\epsilon_i \in [0, 1]$ and $\eta_i \ge 0$.
+  Suppose $x_i \in [1 - \epsilon_i, 1 + \eta_i]$ for each $i \in [n]$, where $\epsilon_i \in [0, 1]$ and $\eta_i \ge -1$.
   Then
-  \[\prod_i x_i \in \left[1 - \sum_i \epsilon_i, 1 + \frac{1}{\ln 2} \sum_i \eta_i\right]\]
+  \[
+  \prod_i x_i
+  &\in \left[1 - \sum_i \epsilon_i, e^{\sum_i \eta_i}\right],
+  \]
+  which is contained in $\left[1 - \sum_i \epsilon_i, 1 + (e - 1) \sum_i \eta_i\right]$ if $\sum_i \eta_i \in [0, 1]$.
 \end{lemma}
 \begin{proof}
+  The lower bound follows by induction:
   \[
-  \prod_i x_i &\ge \prod_i (1 - \epsilon_i) \\
-  &\ge 1 - \sum_i \epsilon_i &\text{by induction} \\
+  \prod_{i=1}^{n+1} x_i &\ge \left(1 - \sum_{i=1}^n \epsilon_i\right) (1 - \epsilon_{n+1}) \\
+  &= 1 - \epsilon_{n+1} - \sum_{i=1}^n \epsilon_i + \epsilon_{n+1} \sum_{i=1}^n \epsilon_i \\
+  &\ge 1 - \sum_{i=1}^{n+1} \epsilon_i
+  \]
+  For the upper bound:
+  \[
   \prod_i x_i
   &\le \exp \sum_i \log (1 + \eta_i) \\
   &\le \exp\left[n \log \left(\frac1n \sum_i (1 + \eta_i)\right)\right] &\text{by concavity} \\
   &= \left(1 + \frac1n \sum_i \eta_i\right)^n \\
-  &\le e^{\sum_i \eta_i} \\
-  &= 2^{\frac{1}{\ln 2} \sum_i \eta_i} \\
-  &\le 1 + \frac{1}{\ln 2} \sum_i \eta_i &\text{\cref{lem:bernoulli}}
+  &\le e^{\sum_i \eta_i}
   \]
 \end{proof}
 
