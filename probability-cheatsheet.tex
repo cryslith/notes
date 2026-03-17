@@ -66,27 +66,28 @@
 
 \subsection*{Inclusion-exclusion}
 
-$A_1, \dots, A_n$ are measurable sets with finite measure.
+$A_1, \dots, A_n$ are measurable sets with finite measure, and $I$ denotes a subset of $[n]$.
 
 \[
 \#A &\eqdef \text{number of $A_i$ which occur} \\
-\mu[\#A \ge 1] &= \sum_{\substack{I \subset [n] \\ 1 \le |I|}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) \\
+\mu[\#A \ge 1] &= \sum_{1 \le |I|} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) \\
 \marginnote{Bonferroni inequalities}
-\mu[\#A \ge 1] &\le \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ odd} \\
-\mu[\#A \ge 1] \ge \mu[1 \le \#A \le k] &\ge \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ even}
+\mu[\#A \ge 1] &\le \sum_{1 \le |I| \le k} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ odd} \\
+\mu[\#A \ge 1] \ge \mu[1 \le \#A \le k] &\ge \sum_{1 \le |I| \le k} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ even} \\
+\mu[1 \le \#A < k] &\ge \sum_{1 \le |I| < k} (-1)^{|I|+1} \mu\left(\bigcap_{i \in I} A_i\right) - 2\sum_{|I| = k} \mu\left(\bigcap_{i \in I} A_i\right) &\text{$k$ even} \\
 \]
 
-\hidden{Proof}{
+\hidden[show]{Proof}{
 \begin{proof}
-  Define the measurable function
-  \[f \eqdef \sum_{\substack{I \subset [n] \\ 1 \le |I| \le k}} (-1)^{|I|+1} \left[\cap_{i \in I} A_i\right].\]
+  For $k \ge 1$ define the measurable function
+  \[f \eqdef \sum_{1 \le |I| \le k} (-1)^{|I|+1} \left[\cap_{i \in I} A_i\right].\]
 
-  We observe:
+  From the calculation
   \[
   f &= \sum_{j=1}^{k} (-1)^{j+1} \binom{\#A}{j} \\
-  &= \binom{\#A - 1}{0} + (-1)^{k+1}\binom{\#A - 1}{k}.
+  &= \binom{\#A - 1}{0} + (-1)^{k+1}\binom{\#A - 1}{k}
   \]
-  We find:
+  we observe:
   \begin{itemize}
   \item If $\#A = 0$ then $f = 0$.
   \item If $1 \le \#A \le k$ then $f = 1$.
@@ -99,7 +100,7 @@ $A_1, \dots, A_n$ are measurable sets with finite measure.
   \item If $k$ is odd then $f \ge [\#A \ge 1]$.
   \item If $k$ is even then $f \le [1 \le \#A \le k]$.
   \end{itemize}
-  Integrating completes the proof.
+  Integrating completes the proof of the first three statements; the last is similar.
 \end{proof}
 }
 
