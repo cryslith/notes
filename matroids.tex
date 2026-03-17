@@ -3,8 +3,11 @@
 \usepackage[margin=1in]{geometry}
 \input{liatex/preamble}
 
-\newcommand*{\I}[0]{\mathcal{I}}
-\newcommand*{\Cc}[0]{\mathcal{C}}
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{notes.bib}
+
+\newcommand*{\II}[0]{\mathcal{I}}
+\newcommand*{\CC}[0]{\mathcal{C}}
 
 \title{Notes on Matroid Algorithms}
 \author{Lily Chung}
@@ -13,32 +16,61 @@
 \begin{document}
 \maketitle
 
-In the following I will sometimes write set union as $A + B$ when $A, B$ are disjoint, and set difference as $C - D$ when $D \subset C$.
-I also use $A + a$ instead of $A + \{a\}$ and $C - d$ instead of $C - \{d\}$.
+The notation $A + B$ denotes a union of sets $A$ and $B$ which are guaranteed to be disjoint.  Similarly $A - B$ denotes set difference where $B \subset A$ is guaranteed.
+We also write $A + a$ instead of $A + \{a\}$ and $A - a$ instead of $A - \{a\}$.
 
 \section*{Matroids}
 
+Matroids have several equivalent definitions; here is the definition via independent sets.
+
+\begin{definition}[Independent sets]
+  Fix a ground set $E$.
+  The \defn{independent sets} of a matroid over $E$ are a collection $\II \subset 2^E$ such that
+  \begin{itemize}
+  \item $\emptyset \in \II$
+  \item If $S \subset T \in \II$ then $S \in \II$
+  \item \marginnote{exchange} If $S, T \in \II$ with $|S| > |T|$ then there exists $x \in S \setminus T$ so that $T + x \in \II$.
+  \end{itemize}
+\end{definition}
+
+Other systems can be derived from the independent sets.
+
+\begin{itemize}
+\item A \defn{basis} is a maximal independent set.
+\item A \defn{circuit} is a minimal dependent set.
+\item The \defn{rank} of a subset of $E$ is the size of the largest independent set it contains.
+\end{itemize}
+
+\begin{lemma}[Unique circuit]
+  Suppose $S$ is an independent set but $S + x$ is not.  Then there is a unique circuit $C \subset S + x$; thus for any $y \in C$ we have $S + x - y \in \II$.
+\end{lemma}
+\begin{proof}
+  Since $S + x$ is independent it contains at least one circuit; suppose it contains distinct circuits $C_1 \ne C_2$.  Then there exists $y \in C_1 \setminus C_2$.  Since $C_1 - y$ is independent we can extend it to a maximal independent set $T$ of $S + x$, so $|T| = |S|$.  We can't have $y \in T$ since $T$ can't contain the circuit $C_1$, so $T = S + x - y$.  But now $T$ contains the circuit $C_2$, a contradiction.
+\end{proof}
+
 todo define matroids, show some lemmas, give examples
-Notation: $E$: ground set, $\I$: independent sets, $\Cc$: circuits
+Notation: $E$: ground set, $\II$: independent sets, $\CC$: circuits
 
 \subsection*{Examples}
 
-\begin{example}
-  Let $G = (V, E)$ be a graph.  The \defn{matching matroid} on $G$ is a matching on $V$ is defined by \[\I \eqdef \{S : \text{there exists a matching in $G$ which matches every vertex in $S$}\}.\]
+\begin{example}[Matching matroid]
+  Let $G = (V, E)$ be a graph.  The \defn{matching matroid} on $G$ is a matching on $V$ is defined by
+  \[\II \eqdef \{S : \text{there exists a matching in $G$ which matches every vertex in $S$}\}.\]
 \end{example}
 
 \section*{Matroid Partitioning}
 
-\href{https://page.math.tu-berlin.de/\~felsner/Lehre/SemMatS/Literatur/ScheinermanUllman:FractionalArboricity.pdf}{based on book chapter}.
+Following \cite[Chapter 5]{SU1997}.
 
-Let $\I_1, \dots, \I_n$ be matroid independence systems over the same ground set $E$.
+Let $\II_1, \dots, \II_n$ be matroids over the same ground set $E$.
 
-A \defn{proper coloring} $S$ of $E$ with respect to $\I_1, \dots, \I_n$ is a partition of $E$ into sets $S_1, \dots, S_n$ such that each $S_i \in \I_i$.
+A \defn{proper coloring} $S$ of $E$ with respect to $\II_1, \dots, \II_n$ is a partition of $E$ into sets $S_1, \dots, S_n$ such that each $S_i \in \II_i$.
 The goal of matroid partitioning is to either find a proper coloring, or a certificate proving that no proper coloring exists.
+Matroid partitioning is equivalent to matroid covering (where the sets $S_i$ aren't required to be disjoint).
 
 The algorithm works by maintaining a \defn{partial proper coloring},
-a collection of disjoint sets $S_1, \dots, S_n$ such that $S_i \in \I_i$ which don't necessarily cover all of $E$.
-Initially the elements of $E$ are uncolored, so the sets $S_i$ are empty.
+a collection of disjoint sets $S_1, \dots, S_n$ such that $S_i \in \II_i$ which don't necessarily cover all of $E$.
+Initially the elements of $E$ are uncolored, so the sets $S_i$ are all empty.
 The algorithm repeatedly finds an \emph{augmenting path}
 which it uses to color an element of $E$,
 maintaining the invariant that the partial coloring is proper.
@@ -46,15 +78,18 @@ This continues until no augmenting path exists.
 
 \begin{definition}
   Let $S$ be a partial proper coloring.
-  We write $x \gets \langle i \rangle$ if $x$ doesn't have color $i$, and $S_i + x \in \I_i$.
-  We also write $x \gets y$ if $y$ has color $i$, $x$ doesn't have color $i$, and $S_i - y + x \in \I_i$.
-  An \defn{augmenting path} is a directed path of the form
-  \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle a \rangle\]
-  such that $x_0$ is uncolored, $x_i \not\gets x_j$ for $j > i + 1$, and $x_i \not\gets \langle a \rangle$ for $i < k$.
+  \begin{itemize}
+  \item
+    The notation $x \gets \langle i \rangle$ means $x \notin S_i$ and $S_i + x \in \II_i$; that is $x$ could legally be recolored to $i$.
+  \item The notation $x \gets y$ means $y \in S_i$ and $x \notin S_i$ and $S_i - y + x \in \II_i$; i.e. $y$'s color could be transferred to $x$.
+  \item An \defn{augmenting path} is a directed path of the form
+    \[x_0 \gets x_1 \gets x_2 \gets \cdots \gets x_k \gets \langle a \rangle\]
+    such that $x_0$ is uncolored, $x_i \not\gets x_j$ for $j > i + 1$, and $x_i \not\gets \langle a \rangle$ for $i < k$.
+  \end{itemize}
 \end{definition}
 
 When the algorithm finds an augmenting path, it shifts all the colors one step along the path to the left.
-The following lemma proves that this preserves the invariant:
+The following lemma proves that this preserves the invariant that $S$ is proper:
 
 \begin{lemma}\label{lem:augmenting path}
   Let $S$ be a partial proper coloring,
@@ -82,17 +117,17 @@ The following lemma proves that this preserves the invariant:
   \item $x_i \gets x_{i+1}$ in $U$ for $i < k$:
 
     We can assume $x_{i+1}$ has color $a$, since otherwise this follows from $x_i \gets x_{i+1}$ in $S$.
-    We must show $U_a' \in \I_a$, where
+    We must show $U_a' \in \II_a$, where
     \[U_a' = U_a - x_{i+1} + x_i = S_a - x_{i+1} + x_i + x_k.\]
     We know the following:
     \[
-    S_a + x_k &\in \I_a & \text{since $x_k \gets \langle a \rangle$ in $S$} \\
-    S_a - x_{i+1} + x_i &\in \I_a & \text{since $x_i \gets x_{i+1}$ in $S$} \\
-    S_a + x_i &\not\in \I_a & \text{since $x_i \not\gets \langle a \rangle$ in $S$} \\
+    S_a + x_k &\in \II_a & \text{since $x_k \gets \langle a \rangle$ in $S$} \\
+    S_a - x_{i+1} + x_i &\in \II_a & \text{since $x_i \gets x_{i+1}$ in $S$} \\
+    S_a + x_i &\not\in \II_a & \text{since $x_i \not\gets \langle a \rangle$ in $S$} \\
     \]
     Since $|S_a + x_k| > |S_a - x_{i+1} + x_i|$
     we must be able to augment $S_a - x_{i+1} + x_i$ by either $x_{i+1}$ or $x_k$.
-    The former is impossible so it must be the latter, which shows $U_a' \in \I_a$.
+    The former is impossible so it must be the latter, which shows $U_a' \in \II_a$.
   \item $x_i \not\gets \langle b \rangle$ in $U$ for $i < k$:
   
     Follows from $x_i \not\gets x_{k+1}$ in $S$.
@@ -104,10 +139,10 @@ The following lemma proves that this preserves the invariant:
 
     We know the following:
     \[
-    S_b &\in \I_b & \text{by assumption} \\
-    S_b - x_{k+1} - x_j + x_i &\in \I_b & \text{since $x_i \gets x_j$ in $U$} \\
-    S_b - x_j + x_i &\not\in \I_b & \text{since $x_i \not\gets x_j$ in $S$} \\
-    S_b - x_{k+1} + x_i &\not\in \I_b & \text{since $x_i \not\gets x_{k+1}$ in $S$} \\
+    S_b &\in \II_b & \text{by assumption} \\
+    S_b - x_{k+1} - x_j + x_i &\in \II_b & \text{since $x_i \gets x_j$ in $U$} \\
+    S_b - x_j + x_i &\not\in \II_b & \text{since $x_i \not\gets x_j$ in $S$} \\
+    S_b - x_{k+1} + x_i &\not\in \II_b & \text{since $x_i \not\gets x_{k+1}$ in $S$} \\
     \]
     Since $|S_b| > |S_b - x_{k+1} - x_j + x_i|$
     we must be able to augment $S_b - x_{k+1} - x_j + x_i$ by either $x_j$ or $x_{k+1}$, but this contradicts the facts.
@@ -120,7 +155,7 @@ The following lemma proves that this preserves the invariant:
 Now we can describe the full matroid partitioning algorithm.
 
 \begin{theorem}[Matroid Partitioning]\label{thm:matroid partitioning}
-  Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$ with rank functions $r_1, \dots, r_n$.
+  Let $\II_1, \dots, \II_n$ be matroids over the ground set $E$ with rank functions $r_1, \dots, r_n$.
   There is a polynomial-time algorithm which finds either a proper coloring,
   or a set $Y \subset E$ such that $|Y| > \sum_i r_i(Y)$.
 \end{theorem}
@@ -131,25 +166,24 @@ for any set $Y$.
 
 \begin{proof}[Proof of \cref{thm:matroid partitioning}.]
   As described earlier, the algorithm starts by finding a proper partial coloring $S$ with no augmenting path; the correctness of this part follows from \cref{lem:augmenting path}.
-  Having found such an $S$, if $S$ is a proper coloring of $E$, then the algorithm outputs $S$.
-  Otherwise, there exists at least one uncolored element.
+  If $S$ is a proper coloring of $E$, then the algorithm outputs $S$; otherwise, there exists at least one uncolored element.
   In this case the algorithm outputs
   \[Y \eqdef \{y \in E : \text{there exists an uncolored element $x$ and a directed path $x \gets \dots \gets y$}\}.\]
   We must show that $|Y| > \sum_i r_i(Y)$.
 
   We claim that $r_i(Y) = |Y \cap S_i|$ for each $i$.
-  We know $r_i(Y) \ge |Y \cap S_i|$ since $S_i \in \I_i$,
+  We know $r_i(Y) \ge |Y \cap S_i|$ since $S_i \in \II_i$,
   so suppose for contradiction that $r_i(Y) > |Y \cap S_i|$; this means
-  there is an element $y \in Y$ such that $Y \cap S_i + y \in \I_i$.
+  there is an element $y \in Y$ such that $Y \cap S_i + y \in \II_i$.
   We know:
   \[
-  S_i &\in \I_i \\
-  S_i + y &\not\in \I_i &\text{since $y \not\gets \langle i \rangle$} \\
+  S_i &\in \II_i \\
+  S_i + y &\not\in \II_i &\text{since $y \not\gets \langle i \rangle$} \\
   \]
   so there is a unique circuit $C \in S_i + y$.
   We cannot have $C \subset Y$ since $Y \cap S_i + y$ is independent,
   so $C$ contains some element $z \in S_i \setminus Y$,
-  which means $S_i - z + y \in \I_i$.
+  which means $S_i - z + y \in \II_i$.
   But this is just $y \gets z$, which contradicts $z \notin Y$.
   So the claim is proved.
 
@@ -162,26 +196,23 @@ for any set $Y$.
   \]
 \end{proof}
 
-\begin{theorem}[Matroid Sum]
-  Let $\I_1, \dots, \I_n$ be matroid independence systems over the ground set $E$.
-  Let $\mathcal{J}$ be the collection of all sets $S \subset E$ such that
-  $S$ can be partitioned into subsets $S_1, \dots, S_n$ where each $S_i \in \I_i$.
-  Then $\mathcal{J}$ is a matroid independence system.
-\end{theorem}
-\begin{proof}
-  
-\end{proof}
+\begin{remark*}
+  Let $\II_1, \dots, \II_n$ be matroids over the ground set $E$.
+  The subsets of $E$ which can be partitioned into subsets $S_1, \dots, S_n$ where each $S_i \in \II_i$ are the independent sets of a matroid, called the \defn{matroid union}.
+\end{remark*}
+
+See \cite[Theorem~11.3.1]{Oxley2011} for a proof.
 
 \section*{Matroid Intersection}
 
 \section*{Shannon switching game}
 
 \begin{definition}
-  Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is the matroid on $A$ defined by $\I_{M|_A} = \{I \subset A \mid I \in \I_M\}$.
+  Given a matroid $M$ on $E$ and a subset $A \subset E$, the \defn{submatroid} $M|_A$ is the matroid on $A$ defined by $\II_{M|_A} = \{I \subset A \mid I \in \II_M\}$.
 \end{definition}
 
 \begin{definition}
-  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is the matroid on $E - B$ defined by $\I_{M/B} = \{I \subset E - B \mid I + B \in \I_M\}$, or equivalently $\Cc_{M/B} = \{C \cap (E - B) \mid C \in \Cc_M\}$.
+  Given a matroid $M$ on $E$ and a subset $B \subset E$, the \defn{quotient matroid}\footnote{Edmonds uses the notation $M \times (E - B)$ which I feel is confusing.} $M/B$ is the matroid on $E - B$ defined by $\II_{M/B} = \{I \subset E - B \mid I + B \in \II_M\}$, or equivalently $\CC_{M/B} = \{C \cap (E - B) \mid C \in \CC_M\}$.
 \end{definition}
 
 For graphic matroids, the submatroid corresponds to deleting the edges of $A$, and the quotient corresponds to contracting the edges in $B$.  Submatroids and quotients commute with themselves and each other.
@@ -194,5 +225,7 @@ For graphic matroids, the submatroid corresponds to deleting the edges of $A$, a
 \end{definition}
 
 % todo: shannon switching game, duality, matroid packing/covering/intersection connections, matroid parity and application to low-degree TRVB
+
+\printbibliography
 
 \end{document}
