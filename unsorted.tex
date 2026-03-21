@@ -6,6 +6,8 @@
 \usepackage[style=alphabetic]{biblatex}
 \addbibresource{notes.bib}
 
+\DeclareMathOperator{\Ber}{Ber}
+
 \title{Unsorted notes}
 \author{Lily Chung}
 \date{}
@@ -20,7 +22,9 @@
 \end{lemma}
 
 \begin{lemma}\label{lem:binom bounds}
-  \[\left(\frac{n}{k}\right)^k &\le \binom{n}{k} \le \frac{n^k}{k!} \le \left(\frac{en}{k}\right)^k & k > 0\]
+  \[
+  \left(\frac{n}{k}\right)^k &\le \binom{n}{k} \le \frac{n^k}{k!} \le \left(\frac{en}{k}\right)^k & n \ge k > 0
+  \]
 \end{lemma}
 \begin{proof}
   \[
@@ -28,6 +32,20 @@
   &\le \prod_{i=0}^{k-1} \frac{n - i}{k - i} \le \prod_{i=0}^{k-1} \frac{n}{k - i}
   \]
   together with \cref{lem:stirling approx}.
+\end{proof}
+
+\begin{lemma}\label{lem:binom frac}
+  Let $0 < k \le n_1 \le n_2$.  Then
+  \[
+  \frac{\binom{n_1}{k}}{\binom{n_2}{k}} \le \left(\frac{n_1}{n_2}\right)^k.
+  \]
+  Equivalently, the probability of drawing $k$ red balls in a row from an urn without replacement is lower than with replacement.
+\end{lemma}
+\begin{proof}
+  Write out the products
+  \[
+  \frac{\prod_{i=0}^{k-1} \frac{n_1 - i}{k - i}}{\prod_{i=0}^{k-1} \frac{n_2 - i}{k - i}}.
+  \]
 \end{proof}
 
 \section*{Combining multiplicative approximations}
@@ -66,6 +84,20 @@
   &\le e^{\sum_i \eta_i}
   \]
 \end{proof}
+
+\section*{Other}
+
+Let $X_1, \dots, X_n$ be independent random variables $X_i \sim \Ber\left(\frac{1 - \delta_i}{2}\right)$.
+Then
+\[\bigoplus_i X_i \sim \Ber\left(\frac{1 - \prod_i \delta_i}{2}\right).\]
+
+\begin{proof}
+  Let $Y_i = (-1)^{X_i}$; then $Y_1, \dots, Y_n$ are independent Rademacher random variables so
+\[
+1 - 2\Pr\left[\bigoplus_i X_i = 1\right] = \E\left[\prod_i Y_i\right] = \prod_i \E[Y_i] = \prod_i \delta_i.
+\]
+\end{proof}
+
 
 \printbibliography
 
